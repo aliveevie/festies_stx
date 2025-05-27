@@ -22,14 +22,16 @@
 ;; Counter for token IDs
 (define-data-var next-token-id uint u1)
 
-;; Events
+;; ;; Events
 (define-event GreetingCardMinted
-    (token-id uint)
-    (sender principal)
-    (recipient principal)
-    (festival (string-ascii 100))
-    (message (string-ascii 500))
-    (value uint)
+    {
+        token-id: uint,
+        sender: principal,
+        recipient: principal,
+        festival: (string-ascii 100),
+        message: (string-ascii 500),
+        value: uint
+    }
 )
 
 ;; Helper functions
