@@ -1,13 +1,4 @@
-;; Festival Greetings NFT Contract
-;; Implements SIP-009 NFT standard for festival greeting cards
-
-(use-trait nft-trait .sip-009-nft-trait.nft-trait)
-(use-trait nft-mintable-trait .sip-009-nft-trait.nft-mintable-trait)
-
-;; Constants
-(define-constant CONTRACT_OWNER tx-sender)
-(define-constant CONTRACT_NAME "Festival Greetings")
-(define-constant CONTRACT_SYMBOL "FGRT")
+;; Basic NFT Contract for Festival Greetings
 
 ;; Data maps
 (define-map token-owner uint principal)
@@ -29,8 +20,7 @@
         sender: principal,
         recipient: principal,
         festival: (string-ascii 100),
-        message: (string-ascii 500),
-        value: uint
+        message: (string-ascii 500)
     }
 )
 
@@ -88,12 +78,10 @@
     (message (string-ascii 500))
     (festival (string-ascii 100))
     (image-uri (string-ascii 500))
-    (is-ipfs-link bool)
 )
     (let
         (
             (new-token-id (var-get next-token-id))
-            (image-type (if is-ipfs-link u0 u1))
         )
         (begin
             ;; Validate inputs
@@ -108,19 +96,6 @@
             (map-set token-sender new-token-id tx-sender)
             (map-set token-message new-token-id message)
             (map-set token-image-uri new-token-id image-uri)
-            (map-set token-image-type new-token-id image-type)
-
-            ;; Update sent and received tokens
-            (let
-                (
-                    (sent-list (default-to (list) (map-get? sent-tokens tx-sender)))
-                    (received-list (default-to (list) (map-get? received-tokens recipient)))
-                )
-                (begin
-                    (map-set sent-tokens tx-sender (append sent-list new-token-id))
-                    (map-set received-tokens recipient (append received-list new-token-id))
-                )
-            )
 
             ;; Increment token ID
             (var-set next-token-id (+ new-token-id u1))
@@ -132,7 +107,6 @@
                 recipient
                 festival
                 message
-                u0
             )
 
             (ok new-token-id)
@@ -141,6 +115,10 @@
 )
 
 ;; Read-only functions
+(define-read-only (get-owner (token-id uint))
+    (ok (map-get? token-owner token-id))
+)
+
 (define-read-only (get-greeting-message (token-id uint))
     (ok (map-get? token-message token-id))
 )
@@ -157,10 +135,6 @@
     (ok (map-get? token-image-uri token-id))
 )
 
-(define-read-only (get-greeting-image-type (token-id uint))
-    (ok (map-get? token-image-type token-id))
-)
-
 (define-read-only (get-sent-greetings (sender principal))
     (ok (map-get? sent-tokens sender))
 )
@@ -169,11 +143,11 @@
     (ok (map-get? received-tokens recipient))
 )
 
-;; NFT trait implementation
-(define-read-only (get-owner (token-id uint))
-    (ok (map-get? token-owner token-id))
+(define-read-only (get-last-token-id)
+    (ok (var-get next-token-id))
 )
 
+;; NFT trait implementation
 (define-read-only (get-token-uri (token-id uint))
     (let
         (
@@ -184,8 +158,4 @@
         )
         (ok (generate-metadata message festival image-uri image-type))
     )
-)
-
-(define-read-only (get-last-token-id)
-    (ok (var-get next-token-id))
 )
