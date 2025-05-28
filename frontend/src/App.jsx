@@ -2,20 +2,17 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import Header from './components/Header'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-blue-600 mb-4">
-          Tailwind CSS Test
-        </h1>
-        <p className="text-gray-600">
-          If you can see this styled text, Tailwind CSS is working correctly!
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        {/* Your main content will go here */}
+      </main>
     </div>
   )
 }
