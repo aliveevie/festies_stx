@@ -8,9 +8,8 @@ import { FaTicketAlt } from "react-icons/fa";
 
 const navLinks = [
   { name: "Home", href: "#" },
-  { name: "Explore", href: "#" },
-  { name: "My Tickets", href: "#" },
   { name: "About", href: "#" },
+  { name: "Create Greetings", href: "#" }
 ];
 
 const Header = () => {
@@ -39,36 +38,36 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full bg-gradient-to-r from-indigo-500 via-pink-500 to-purple-500 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+    <header className="w-full bg-gradient-to-r from-indigo-500 via-pink-500 to-purple-500 shadow-lg rounded-b-xl">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between min-h-[72px]">
         {/* Logo */}
-        <div className="flex items-center gap-2">
-          <FaTicketAlt className="text-white text-3xl" />
+        <div className="flex items-center gap-4 pr-8">
+          <FaTicketAlt className="text-white text-3xl drop-shadow" />
           <span className="text-2xl font-extrabold text-white tracking-wide drop-shadow-lg">Festies</span>
         </div>
         {/* Navigation */}
-        <nav className="hidden md:flex gap-8">
-          {navLinks.map((link) => (
+        <nav className="flex gap-8 flex-1">
+          {navLinks.map((link, idx) => (
             <a
               key={link.name}
               href={link.href}
-              className="text-white text-lg font-medium hover:underline hover:underline-offset-4 transition-all"
+              className={`text-white text-lg font-semibold hover:underline hover:underline-offset-8 transition-all ${idx === 0 ? 'opacity-90' : 'opacity-80'} px-2`}
             >
               {link.name}
             </a>
           ))}
         </nav>
         {/* Wallet Connect */}
-        <div>
+        <div className="flex items-center">
           {!userData ? (
             <button
               onClick={connectWallet}
-              className="px-6 py-2 bg-white text-indigo-600 font-bold rounded-lg shadow hover:bg-indigo-100 transition-colors"
+              className="px-6 py-2 bg-white text-indigo-600 font-bold rounded-lg shadow-md hover:bg-indigo-50 hover:scale-105 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-300"
             >
               Connect Wallet
             </button>
           ) : (
-            <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
+            <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg shadow">
               <span className="text-white font-mono text-sm">
                 {userData.profile.stxAddress.mainnet.slice(0, 6)}...{userData.profile.stxAddress.mainnet.slice(-4)}
               </span>
@@ -76,18 +75,6 @@ const Header = () => {
           )}
         </div>
       </div>
-      {/* Mobile nav */}
-      <nav className="flex md:hidden justify-center gap-6 py-2 bg-white/10">
-        {navLinks.map((link) => (
-          <a
-            key={link.name}
-            href={link.href}
-            className="text-white text-base font-medium hover:underline hover:underline-offset-4 transition-all"
-          >
-            {link.name}
-          </a>
-        ))}
-      </nav>
     </header>
   );
 };
