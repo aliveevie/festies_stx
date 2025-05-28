@@ -5,11 +5,12 @@ import {
   showConnect,
 } from "@stacks/connect";
 import { FaTicketAlt } from "react-icons/fa";
+import { NavLink } from 'react-router-dom';
 
 const navLinks = [
-  { name: "Home", href: "#" },
+  { name: "Home", href: "/" },
   { name: "About", href: "#" },
-  { name: "Create Greetings", href: "#" }
+  { name: "Create Greeting", href: "/create" },
 ];
 
 const Header = () => {
@@ -48,13 +49,26 @@ const Header = () => {
         {/* Navigation */}
         <nav className="flex gap-8 flex-1">
           {navLinks.map((link, idx) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className={`text-white text-lg font-semibold hover:underline hover:underline-offset-8 transition-all ${idx === 0 ? 'opacity-90' : 'opacity-80'} px-2`}
-            >
-              {link.name}
-            </a>
+            link.href.startsWith('/') ? (
+              <NavLink
+                key={link.name}
+                to={link.href}
+                className={({ isActive }) =>
+                  `text-white text-lg font-semibold hover:underline hover:underline-offset-8 transition-all px-2 ${isActive ? 'opacity-100 underline' : 'opacity-80'}`
+                }
+                end={link.href === '/'}
+              >
+                {link.name}
+              </NavLink>
+            ) : (
+              <a
+                key={link.name}
+                href={link.href}
+                className="text-white text-lg font-semibold hover:underline hover:underline-offset-8 transition-all px-2 opacity-80"
+              >
+                {link.name}
+              </a>
+            )
           ))}
         </nav>
         {/* Wallet Connect */}
