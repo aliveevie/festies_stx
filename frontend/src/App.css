@@ -40,3 +40,33 @@
 .read-the-docs {
   color: #888;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fade-in-up 1s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+  .delay-150 {
+    animation-delay: 0.15s;
+  }
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
