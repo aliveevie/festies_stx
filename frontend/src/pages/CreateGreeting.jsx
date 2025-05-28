@@ -5,7 +5,7 @@ import {
   showConnect,
   openContractCall,
 } from "@stacks/connect";
-import { STACKS_MOCKNET } from "@stacks/network";
+import { StacksNetworks } from "@stacks/network";
 import { stringAsciiCV, principalCV } from "@stacks/transactions";
 
 const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
@@ -47,7 +47,7 @@ const CreateGreeting = () => {
   const handleMint = async (e) => {
     e.preventDefault();
     setTxStatus("");
-    const network = new STACKS_MOCKNET({ url: "http://localhost:3999" });
+    const network = new StacksNetworks({ url: "http://localhost:3999" });
     try {
       const options = {
         contractAddress: CONTRACT_ADDRESS,
@@ -109,7 +109,7 @@ const CreateGreeting = () => {
             />
             <input
               className="p-3 border border-indigo-300 rounded"
-              placeholder="Image URI (optional)"
+              placeholder="Image SVG"
               value={imageUri}
               onChange={e => setImageUri(e.target.value)}
             />
