@@ -5,10 +5,8 @@ import {
   showConnect,
   openContractCall,
 } from "@stacks/connect";
-import { StacksNetworks } from "@stacks/network";
 import { stringAsciiCV, principalCV } from "@stacks/transactions";
-import { STACKS_DEVNET } from "@stacks/network";
-
+import { STACKS_TESTNET } from "@stacks/network";
 
 const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
 const CONTRACT_NAME = "festies";
@@ -49,6 +47,7 @@ const CreateGreeting = () => {
   const handleMint = async (e) => {
     e.preventDefault();
     setTxStatus("");
+    console.log("Mint clicked");
     // const network = new StacksNetworks({ url: "http://localhost:3999" });
     try {
       const options = {
@@ -61,13 +60,14 @@ const CreateGreeting = () => {
           stringAsciiCV(festival),
           stringAsciiCV(imageUri),
         ],
-        network: STACKS_DEVNET,
+        network: STACKS_TESTNET,
         appDetails,
         onFinish: ({ txId }) => {
           setTxStatus(`Transaction submitted! TxID: ${txId}`);
         },
         onCancel: () => setTxStatus("Transaction canceled."),
       };
+      console.log("Contract call options:", options);
       await openContractCall(options);
     } catch (err) {
       setTxStatus("Error: " + err.message);
