@@ -7,6 +7,8 @@ import {
 } from "@stacks/connect";
 import { StacksNetworks } from "@stacks/network";
 import { stringAsciiCV, principalCV } from "@stacks/transactions";
+import { STACKS_DEVNET } from "@stacks/network";
+
 
 const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
 const CONTRACT_NAME = "festies";
@@ -47,7 +49,7 @@ const CreateGreeting = () => {
   const handleMint = async (e) => {
     e.preventDefault();
     setTxStatus("");
-    const network = new StacksNetworks({ url: "http://localhost:3999" });
+    // const network = new StacksNetworks({ url: "http://localhost:3999" });
     try {
       const options = {
         contractAddress: CONTRACT_ADDRESS,
@@ -59,7 +61,7 @@ const CreateGreeting = () => {
           stringAsciiCV(festival),
           stringAsciiCV(imageUri),
         ],
-        network,
+        network: STACKS_DEVNET,
         appDetails,
         onFinish: ({ txId }) => {
           setTxStatus(`Transaction submitted! TxID: ${txId}`);
