@@ -1,18 +1,23 @@
 import { useState, useEffect } from "react";
 import {
-  AppConfig,
-  UserSession,
-  showConnect,
-  openContractCall,
+  connect,
+  disconnect,
+  isConnected,
+  getLocalStorage,
+  request,
 } from "@stacks/connect";
-import { stringAsciiCV, principalCV } from "@stacks/transactions";
+import {
+  makeContractCall,
+  broadcastTransaction,
+  Cl,
+  stringAsciiCV,
+  principalCV,
+} from "@stacks/transactions";
 import { STACKS_TESTNET } from "@stacks/network";
 
 const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
 const CONTRACT_NAME = "festies";
 
-const appConfig = new AppConfig(["store_write"]);
-const userSession = new UserSession({ appConfig });
 const appDetails = {
   name: "Festies",
   icon: "https://freesvg.org/img/1541103084.png",
@@ -27,32 +32,76 @@ const CreateGreeting = () => {
   const [txStatus, setTxStatus] = useState("");
 
   useEffect(() => {
-    if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn().then((userData) => {
-        setUserData(userData);
-      });
-    } else if (userSession.isUserSignedIn()) {
-      setUserData(userSession.loadUserData());
-    }
+    // Check if user is connected using the new SDK
+    const checkConnection = async () => {
+      if (isConnected()) {
+        try {
+          const response = await request('getAddresses');
+          if (response.addresses && response.addresses.length > 0) {
+            // Find the STX address from the response
+            const stxAddress = response.addresses.find(addr => addr.address.startsWith('ST'));
+            if (stxAddress) {
+              setUserData({
+                profile: {
+                  stxAddress: stxAddress.address,
+                }
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching account data:', error);
+        }
+      }
+    };
+    checkConnection();
   }, []);
 
-  const connectWallet = () => {
-    showConnect({
-      appDetails,
-      onFinish: () => window.location.reload(),
-      userSession,
-    });
+  const connectWallet = async () => {
+    try {
+      const response = await connect({
+        appDetails,
+        onFinish: async () => {
+          // After successful connection, get the account data
+          const accountData = await request('getAddresses');
+          if (accountData.addresses && accountData.addresses.length > 0) {
+            // Find the STX address from the response
+            const stxAddress = accountData.addresses.find(addr => addr.address.startsWith('ST'));
+            if (stxAddress) {
+              setUserData({
+                profile: {
+                  stxAddress: stxAddress.address,
+                }
+              });
+            }
+          }
+        },
+        onCancel: () => {
+          console.log('Connection cancelled');
+        }
+      });
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      setTxStatus("Error connecting wallet: " + error.message);
+    }
   };
 
   const handleMint = async (e) => {
     e.preventDefault();
     setTxStatus("");
     console.log("Mint clicked");
-    // const network = new StacksNetworks({ url: "http://localhost:3999" });
+    
     try {
-      const options = {
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CONTRACT_NAME,
+      // First get the user's address
+      const addressResponse = await request('getAddresses');
+      const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
+      
+      if (!stxAddress) {
+        throw new Error('No STX address found');
+      }
+
+      // Request the transaction from the wallet
+      const response = await request('stx_callContract', {
+        contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
         functionName: "mint-greeting-card",
         functionArgs: [
           principalCV(recipient),
@@ -60,16 +109,18 @@ const CreateGreeting = () => {
           stringAsciiCV(festival),
           stringAsciiCV(imageUri),
         ],
-        network: STACKS_TESTNET,
+        network: "testnet",
         appDetails,
-        onFinish: ({ txId }) => {
-          setTxStatus(`Transaction submitted! TxID: ${txId}`);
-        },
-        onCancel: () => setTxStatus("Transaction canceled."),
-      };
-      console.log("Contract call options:", options);
-      await openContractCall(options);
+        validateWithAbi: true,
+      });
+
+      if (response.txid) {
+        setTxStatus(`Transaction submitted! TxID: ${response.txid}`);
+      } else {
+        throw new Error('No transaction ID received');
+      }
     } catch (err) {
+      console.error('Error calling contract:', err);
       setTxStatus("Error: " + err.message);
     }
   };
