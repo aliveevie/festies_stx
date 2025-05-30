@@ -110,7 +110,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📫 Contact
 
-Project Link: [https://github.com/yourusername/festies](https://github.com/yourusername/festies)
+Project Link: [https://github.com/aliveevie/festies_stx](https://github.com/aliveevie/festies_stx)
 
 ## 🙏 Acknowledgments
 
