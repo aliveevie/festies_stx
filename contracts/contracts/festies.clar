@@ -1,18 +1,23 @@
 ;; Basic NFT Contract for Festival Greetings
 
-;; Data maps
-(define-map token-owner uint principal)
-(define-map token-festival uint (string-ascii 100))
-(define-map token-sender uint principal)
-(define-map token-message uint (string-ascii 500))
-(define-map token-image-uri uint (string-ascii 500))
+;; Define the NFT type
+(define-non-fungible-token GreetingCard uint)
+
+;; Data map for NFT metadata
+(define-map greeting-data uint (tuple 
+    (name (string-ascii 40))
+    (festival (string-ascii 100))
+    (message (string-ascii 500))
+    (image-uri (string-ascii 500))
+    (sender principal)
+))
 
 ;; Counter for token IDs
 (define-data-var next-token-id uint u1)
 
 ;; Public functions
 (define-public (mint-greeting-card
-    (recipient principal)
+    (name (string-ascii 40))
     (message (string-ascii 500))
     (festival (string-ascii 100))
     (image-uri (string-ascii 500))
@@ -20,20 +25,26 @@
     (let
         (
             (new-token-id (var-get next-token-id))
+            (nft-data (tuple 
+                (name name)
+                (festival festival)
+                (message message)
+                (image-uri image-uri)
+                (sender tx-sender)
+            ))
         )
         (begin
             ;; Validate inputs
-            (asserts! (is-eq recipient tx-sender) (err u1))
+            (asserts! (> (len name) u0) (err u1))
             (asserts! (> (len message) u0) (err u2))
             (asserts! (> (len festival) u0) (err u3))
             (asserts! (> (len image-uri) u0) (err u4))
 
-            ;; Mint the token
-            (map-set token-owner new-token-id recipient)
-            (map-set token-festival new-token-id festival)
-            (map-set token-sender new-token-id tx-sender)
-            (map-set token-message new-token-id message)
-            (map-set token-image-uri new-token-id image-uri)
+            ;; Mint the NFT
+            (try! (nft-mint? GreetingCard new-token-id tx-sender))
+
+            ;; Store the metadata
+            (map-set greeting-data new-token-id nft-data)
 
             ;; Increment token ID
             (var-set next-token-id (+ new-token-id u1))
@@ -44,24 +55,13 @@
 )
 
 ;; Read-only functions
-(define-read-only (get-owner (token-id uint))
-    (ok (map-get? token-owner token-id))
-)
-
-(define-read-only (get-greeting-message (token-id uint))
-    (ok (map-get? token-message token-id))
-)
-
-(define-read-only (get-greeting-festival (token-id uint))
-    (ok (map-get? token-festival token-id))
-)
-
-(define-read-only (get-greeting-sender (token-id uint))
-    (ok (map-get? token-sender token-id))
-)
-
-(define-read-only (get-greeting-image (token-id uint))
-    (ok (map-get? token-image-uri token-id))
+(define-read-only (get-greeting-card (token-id uint))
+    (let ((owner (nft-get-owner? GreetingCard token-id)))
+        (if (is-some owner)
+            (ok (map-get? greeting-data token-id))
+            (err u404)
+        )
+    )
 )
 
 (define-read-only (get-last-token-id)
