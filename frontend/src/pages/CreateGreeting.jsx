@@ -24,7 +24,7 @@ const appDetails = {
 };
 
 const CreateGreeting = () => {
-  const [recipient, setRecipient] = useState("");
+  const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [festival, setFestival] = useState("");
   const [imageUri, setImageUri] = useState("");
@@ -104,7 +104,7 @@ const CreateGreeting = () => {
         contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
         functionName: "mint-greeting-card",
         functionArgs: [
-          principalCV(recipient),
+          stringAsciiCV(name),
           stringAsciiCV(message),
           stringAsciiCV(festival),
           stringAsciiCV(imageUri),
@@ -140,9 +140,9 @@ const CreateGreeting = () => {
           <form className="flex flex-col gap-4" onSubmit={handleMint}>
             <input
               className="p-3 border border-indigo-300 rounded"
-              placeholder="Recipient Principal (e.g. ST...)"
-              value={recipient}
-              onChange={e => setRecipient(e.target.value)}
+              placeholder="Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
               required
             />
             <input
