@@ -15,7 +15,7 @@ import {
 } from "@stacks/transactions";
 import { STACKS_TESTNET } from "@stacks/network";
 
-const CONTRACT_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
+const CONTRACT_ADDRESS = "ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5";
 const CONTRACT_NAME = "festies";
 
 const appDetails = {
