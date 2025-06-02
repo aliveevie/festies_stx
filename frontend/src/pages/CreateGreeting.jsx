@@ -15,7 +15,7 @@ import {
 } from "@stacks/transactions";
 import { STACKS_TESTNET } from "@stacks/network";
 
-const CONTRACT_ADDRESS = "ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5";
+const CONTRACT_ADDRESS = "ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG";
 const CONTRACT_NAME = "festies";
 
 const appDetails = {
@@ -30,6 +30,7 @@ const CreateGreeting = () => {
   const [imageUri, setImageUri] = useState("");
   const [userData, setUserData] = useState(undefined);
   const [txStatus, setTxStatus] = useState("");
+  const [recipient, setRecipient] = useState("");
 
   useEffect(() => {
     // Check if user is connected using the new SDK
@@ -104,6 +105,7 @@ const CreateGreeting = () => {
         contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
         functionName: "mint-greeting-card",
         functionArgs: [
+          principalCV(recipient),
           stringAsciiCV(name),
           stringAsciiCV(message),
           stringAsciiCV(festival),
@@ -138,6 +140,13 @@ const CreateGreeting = () => {
           </button>
         ) : (
           <form className="flex flex-col gap-4" onSubmit={handleMint}>
+            <input
+              className="p-3 border border-indigo-300 rounded"
+              placeholder="Recipient Principal (e.g. ST...)"
+              value={recipient}
+              onChange={e => setRecipient(e.target.value)}
+              required
+            />
             <input
               className="p-3 border border-indigo-300 rounded"
               placeholder="Name"

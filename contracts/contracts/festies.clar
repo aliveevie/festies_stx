@@ -10,6 +10,7 @@
     (message (string-ascii 500))
     (image-uri (string-ascii 500))
     (sender principal)
+    (recipient principal)
 ))
 
 ;; Counter for token IDs
@@ -17,6 +18,7 @@
 
 ;; Public functions
 (define-public (mint-greeting-card
+    (recipient principal)
     (name (string-ascii 40))
     (message (string-ascii 500))
     (festival (string-ascii 100))
@@ -31,6 +33,7 @@
                 (message message)
                 (image-uri image-uri)
                 (sender tx-sender)
+                (recipient recipient)
             ))
         )
         (begin
@@ -40,8 +43,8 @@
             (asserts! (> (len festival) u0) (err u3))
             (asserts! (> (len image-uri) u0) (err u4))
 
-            ;; Mint the NFT
-            (try! (nft-mint? GreetingCard new-token-id tx-sender))
+            ;; Mint the NFT to the recipient
+            (try! (nft-mint? GreetingCard new-token-id recipient))
 
             ;; Store the metadata
             (map-set greeting-data new-token-id nft-data)
