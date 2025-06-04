@@ -1,5 +1,5 @@
 ;; Basic NFT Contract for Festival Greetings
-(impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
+(impl-trait .nft-trait.nft-trait)
 
 ;; Define the NFT type
 (define-non-fungible-token GreetingCard uint)
@@ -29,7 +29,12 @@
 )
 
 (define-read-only (get-token-uri (token-id uint))
-    (ok (map-get? greeting-data token-id))
+    (let ((data (map-get? greeting-data token-id)))
+        (if (is-some data)
+            (ok (some (get image-uri (unwrap! data err-invalid-input))))
+            (ok none)
+        )
+    )
 )
 
 (define-read-only (get-owner (token-id uint))
