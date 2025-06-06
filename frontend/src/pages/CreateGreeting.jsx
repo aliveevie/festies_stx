@@ -12,10 +12,11 @@ import {
   Cl,
   stringAsciiCV,
   principalCV,
+  uintCV,
 } from "@stacks/transactions";
 import { STACKS_TESTNET } from "@stacks/network";
 
-const CONTRACT_ADDRESS = "ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG";
+const CONTRACT_ADDRESS = "ST2JHG361ZXG51QTKY2NQCVBPPRRE2KZB1HR05NNC";
 const CONTRACT_NAME = "festies";
 
 const appDetails = {
@@ -31,6 +32,7 @@ const CreateGreeting = () => {
   const [userData, setUserData] = useState(undefined);
   const [txStatus, setTxStatus] = useState("");
   const [recipient, setRecipient] = useState("");
+  const [greetingCard, setGreetingCard] = useState(null);
 
   useEffect(() => {
     // Check if user is connected using the new SDK
@@ -39,7 +41,6 @@ const CreateGreeting = () => {
         try {
           const response = await request('getAddresses');
           if (response.addresses && response.addresses.length > 0) {
-            // Find the STX address from the response
             const stxAddress = response.addresses.find(addr => addr.address.startsWith('ST'));
             if (stxAddress) {
               setUserData({
@@ -62,10 +63,8 @@ const CreateGreeting = () => {
       const response = await connect({
         appDetails,
         onFinish: async () => {
-          // After successful connection, get the account data
           const accountData = await request('getAddresses');
           if (accountData.addresses && accountData.addresses.length > 0) {
-            // Find the STX address from the response
             const stxAddress = accountData.addresses.find(addr => addr.address.startsWith('ST'));
             if (stxAddress) {
               setUserData({
@@ -89,10 +88,8 @@ const CreateGreeting = () => {
   const handleMint = async (e) => {
     e.preventDefault();
     setTxStatus("");
-    console.log("Mint clicked");
     
     try {
-      // First get the user's address
       const addressResponse = await request('getAddresses');
       const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
       
@@ -118,12 +115,32 @@ const CreateGreeting = () => {
 
       if (response.txid) {
         setTxStatus(`Transaction submitted! TxID: ${response.txid}`);
+        // Wait for transaction to be mined and then fetch the greeting card
+        setTimeout(fetchGreetingCard, 5000);
       } else {
         throw new Error('No transaction ID received');
       }
     } catch (err) {
       console.error('Error calling contract:', err);
       setTxStatus("Error: " + err.message);
+    }
+  };
+
+  const fetchGreetingCard = async () => {
+    try {
+      const response = await request('stx_callReadOnly', {
+        contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
+        functionName: "get-greeting-card",
+        functionArgs: [uintCV(1)], // Fetch the first card for now
+        network: "testnet",
+        appDetails,
+      });
+
+      if (response) {
+        setGreetingCard(response);
+      }
+    } catch (err) {
+      console.error('Error fetching greeting card:', err);
     }
   };
 
@@ -171,9 +188,10 @@ const CreateGreeting = () => {
             />
             <input
               className="p-3 border border-indigo-300 rounded"
-              placeholder="Image SVG"
+              placeholder="Image URI"
               value={imageUri}
               onChange={e => setImageUri(e.target.value)}
+              required
             />
             <button
               type="submit"
@@ -184,6 +202,15 @@ const CreateGreeting = () => {
           </form>
         )}
         {txStatus && <div className="mt-6 text-center text-indigo-700 font-semibold">{txStatus}</div>}
+        {greetingCard && (
+          <div className="mt-6 p-4 border border-indigo-300 rounded">
+            <h2 className="text-xl font-bold mb-2">Latest Greeting Card</h2>
+            <p><strong>Name:</strong> {greetingCard.name}</p>
+            <p><strong>Festival:</strong> {greetingCard.festival}</p>
+            <p><strong>Message:</strong> {greetingCard.message}</p>
+            <img src={greetingCard.image_uri} alt="Greeting Card" className="mt-2 max-w-full h-auto" />
+          </div>
+        )}
       </div>
     </section>
   );
