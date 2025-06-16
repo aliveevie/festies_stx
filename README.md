@@ -22,8 +22,8 @@ Festies is a decentralized application built on the Stacks blockchain that enabl
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/festies.git
-cd festies
+git clone '<repo url>'
+cd festies_stx
 ```
 
 2. Install dependencies for both frontend and contracts:
