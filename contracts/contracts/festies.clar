@@ -16,6 +16,7 @@
     (festival (string-ascii 100))
     (message (string-ascii 500))
     (image-uri (string-ascii 500))
+    (metadata-uri (string-ascii 500))
     (sender principal)
     (recipient principal)
 ))
@@ -31,7 +32,7 @@
 (define-read-only (get-token-uri (token-id uint))
     (let ((data (map-get? greeting-data token-id)))
         (if (is-some data)
-            (ok (some (get image-uri (unwrap! data err-invalid-input))))
+            (ok (some (get metadata-uri (unwrap! data err-invalid-input))))
             (ok none)
         )
     )
@@ -56,6 +57,7 @@
     (message (string-ascii 500))
     (festival (string-ascii 100))
     (image-uri (string-ascii 500))
+    (metadata-uri (string-ascii 500))
 )
     (let
         (
@@ -65,6 +67,7 @@
                 (festival festival)
                 (message message)
                 (image-uri image-uri)
+                (metadata-uri metadata-uri)
                 (sender tx-sender)
                 (recipient recipient)
             ))
@@ -75,7 +78,8 @@
             (asserts! (> (len message) u0) err-invalid-input)
             (asserts! (> (len festival) u0) err-invalid-input)
             (asserts! (> (len image-uri) u0) err-invalid-input)
-            ;; #[filter(recipient, name, message, festival, image-uri)]
+            (asserts! (> (len metadata-uri) u0) err-invalid-input)
+            ;; #[filter(recipient, name, message, festival, image-uri, metadata-uri)]
 
             ;; Mint the NFT to the recipient
             (try! (nft-mint? GreetingCard new-token-id recipient))
