@@ -1,4 +1,5 @@
 /// <reference path="./clarinet-env.d.ts" />
+import { Cl } from "@stacks/transactions";
 import { describe, expect, it } from "vitest";
 
 const accounts = simnet.getAccounts();
@@ -34,17 +35,19 @@ describe("festies contract", () => {
       "festies",
       "mint-greeting-card",
       [
-        recipient.address,
-        name,
-        message,
-        festival,
-        imageUri,
-        metadataUri
+        Cl.principal(recipient),
+        Cl.stringAscii(name),
+        Cl.stringAscii(message),
+        Cl.stringAscii(festival),
+        Cl.stringAscii(imageUri),
+        Cl.stringAscii(metadataUri)
       ],
       address1
     );
-    expect(mintResult.isOk).toBe(true);
-    const tokenId = mintResult.value;
+    expect(mintResult).toBeOk(Cl.uint(1));
+    
+    // Extract token ID from the result
+    const tokenId = Cl.uint(1);
 
     // Check get-token-uri returns the correct metadata-uri
     const { result: uriResult } = simnet.callReadOnlyFn(
@@ -53,9 +56,7 @@ describe("festies contract", () => {
       [tokenId],
       address1
     );
-    expect(uriResult.isOk).toBe(true);
-    expect(uriResult.value).toBeSome();
-    expect(uriResult.value.value).toBe(metadataUri);
+    expect(uriResult).toBeOk(Cl.some(Cl.stringAscii(metadataUri)));
 
     // Check ownership
     const { result: ownerResult } = simnet.callReadOnlyFn(
@@ -64,8 +65,6 @@ describe("festies contract", () => {
       [tokenId],
       address1
     );
-    expect(ownerResult.isOk).toBe(true);
-    expect(ownerResult.value).toBeSome();
-    expect(ownerResult.value.value).toBe(recipient.address);
+    expect(ownerResult).toBeOk(Cl.some(Cl.principal(recipient)));
   });
 });
