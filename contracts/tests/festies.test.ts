@@ -30,7 +30,7 @@ describe("festies contract", () => {
     const metadataUri = "https://example.com/metadata.json";
 
     // Mint the NFT
-    const { result: mintResult, events } = simnet.callPublicFn(
+    const { result: mintResult } = simnet.callPublicFn(
       "festies",
       "mint-greeting-card",
       [
