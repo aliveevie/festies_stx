@@ -144,6 +144,34 @@ const CreateGreeting = () => {
     }
   };
 
+  // Burn NFT handler
+  const handleBurn = async () => {
+    setTxStatus("");
+    try {
+      const addressResponse = await request('getAddresses');
+      const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
+      if (!stxAddress) throw new Error('No STX address found');
+      // Assume token-id is 1 for demo; in production, use actual token id
+      const response = await request('stx_callContract', {
+        contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
+        functionName: "burn-greeting-card",
+        functionArgs: [uintCV(1)],
+        network: "testnet",
+        appDetails,
+        validateWithAbi: true,
+      });
+      if (response.txid) {
+        setTxStatus(`Burn transaction submitted! TxID: ${response.txid}`);
+        setGreetingCard(null);
+      } else {
+        throw new Error('No transaction ID received');
+      }
+    } catch (err) {
+      console.error('Error burning NFT:', err);
+      setTxStatus("Error: " + err.message);
+    }
+  };
+
   return (
     <section className="flex flex-col items-center justify-center min-h-[70vh] py-12 px-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-xl">
@@ -209,6 +237,15 @@ const CreateGreeting = () => {
             <p><strong>Festival:</strong> {greetingCard.festival}</p>
             <p><strong>Message:</strong> {greetingCard.message}</p>
             <img src={greetingCard.image_uri} alt="Greeting Card" className="mt-2 max-w-full h-auto" />
+            {/* Show Burn button if user is owner */}
+            {userData && userData.profile.stxAddress === greetingCard.sender && (
+              <button
+                className="mt-4 py-2 px-6 bg-red-600 text-white font-bold rounded hover:bg-red-700 transition"
+                onClick={handleBurn}
+              >
+                Burn NFT
+              </button>
+            )}
           </div>
         )}
       </div>
