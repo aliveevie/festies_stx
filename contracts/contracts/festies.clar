@@ -24,6 +24,32 @@
 ;; Counter for token IDs
 (define-data-var next-token-id uint u1)
 
+;; --- Royalty Mechanism ---
+(define-data-var royalty-percentage uint u5) ;; 5% default
+(define-data-var royalty-recipient principal contract-owner)
+
+(define-constant err-not-owner (err u103))
+
+(define-public (set-royalty-info (recipient principal) (percentage uint))
+    (begin
+        (asserts! (is-eq tx-sender contract-owner) err-not-owner)
+        (asserts! (<= percentage u100) err-invalid-input)
+        (var-set royalty-recipient recipient)
+        (var-set royalty-percentage percentage)
+        (ok true)
+    )
+)
+
+(define-read-only (get-royalty-info)
+    (ok (tuple (recipient (var-get royalty-recipient)) (percentage (var-get royalty-percentage))))
+)
+
+(define-read-only (calculate-royalty (sale-price uint))
+    (let ((percentage (var-get royalty-percentage)))
+        (ok (/ (* sale-price percentage) u100))
+    )
+)
+
 ;; Required trait functions
 (define-read-only (get-last-token-id)
     (ok (var-get next-token-id))
