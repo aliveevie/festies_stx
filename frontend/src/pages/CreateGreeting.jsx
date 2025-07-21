@@ -35,6 +35,25 @@ const CreateGreeting = () => {
   const [greetingCard, setGreetingCard] = useState(null);
   const [operatorAddress, setOperatorAddress] = useState("");
   const [approvalStatus, setApprovalStatus] = useState("");
+  const [royaltyInfo, setRoyaltyInfo] = useState(null);
+
+  // Fetch royalty info
+  const fetchRoyaltyInfo = async () => {
+    try {
+      const response = await request('stx_callReadOnly', {
+        contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
+        functionName: "get-royalty-info",
+        functionArgs: [],
+        network: "testnet",
+        appDetails,
+      });
+      if (response) {
+        setRoyaltyInfo(response);
+      }
+    } catch (err) {
+      console.error('Error fetching royalty info:', err);
+    }
+  };
 
   useEffect(() => {
     // Check if user is connected using the new SDK
@@ -50,6 +69,8 @@ const CreateGreeting = () => {
                   stxAddress: stxAddress.address,
                 }
               });
+              // Fetch royalty info when user connects
+              fetchRoyaltyInfo();
             }
           }
         } catch (error) {
@@ -286,6 +307,14 @@ const CreateGreeting = () => {
         )}
         {txStatus && <div className="mt-6 text-center text-indigo-700 font-semibold">{txStatus}</div>}
         {approvalStatus && <div className="mt-6 text-center text-indigo-700 font-semibold">{approvalStatus}</div>}
+        {/* Royalty Info Display */}
+        {royaltyInfo && (
+          <div className="mt-6 p-4 border border-indigo-300 rounded">
+            <h3 className="text-lg font-bold mb-2">Royalty Information</h3>
+            <p><strong>Recipient:</strong> {royaltyInfo.recipient}</p>
+            <p><strong>Percentage:</strong> {royaltyInfo.percentage}%</p>
+          </div>
+        )}
         {greetingCard && (
           <div className="mt-6 p-4 border border-indigo-300 rounded">
             <h2 className="text-xl font-bold mb-2">Latest Greeting Card</h2>
