@@ -68,11 +68,54 @@
     (ok (nft-get-owner? GreetingCard token-id))
 )
 
+;; --- Approval/Operator System ---
+(define-map token-approvals uint principal)
+
+(define-public (approve (token-id uint) (operator principal))
+    (let ((owner (nft-get-owner? GreetingCard token-id)))
+        (if (is-some owner)
+            (let ((actual-owner (unwrap! owner err-not-token-owner)))
+                (begin
+                    (asserts! (is-eq tx-sender actual-owner) err-not-token-owner)
+                    (map-set token-approvals token-id operator)
+                    (ok true)
+                )
+            )
+            (err u404)
+        )
+    )
+)
+
+(define-public (revoke-approval (token-id uint))
+    (let ((owner (nft-get-owner? GreetingCard token-id)))
+        (if (is-some owner)
+            (let ((actual-owner (unwrap! owner err-not-token-owner)))
+                (begin
+                    (asserts! (is-eq tx-sender actual-owner) err-not-token-owner)
+                    (map-delete token-approvals token-id)
+                    (ok true)
+                )
+            )
+            (err u404)
+        )
+    )
+)
+
+(define-read-only (get-approved (token-id uint))
+    (ok (map-get? token-approvals token-id))
+)
+
+;; Update transfer to allow approved operator
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
-    (begin
-        (asserts! (is-eq tx-sender sender) err-not-token-owner)
-        ;; #[filter(token-id, recipient)]
-        (nft-transfer? GreetingCard token-id sender recipient)
+    (let ((approved-operator (map-get? token-approvals token-id)))
+        (begin
+            (asserts!
+                (or (is-eq tx-sender sender)
+                    (and (is-some approved-operator) (is-eq tx-sender (unwrap! approved-operator err-not-token-owner))))
+                err-not-token-owner)
+            (map-delete token-approvals token-id)
+            (nft-transfer? GreetingCard token-id sender recipient)
+        )
     )
 )
 
