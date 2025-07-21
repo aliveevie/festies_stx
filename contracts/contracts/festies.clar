@@ -108,14 +108,16 @@
 ;; Update transfer to allow approved operator
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
     (let ((approved-operator (map-get? token-approvals token-id)))
-        (begin
-            (asserts!
-                (or (is-eq tx-sender sender)
-                    (and (is-some approved-operator) (is-eq tx-sender (unwrap! approved-operator err-not-token-owner))))
-                err-not-token-owner)
-            (map-delete token-approvals token-id)
-            (nft-transfer? GreetingCard token-id sender recipient)
-            (print {event: "transfer", token-id: token-id, from: sender, to: recipient, operator: tx-sender})
+        (asserts!
+            (or (is-eq tx-sender sender)
+                (and (is-some approved-operator) (is-eq tx-sender (unwrap! approved-operator err-not-token-owner))))
+            err-not-token-owner)
+        (let (
+            (ignore1 (map-delete token-approvals token-id))
+            (ignore2 (try! (nft-transfer? GreetingCard token-id sender recipient)))
+            (ignore3 (print {event: "transfer", token-id: token-id, from: sender, to: recipient, operator: tx-sender}))
+        )
+            (ok true)
         )
     )
 )
