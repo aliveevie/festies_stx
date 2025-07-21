@@ -36,6 +36,9 @@ const CreateGreeting = () => {
   const [operatorAddress, setOperatorAddress] = useState("");
   const [approvalStatus, setApprovalStatus] = useState("");
   const [royaltyInfo, setRoyaltyInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isBurning, setIsBurning] = useState(false);
 
   // Fetch royalty info
   const fetchRoyaltyInfo = async () => {
@@ -111,6 +114,7 @@ const CreateGreeting = () => {
   const handleMint = async (e) => {
     e.preventDefault();
     setTxStatus("");
+    setIsLoading(true);
     
     try {
       const addressResponse = await request('getAddresses');
@@ -137,7 +141,7 @@ const CreateGreeting = () => {
       });
 
       if (response.txid) {
-        setTxStatus(`Transaction submitted! TxID: ${response.txid}`);
+        setTxStatus(`🎉 Transaction submitted! TxID: ${response.txid}`);
         // Wait for transaction to be mined and then fetch the greeting card
         setTimeout(fetchGreetingCard, 5000);
       } else {
@@ -145,7 +149,9 @@ const CreateGreeting = () => {
       }
     } catch (err) {
       console.error('Error calling contract:', err);
-      setTxStatus("Error: " + err.message);
+      setTxStatus("❌ Error: " + err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -170,6 +176,7 @@ const CreateGreeting = () => {
   // Burn NFT handler
   const handleBurn = async () => {
     setTxStatus("");
+    setIsBurning(true);
     try {
       const addressResponse = await request('getAddresses');
       const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
@@ -184,20 +191,23 @@ const CreateGreeting = () => {
         validateWithAbi: true,
       });
       if (response.txid) {
-        setTxStatus(`Burn transaction submitted! TxID: ${response.txid}`);
+        setTxStatus(`🔥 Burn transaction submitted! TxID: ${response.txid}`);
         setGreetingCard(null);
       } else {
         throw new Error('No transaction ID received');
       }
     } catch (err) {
       console.error('Error burning NFT:', err);
-      setTxStatus("Error: " + err.message);
+      setTxStatus("❌ Error: " + err.message);
+    } finally {
+      setIsBurning(false);
     }
   };
 
   // Approve operator handler
   const handleApprove = async () => {
     setApprovalStatus("");
+    setIsApproving(true);
     try {
       const addressResponse = await request('getAddresses');
       const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
@@ -211,20 +221,23 @@ const CreateGreeting = () => {
         validateWithAbi: true,
       });
       if (response.txid) {
-        setApprovalStatus(`Approval transaction submitted! TxID: ${response.txid}`);
+        setApprovalStatus(`✅ Approval transaction submitted! TxID: ${response.txid}`);
         setOperatorAddress("");
       } else {
         throw new Error('No transaction ID received');
       }
     } catch (err) {
       console.error('Error approving operator:', err);
-      setApprovalStatus("Error: " + err.message);
+      setApprovalStatus("❌ Error: " + err.message);
+    } finally {
+      setIsApproving(false);
     }
   };
 
   // Revoke approval handler
   const handleRevokeApproval = async () => {
     setApprovalStatus("");
+    setIsApproving(true);
     try {
       const addressResponse = await request('getAddresses');
       const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
@@ -238,52 +251,59 @@ const CreateGreeting = () => {
         validateWithAbi: true,
       });
       if (response.txid) {
-        setApprovalStatus(`Revoke transaction submitted! TxID: ${response.txid}`);
+        setApprovalStatus(`🔄 Revoke transaction submitted! TxID: ${response.txid}`);
       } else {
         throw new Error('No transaction ID received');
       }
     } catch (err) {
       console.error('Error revoking approval:', err);
-      setApprovalStatus("Error: " + err.message);
+      setApprovalStatus("❌ Error: " + err.message);
+    } finally {
+      setIsApproving(false);
     }
   };
 
   return (
     <section className="flex flex-col items-center justify-center min-h-[70vh] py-12 px-4">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-xl">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-2xl">
         <h1 className="text-3xl font-extrabold text-indigo-600 mb-6 text-center">Mint a Festival Greeting NFT</h1>
         {!userData ? (
-          <button
-            className="w-full py-3 bg-indigo-600 text-white font-bold rounded-lg mb-4 hover:bg-indigo-700 transition"
-            onClick={connectWallet}
-          >
-            Connect Wallet
-          </button>
+          <div className="text-center">
+            <button
+              className="w-full py-3 bg-indigo-600 text-white font-bold rounded-lg mb-4 hover:bg-indigo-700 transition"
+              onClick={connectWallet}
+            >
+              Connect Wallet
+            </button>
+            <p className="text-gray-600">Connect your wallet to start minting NFTs</p>
+          </div>
         ) : (
           <form className="flex flex-col gap-4" onSubmit={handleMint}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                className="p-3 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="Recipient Principal (e.g. ST...)"
+                value={recipient}
+                onChange={e => setRecipient(e.target.value)}
+                required
+              />
+              <input
+                className="p-3 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="Name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                required
+              />
+            </div>
             <input
-              className="p-3 border border-indigo-300 rounded"
-              placeholder="Recipient Principal (e.g. ST...)"
-              value={recipient}
-              onChange={e => setRecipient(e.target.value)}
-              required
-            />
-            <input
-              className="p-3 border border-indigo-300 rounded"
-              placeholder="Name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-            />
-            <input
-              className="p-3 border border-indigo-300 rounded"
+              className="p-3 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               placeholder="Festival Name"
               value={festival}
               onChange={e => setFestival(e.target.value)}
               required
             />
             <textarea
-              className="p-3 border border-indigo-300 rounded"
+              className="p-3 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               placeholder="Your Message"
               value={message}
               onChange={e => setMessage(e.target.value)}
@@ -291,7 +311,7 @@ const CreateGreeting = () => {
               required
             />
             <input
-              className="p-3 border border-indigo-300 rounded"
+              className="p-3 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               placeholder="Image URI"
               value={imageUri}
               onChange={e => setImageUri(e.target.value)}
@@ -299,62 +319,111 @@ const CreateGreeting = () => {
             />
             <button
               type="submit"
-              className="py-3 bg-gradient-to-r from-indigo-500 via-pink-500 to-purple-500 text-white font-bold rounded-lg mt-2 hover:scale-105 transition"
+              disabled={isLoading}
+              className="py-3 bg-gradient-to-r from-indigo-500 via-pink-500 to-purple-500 text-white font-bold rounded-lg mt-2 hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Mint Greeting NFT
+              {isLoading ? "⏳ Minting..." : "Mint Greeting NFT"}
             </button>
           </form>
         )}
-        {txStatus && <div className="mt-6 text-center text-indigo-700 font-semibold">{txStatus}</div>}
-        {approvalStatus && <div className="mt-6 text-center text-indigo-700 font-semibold">{approvalStatus}</div>}
-        {/* Royalty Info Display */}
-        {royaltyInfo && (
-          <div className="mt-6 p-4 border border-indigo-300 rounded">
-            <h3 className="text-lg font-bold mb-2">Royalty Information</h3>
-            <p><strong>Recipient:</strong> {royaltyInfo.recipient}</p>
-            <p><strong>Percentage:</strong> {royaltyInfo.percentage}%</p>
+        
+        {/* Transaction Status */}
+        {txStatus && (
+          <div className="mt-6 p-4 rounded-lg border-l-4 border-indigo-500 bg-indigo-50">
+            <div className="text-indigo-700 font-semibold">{txStatus}</div>
           </div>
         )}
+        {approvalStatus && (
+          <div className="mt-6 p-4 rounded-lg border-l-4 border-green-500 bg-green-50">
+            <div className="text-green-700 font-semibold">{approvalStatus}</div>
+          </div>
+        )}
+        
+        {/* Royalty Info Display */}
+        {royaltyInfo && (
+          <div className="mt-6 p-4 border border-indigo-300 rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50">
+            <h3 className="text-lg font-bold mb-3 text-indigo-700">💰 Royalty Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Recipient</p>
+                <p className="font-mono text-sm break-all">{royaltyInfo.recipient}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Percentage</p>
+                <p className="font-bold text-lg text-indigo-600">{royaltyInfo.percentage}%</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* NFT Display */}
         {greetingCard && (
-          <div className="mt-6 p-4 border border-indigo-300 rounded">
-            <h2 className="text-xl font-bold mb-2">Latest Greeting Card</h2>
-            <p><strong>Name:</strong> {greetingCard.name}</p>
-            <p><strong>Festival:</strong> {greetingCard.festival}</p>
-            <p><strong>Message:</strong> {greetingCard.message}</p>
-            <img src={greetingCard.image_uri} alt="Greeting Card" className="mt-2 max-w-full h-auto" />
-            {/* Show Burn button if user is owner */}
-            {userData && userData.profile.stxAddress === greetingCard.sender && (
-              <button
-                className="mt-4 py-2 px-6 bg-red-600 text-white font-bold rounded hover:bg-red-700 transition"
-                onClick={handleBurn}
-              >
-                Burn NFT
-              </button>
-            )}
-            {/* Approval/Operator section */}
-            {userData && userData.profile.stxAddress === greetingCard.sender && (
-              <div className="mt-4 p-4 border border-indigo-300 rounded">
-                <h3 className="text-lg font-bold mb-2">Operator Management</h3>
-                <input
-                  className="p-2 border border-indigo-300 rounded mb-2 w-full"
-                  placeholder="Operator Address (e.g. ST...)"
-                  value={operatorAddress}
-                  onChange={e => setOperatorAddress(e.target.value)}
+          <div className="mt-6 p-6 border border-indigo-300 rounded-lg bg-gradient-to-br from-white to-indigo-50 shadow-lg">
+            <h2 className="text-2xl font-bold mb-4 text-indigo-700">🎉 Latest Greeting Card</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600">Name</p>
+                    <p className="font-semibold text-lg">{greetingCard.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Festival</p>
+                    <p className="font-semibold text-lg">{greetingCard.festival}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Message</p>
+                    <p className="font-semibold text-lg italic">"{greetingCard.message}"</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <img 
+                  src={greetingCard.image_uri} 
+                  alt="Greeting Card" 
+                  className="w-full h-48 object-cover rounded-lg shadow-md"
                 />
-                <div className="flex gap-2">
+              </div>
+            </div>
+            
+            {/* Owner Actions */}
+            {userData && userData.profile.stxAddress === greetingCard.sender && (
+              <div className="mt-6 space-y-4">
+                <div className="flex gap-3">
                   <button
-                    className="py-2 px-4 bg-green-600 text-white font-bold rounded hover:bg-green-700 transition"
-                    onClick={handleApprove}
-                    disabled={!operatorAddress}
+                    className="py-2 px-6 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                    onClick={handleBurn}
+                    disabled={isBurning}
                   >
-                    Approve Operator
+                    {isBurning ? "🔥 Burning..." : "🔥 Burn NFT"}
                   </button>
-                  <button
-                    className="py-2 px-4 bg-orange-600 text-white font-bold rounded hover:bg-orange-700 transition"
-                    onClick={handleRevokeApproval}
-                  >
-                    Revoke Approval
-                  </button>
+                </div>
+                
+                {/* Approval/Operator section */}
+                <div className="p-4 border border-indigo-300 rounded-lg bg-white">
+                  <h3 className="text-lg font-bold mb-3 text-indigo-700">🔐 Operator Management</h3>
+                  <input
+                    className="p-3 border border-indigo-300 rounded-lg mb-3 w-full focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Operator Address (e.g. ST...)"
+                    value={operatorAddress}
+                    onChange={e => setOperatorAddress(e.target.value)}
+                  />
+                  <div className="flex gap-3">
+                    <button
+                      className="py-2 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                      onClick={handleApprove}
+                      disabled={!operatorAddress || isApproving}
+                    >
+                      {isApproving ? "⏳ Processing..." : "✅ Approve Operator"}
+                    </button>
+                    <button
+                      className="py-2 px-4 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition disabled:opacity-50"
+                      onClick={handleRevokeApproval}
+                      disabled={isApproving}
+                    >
+                      {isApproving ? "⏳ Processing..." : "🔄 Revoke Approval"}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
