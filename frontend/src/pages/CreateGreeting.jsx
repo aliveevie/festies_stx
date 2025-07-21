@@ -33,6 +33,8 @@ const CreateGreeting = () => {
   const [txStatus, setTxStatus] = useState("");
   const [recipient, setRecipient] = useState("");
   const [greetingCard, setGreetingCard] = useState(null);
+  const [operatorAddress, setOperatorAddress] = useState("");
+  const [approvalStatus, setApprovalStatus] = useState("");
 
   useEffect(() => {
     // Check if user is connected using the new SDK
@@ -172,6 +174,59 @@ const CreateGreeting = () => {
     }
   };
 
+  // Approve operator handler
+  const handleApprove = async () => {
+    setApprovalStatus("");
+    try {
+      const addressResponse = await request('getAddresses');
+      const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
+      if (!stxAddress) throw new Error('No STX address found');
+      const response = await request('stx_callContract', {
+        contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
+        functionName: "approve",
+        functionArgs: [uintCV(1), principalCV(operatorAddress)],
+        network: "testnet",
+        appDetails,
+        validateWithAbi: true,
+      });
+      if (response.txid) {
+        setApprovalStatus(`Approval transaction submitted! TxID: ${response.txid}`);
+        setOperatorAddress("");
+      } else {
+        throw new Error('No transaction ID received');
+      }
+    } catch (err) {
+      console.error('Error approving operator:', err);
+      setApprovalStatus("Error: " + err.message);
+    }
+  };
+
+  // Revoke approval handler
+  const handleRevokeApproval = async () => {
+    setApprovalStatus("");
+    try {
+      const addressResponse = await request('getAddresses');
+      const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
+      if (!stxAddress) throw new Error('No STX address found');
+      const response = await request('stx_callContract', {
+        contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
+        functionName: "revoke-approval",
+        functionArgs: [uintCV(1)],
+        network: "testnet",
+        appDetails,
+        validateWithAbi: true,
+      });
+      if (response.txid) {
+        setApprovalStatus(`Revoke transaction submitted! TxID: ${response.txid}`);
+      } else {
+        throw new Error('No transaction ID received');
+      }
+    } catch (err) {
+      console.error('Error revoking approval:', err);
+      setApprovalStatus("Error: " + err.message);
+    }
+  };
+
   return (
     <section className="flex flex-col items-center justify-center min-h-[70vh] py-12 px-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-xl">
@@ -230,6 +285,7 @@ const CreateGreeting = () => {
           </form>
         )}
         {txStatus && <div className="mt-6 text-center text-indigo-700 font-semibold">{txStatus}</div>}
+        {approvalStatus && <div className="mt-6 text-center text-indigo-700 font-semibold">{approvalStatus}</div>}
         {greetingCard && (
           <div className="mt-6 p-4 border border-indigo-300 rounded">
             <h2 className="text-xl font-bold mb-2">Latest Greeting Card</h2>
@@ -245,6 +301,33 @@ const CreateGreeting = () => {
               >
                 Burn NFT
               </button>
+            )}
+            {/* Approval/Operator section */}
+            {userData && userData.profile.stxAddress === greetingCard.sender && (
+              <div className="mt-4 p-4 border border-indigo-300 rounded">
+                <h3 className="text-lg font-bold mb-2">Operator Management</h3>
+                <input
+                  className="p-2 border border-indigo-300 rounded mb-2 w-full"
+                  placeholder="Operator Address (e.g. ST...)"
+                  value={operatorAddress}
+                  onChange={e => setOperatorAddress(e.target.value)}
+                />
+                <div className="flex gap-2">
+                  <button
+                    className="py-2 px-4 bg-green-600 text-white font-bold rounded hover:bg-green-700 transition"
+                    onClick={handleApprove}
+                    disabled={!operatorAddress}
+                  >
+                    Approve Operator
+                  </button>
+                  <button
+                    className="py-2 px-4 bg-orange-600 text-white font-bold rounded hover:bg-orange-700 transition"
+                    onClick={handleRevokeApproval}
+                  >
+                    Revoke Approval
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         )}
