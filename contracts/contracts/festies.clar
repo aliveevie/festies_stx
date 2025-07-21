@@ -121,6 +121,23 @@
     )
 )
 
+;; --- Burn Functionality ---
+(define-public (burn-greeting-card (token-id uint))
+    (let ((owner (nft-get-owner? GreetingCard token-id)))
+        (if (is-some owner)
+            (let ((actual-owner (unwrap! owner err-not-token-owner)))
+                (begin
+                    (asserts! (is-eq tx-sender actual-owner) err-not-token-owner)
+                    (try! (nft-burn? GreetingCard token-id actual-owner))
+                    (map-delete greeting-data token-id)
+                    (ok true)
+                )
+            )
+            (err u404)
+        )
+    )
+)
+
 ;; Read-only functions
 (define-read-only (get-greeting-card (token-id uint))
     (let ((owner (nft-get-owner? GreetingCard token-id)))
