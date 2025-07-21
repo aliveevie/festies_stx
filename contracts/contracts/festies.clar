@@ -115,6 +115,7 @@
                 err-not-token-owner)
             (map-delete token-approvals token-id)
             (nft-transfer? GreetingCard token-id sender recipient)
+            (print {event: "transfer", token-id: token-id, from: sender, to: recipient, operator: tx-sender})
         )
     )
 )
@@ -152,13 +153,9 @@
 
             ;; Mint the NFT to the recipient
             (try! (nft-mint? GreetingCard new-token-id recipient))
-
-            ;; Store the metadata
             (map-set greeting-data new-token-id nft-data)
-
-            ;; Increment token ID
+            (print {event: "mint", token-id: new-token-id, to: recipient, from: tx-sender})
             (var-set next-token-id (+ new-token-id u1))
-
             (ok new-token-id)
         )
     )
@@ -173,6 +170,7 @@
                     (asserts! (is-eq tx-sender actual-owner) err-not-token-owner)
                     (try! (nft-burn? GreetingCard token-id actual-owner))
                     (map-delete greeting-data token-id)
+                    (print {event: "burn", token-id: token-id, owner: actual-owner})
                     (ok true)
                 )
             )
