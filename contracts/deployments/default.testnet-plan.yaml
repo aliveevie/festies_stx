@@ -10,15 +10,15 @@ plan:
       transactions:
         - contract-publish:
             contract-name: nft-trait
-            expected-sender: ST2NEB84ASENDXKYGJPQW86YXQCEFEX2ZQPG87ND
+            expected-sender: STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6
             cost: 4670
             path: contracts/nft-trait.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: festies
-            expected-sender: ST2NEB84ASENDXKYGJPQW86YXQCEFEX2ZQPG87ND
-            cost: 31170
+            expected-sender: STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6
+            cost: 62330
             path: contracts/festies.clar
             anchor-block-only: true
             clarity-version: 2
