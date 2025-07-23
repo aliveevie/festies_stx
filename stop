@@ -1,1 +1,4 @@
 docker network rm contracts.devnet
+
+clarinet deployment generate --testnet
+clarinet deployment apply --testnet

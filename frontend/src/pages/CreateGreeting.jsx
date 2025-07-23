@@ -16,7 +16,7 @@ import {
 } from "@stacks/transactions";
 import { STACKS_TESTNET } from "@stacks/network";
 
-const CONTRACT_ADDRESS = "ST2JHG361ZXG51QTKY2NQCVBPPRRE2KZB1HR05NNC";
+const CONTRACT_ADDRESS = "STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6";
 const CONTRACT_NAME = "festies";
 
 const appDetails = {
@@ -29,6 +29,7 @@ const CreateGreeting = () => {
   const [message, setMessage] = useState("");
   const [festival, setFestival] = useState("");
   const [imageUri, setImageUri] = useState("");
+  const [metadataUri, setMetadataUri] = useState("");
   const [userData, setUserData] = useState(undefined);
   const [txStatus, setTxStatus] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -40,7 +41,7 @@ const CreateGreeting = () => {
   const [isApproving, setIsApproving] = useState(false);
   const [isBurning, setIsBurning] = useState(false);
 
-  // Fetch royalty info
+  // Fetch royalty info and verify contract deployment
   const fetchRoyaltyInfo = async () => {
     try {
       const response = await request('stx_callReadOnly', {
@@ -52,9 +53,11 @@ const CreateGreeting = () => {
       });
       if (response) {
         setRoyaltyInfo(response);
+        console.log('✅ Contract is deployed and accessible');
       }
     } catch (err) {
-      console.error('Error fetching royalty info:', err);
+      console.error('❌ Error fetching royalty info (contract may not be deployed):', err);
+      setTxStatus("⚠️ Warning: Unable to verify contract deployment. Please ensure the contract is deployed to testnet.");
     }
   };
 
@@ -117,6 +120,11 @@ const CreateGreeting = () => {
     setIsLoading(true);
     
     try {
+      // Validate all required fields
+      if (!recipient || !name || !message || !festival || !imageUri || !metadataUri) {
+        throw new Error('Please fill in all required fields');
+      }
+
       const addressResponse = await request('getAddresses');
       const stxAddress = addressResponse.addresses.find(addr => addr.address.startsWith('ST'));
       
@@ -125,6 +133,9 @@ const CreateGreeting = () => {
       }
 
       // Request the transaction from the wallet
+      console.log('Calling contract:', `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`);
+      console.log('Function args:', [recipient, name, message, festival, imageUri, metadataUri]);
+      
       const response = await request('stx_callContract', {
         contract: `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`,
         functionName: "mint-greeting-card",
@@ -134,6 +145,7 @@ const CreateGreeting = () => {
           stringAsciiCV(message),
           stringAsciiCV(festival),
           stringAsciiCV(imageUri),
+          stringAsciiCV(metadataUri),
         ],
         network: "testnet",
         appDetails,
@@ -315,6 +327,13 @@ const CreateGreeting = () => {
               placeholder="Image URI"
               value={imageUri}
               onChange={e => setImageUri(e.target.value)}
+              required
+            />
+            <input
+              className="p-3 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              placeholder="Metadata URI (JSON metadata file)"
+              value={metadataUri}
+              onChange={e => setMetadataUri(e.target.value)}
               required
             />
             <button
