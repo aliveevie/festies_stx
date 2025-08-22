@@ -1,25 +1,34 @@
 ---
 id: 0
-name: Testnet deployment
+name: "Festies NFT Contracts - Testnet Deployment"
+description: "Professional NFT contracts for Festival Greetings deployment on testnet"
 network: testnet
 stacks-node: "https://api.testnet.hiro.so"
-bitcoin-node: "http://blockstack:blockstacksystem@bitcoind.testnet.stacks.co:18332"
+bitcoin-node: "https://api.testnet.hiro.so"
 plan:
   batches:
     - id: 0
+      name: "Core Contracts Deployment"
+      description: "Deploy main NFT contract and trait interface to testnet"
       transactions:
         - contract-publish:
             contract-name: nft-trait
-            expected-sender: STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6
-            cost: 4670
+            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            cost: 15000
             path: contracts/nft-trait.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: festies
-            expected-sender: STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6
-            cost: 62330
+            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            cost: 25000
             path: contracts/festies.clar
             anchor-block-only: true
             clarity-version: 2
+            depends-on: "nft-trait"
       epoch: "2.5"
+      requirements:
+        - "nft-trait contract must be deployed first"
+        - "Minimum STX balance: 0.05 STX"
+        - "Testnet network must be accessible"
+        - "Valid testnet credentials required"
