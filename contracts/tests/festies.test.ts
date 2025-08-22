@@ -7,521 +7,820 @@ const wallet1 = accounts.get("wallet_1")!;
 const wallet2 = accounts.get("wallet_2")!;
 const wallet3 = accounts.get("wallet_3")!;
 
-describe("Init connection", () => {
-  it("ensures simnet is well initalised", () => {
-    expect(simnet.blockHeight).toBeDefined();
-  });
-});
+// Test data constants
+const TEST_NAME = "Birthday Card";
+const TEST_MESSAGE = "Happy Birthday!";
+const TEST_FESTIVAL = "Birthday";
+const TEST_IMAGE_URI = "https://example.com/image.png";
+const TEST_METADATA_URI = "https://example.com/metadata.json";
 
-describe("festies contract - Basic Functionality", () => {
-  it("mints a greeting card NFT and returns the correct metadata-uri", () => {
-    const recipient = wallet2;
-    const name = "Birthday Card";
-    const message = "Happy Birthday!";
-    const festival = "Birthday";
-    const imageUri = "https://example.com/image.png";
-    const metadataUri = "https://example.com/metadata.json";
+describe("Festies NFT Contract - Professional Test Suite", () => {
+  describe("Contract Initialization", () => {
+    it("ensures simnet is well initialized", () => {
+      expect(simnet.blockHeight).toBeDefined();
+    });
 
-    // Mint the NFT
-    const { result: mintResult } = simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(recipient),
-        Cl.stringAscii(name),
-        Cl.stringAscii(message),
-        Cl.stringAscii(festival),
-        Cl.stringAscii(imageUri),
-        Cl.stringAscii(metadataUri)
-      ],
-      wallet1
-    );
-    expect(mintResult).toBeOk(Cl.uint(1));
-    
-    // Extract token ID from the result
-    const tokenId = Cl.uint(1);
+    it("returns correct contract information", () => {
+      const { result } = simnet.callReadOnlyFn(
+        "festies",
+        "get-contract-info",
+        [],
+        deployer
+      );
+      
+      expect(result).toBeOk(Cl.tuple({
+        name: Cl.stringAscii("Festival Greetings"),
+        symbol: Cl.stringAscii("FESTIE"),
+        version: Cl.stringAscii("2.0.0"),
+        description: Cl.stringAscii("Professional NFT contract for festival greetings with royalty support and advanced features")
+      }));
+    });
 
-    // Check get-token-uri returns the correct metadata-uri
-    const { result: uriResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-token-uri",
-      [tokenId],
-      wallet1
-    );
-    expect(uriResult).toBeOk(Cl.some(Cl.stringAscii(metadataUri)));
+    it("returns correct contract owner", () => {
+      const { result } = simnet.callReadOnlyFn(
+        "festies",
+        "get-contract-owner",
+        [],
+        deployer
+      );
+      
+      expect(result).toBeOk(Cl.principal(deployer));
+    });
 
-    // Check ownership
-    const { result: ownerResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-owner",
-      [tokenId],
-      wallet1
-    );
-    expect(ownerResult).toBeOk(Cl.some(Cl.principal(recipient)));
-
-    // Check greeting card data
-    const { result: greetingResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-greeting-card",
-      [tokenId],
-      wallet1
-    );
-    expect(greetingResult).toBeOk(Cl.some(Cl.tuple({
-      name: Cl.stringAscii(name),
-      festival: Cl.stringAscii(festival),
-      message: Cl.stringAscii(message),
-      "image-uri": Cl.stringAscii(imageUri),
-      "metadata-uri": Cl.stringAscii(metadataUri),
-      sender: Cl.principal(wallet1),
-      recipient: Cl.principal(recipient)
-    })));
+    it("returns correct contract status", () => {
+      const { result } = simnet.callReadOnlyFn(
+        "festies",
+        "get-contract-status",
+        [],
+        deployer
+      );
+      
+      expect(result).toBeOk(Cl.tuple({
+        owner: Cl.principal(deployer),
+        paused: Cl.bool(false),
+        "total-supply": Cl.uint(0),
+        "next-token-id": Cl.uint(1),
+        "royalty-percentage": Cl.uint(5),
+        "royalty-recipient": Cl.principal(deployer)
+      }));
+    });
   });
 
-  it("validates input parameters when minting", () => {
-    const recipient = wallet2;
+  describe("NFT Minting Functionality", () => {
+    it("mints a greeting card NFT with correct metadata", () => {
+      const recipient = wallet2;
 
-    // Test empty name
-    const { result: emptyNameResult } = simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(recipient),
-        Cl.stringAscii(""),
-        Cl.stringAscii("Happy Birthday!"),
-        Cl.stringAscii("Birthday"),
-        Cl.stringAscii("https://example.com/image.png"),
-        Cl.stringAscii("https://example.com/metadata.json")
-      ],
-      wallet1
-    );
-    expect(emptyNameResult).toBeErr(Cl.uint(102)); // err-invalid-input
+      const { result: mintResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      
+      expect(mintResult).toBeOk(Cl.uint(1));
+      
+      const tokenId = Cl.uint(1);
 
-    // Test empty message
-    const { result: emptyMessageResult } = simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(recipient),
-        Cl.stringAscii("Birthday Card"),
-        Cl.stringAscii(""),
-        Cl.stringAscii("Birthday"),
-        Cl.stringAscii("https://example.com/image.png"),
-        Cl.stringAscii("https://example.com/metadata.json")
-      ],
-      wallet1
-    );
-    expect(emptyMessageResult).toBeErr(Cl.uint(102)); // err-invalid-input
+      // Verify token URI
+      const { result: uriResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-token-uri",
+        [tokenId],
+        wallet1
+      );
+      expect(uriResult).toBeOk(Cl.some(Cl.stringAscii(TEST_METADATA_URI)));
+
+      // Verify ownership
+      const { result: ownerResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-owner",
+        [tokenId],
+        wallet1
+      );
+      expect(ownerResult).toBeOk(Cl.some(Cl.principal(recipient)));
+
+      // Verify complete metadata
+      const { result: metadataResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-token-metadata",
+        [tokenId],
+        wallet1
+      );
+      
+      expect(metadataResult).toBeOk(Cl.some(Cl.tuple({
+        name: Cl.stringAscii(TEST_NAME),
+        festival: Cl.stringAscii(TEST_FESTIVAL),
+        message: Cl.stringAscii(TEST_MESSAGE),
+        "image-uri": Cl.stringAscii(TEST_IMAGE_URI),
+        "metadata-uri": Cl.stringAscii(TEST_METADATA_URI),
+        sender: Cl.principal(wallet1),
+        recipient: Cl.principal(recipient),
+        "created-at": Cl.uint(1)
+      })));
+
+      // Verify total supply increased
+      const { result: supplyResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-total-supply",
+        [],
+        wallet1
+      );
+      expect(supplyResult).toBeOk(Cl.uint(1));
+    });
+
+    it("validates all input parameters when minting", () => {
+      const recipient = wallet2;
+
+      // Test empty name
+      const { result: emptyNameResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(""),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      expect(emptyNameResult).toBeErr(Cl.uint(102)); // ERR_INVALID_INPUT
+
+      // Test empty message
+      const { result: emptyMessageResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(""),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      expect(emptyMessageResult).toBeErr(Cl.uint(102)); // ERR_INVALID_INPUT
+
+      // Test empty festival
+      const { result: emptyFestivalResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(""),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      expect(emptyFestivalResult).toBeErr(Cl.uint(102)); // ERR_INVALID_INPUT
+
+      // Test empty image URI
+      const { result: emptyImageResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(""),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      expect(emptyImageResult).toBeErr(Cl.uint(102)); // ERR_INVALID_INPUT
+
+      // Test empty metadata URI
+      const { result: emptyMetadataResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii("")
+        ],
+        wallet1
+      );
+      expect(emptyMetadataResult).toBeErr(Cl.uint(102)); // ERR_INVALID_INPUT
+    });
+
+    it("increments token IDs and total supply correctly", () => {
+      const recipient = wallet2;
+
+      // Mint first NFT
+      const { result: firstMint } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      expect(firstMint).toBeOk(Cl.uint(1));
+
+      // Mint second NFT
+      const { result: secondMint } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      expect(secondMint).toBeOk(Cl.uint(2));
+
+      // Verify total supply
+      const { result: supplyResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-total-supply",
+        [],
+        wallet1
+      );
+      expect(supplyResult).toBeOk(Cl.uint(2));
+
+      // Verify next token ID
+      const { result: nextIdResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-last-token-id",
+        [],
+        wallet1
+      );
+      expect(nextIdResult).toBeOk(Cl.uint(3));
+    });
+
+    it("supports batch minting operations", () => {
+      const recipients = [wallet2, wallet3];
+      const names = ["Card 1", "Card 2"];
+      const messages = ["Message 1", "Message 2"];
+      const festivals = ["Festival 1", "Festival 2"];
+      const imageUris = ["https://example.com/image1.png", "https://example.com/image2.png"];
+      const metadataUris = ["https://example.com/metadata1.json", "https://example.com/metadata2.json"];
+
+      const { result: batchResult } = simnet.callPublicFn(
+        "festies",
+        "batch-mint-greeting-cards",
+        [
+          Cl.list(recipients.map(r => Cl.principal(r))),
+          Cl.list(names.map(n => Cl.stringAscii(n))),
+          Cl.list(messages.map(m => Cl.stringAscii(m))),
+          Cl.list(festivals.map(f => Cl.stringAscii(f))),
+          Cl.list(imageUris.map(i => Cl.stringAscii(i))),
+          Cl.list(metadataUris.map(m => Cl.stringAscii(m)))
+        ],
+        wallet1
+      );
+
+      expect(batchResult).toBeOk(Cl.list([Cl.uint(3), Cl.uint(4)]));
+
+      // Verify total supply after batch mint
+      const { result: supplyResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-total-supply",
+        [],
+        wallet1
+      );
+      expect(supplyResult).toBeOk(Cl.uint(4));
+    });
   });
 
-  it("increments token IDs correctly", () => {
-    const recipient = wallet2;
-    const name = "Card";
-    const message = "Hello!";
-    const festival = "Festival";
-    const imageUri = "https://example.com/image.png";
-    const metadataUri = "https://example.com/metadata.json";
+  describe("Royalty System", () => {
+    it("sets and gets royalty info (contract owner only)", () => {
+      const newRecipient = wallet2;
+      const newPercentage = 10;
 
-    // Mint first NFT
-    const { result: firstMint } = simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(recipient),
-        Cl.stringAscii(name),
-        Cl.stringAscii(message),
-        Cl.stringAscii(festival),
-        Cl.stringAscii(imageUri),
-        Cl.stringAscii(metadataUri)
-      ],
-      wallet1
-    );
-    expect(firstMint).toBeOk(Cl.uint(1));
+      // Only contract owner can set royalty info
+      const { result: setResult } = simnet.callPublicFn(
+        "festies",
+        "set-royalty-info",
+        [Cl.principal(newRecipient), Cl.uint(newPercentage)],
+        deployer
+      );
+      expect(setResult).toBeOk(Cl.bool(true));
 
-    // Mint second NFT
-    const { result: secondMint } = simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(recipient),
-        Cl.stringAscii(name),
-        Cl.stringAscii(message),
-        Cl.stringAscii(festival),
-        Cl.stringAscii(imageUri),
-        Cl.stringAscii(metadataUri)
-      ],
-      wallet1
-    );
-    expect(secondMint).toBeOk(Cl.uint(2));
-  });
-});
+      // Check the royalty info was set correctly
+      const { result: getRoyaltyResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-royalty-info",
+        [],
+        deployer
+      );
+      expect(getRoyaltyResult).toBeOk(Cl.tuple({
+        recipient: Cl.principal(newRecipient),
+        percentage: Cl.uint(newPercentage)
+      }));
+    });
 
-describe("festies contract - Royalty Mechanism", () => {
-  it("sets and gets royalty info (contract owner only)", () => {
-    const newRecipient = wallet2;
-    const newPercentage = 10;
+    it("prevents non-owner from setting royalty info", () => {
+      const { result: setResult } = simnet.callPublicFn(
+        "festies",
+        "set-royalty-info",
+        [Cl.principal(wallet2), Cl.uint(10)],
+        wallet1
+      );
+      expect(setResult).toBeErr(Cl.uint(100)); // ERR_OWNER_ONLY
+    });
 
-    // Only contract owner can set royalty info
-    const { result: setResult } = simnet.callPublicFn(
-      "festies",
-      "set-royalty-info",
-      [Cl.principal(newRecipient), Cl.uint(newPercentage)],
-      deployer
-    );
-    expect(setResult).toBeOk(Cl.bool(true));
+    it("validates royalty percentage is not over 100%", () => {
+      const { result: setResult } = simnet.callPublicFn(
+        "festies",
+        "set-royalty-info",
+        [Cl.principal(wallet2), Cl.uint(101)],
+        deployer
+      );
+      expect(setResult).toBeErr(Cl.uint(105)); // ERR_INVALID_ROYALTY
+    });
 
-    // Check the royalty info was set correctly
-    const { result: getRoyaltyResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-royalty-info",
-      [],
-      deployer
-    );
-    expect(getRoyaltyResult).toBeOk(Cl.tuple({
-      recipient: Cl.principal(newRecipient),
-      percentage: Cl.uint(newPercentage)
-    }));
+    it("calculates royalty correctly", () => {
+      const salePrice = 1000;
+      const { result: royaltyResult } = simnet.callReadOnlyFn(
+        "festies",
+        "calculate-royalty",
+        [Cl.uint(salePrice)],
+        deployer
+      );
+      
+      // Default royalty is 5%
+      expect(royaltyResult).toBeOk(Cl.uint(50));
+    });
   });
 
-  it("prevents non-owner from setting royalty info", () => {
-    const { result: setResult } = simnet.callPublicFn(
-      "festies",
-      "set-royalty-info",
-      [Cl.principal(wallet2), Cl.uint(10)],
-      wallet1
-    );
-    expect(setResult).toBeErr(Cl.uint(103)); // err-not-owner
+  describe("Approval System", () => {
+    beforeEach(() => {
+      // Mint an NFT for testing
+      simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(wallet1),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+    });
+
+    it("allows token owner to approve operator", () => {
+      const tokenId = Cl.uint(1);
+      const operator = wallet2;
+
+      const { result: approveResult } = simnet.callPublicFn(
+        "festies",
+        "approve",
+        [tokenId, Cl.principal(operator)],
+        wallet1
+      );
+      
+      expect(approveResult).toBeOk(Cl.bool(true));
+
+      // Verify approval was set
+      const { result: approvedResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-approved",
+        [tokenId],
+        wallet1
+      );
+      expect(approvedResult).toBeOk(Cl.some(Cl.principal(operator)));
+    });
+
+    it("prevents non-owner from approving operator", () => {
+      const tokenId = Cl.uint(1);
+      const operator = wallet2;
+
+      const { result: approveResult } = simnet.callPublicFn(
+        "festies",
+        "approve",
+        [tokenId, Cl.principal(operator)],
+        wallet2
+      );
+      
+      expect(approveResult).toBeErr(Cl.uint(101)); // ERR_NOT_TOKEN_OWNER
+    });
+
+    it("allows token owner to revoke approval", () => {
+      const tokenId = Cl.uint(1);
+      const operator = wallet2;
+
+      // First approve
+      simnet.callPublicFn(
+        "festies",
+        "approve",
+        [tokenId, Cl.principal(operator)],
+        wallet1
+      );
+
+      // Then revoke
+      const { result: revokeResult } = simnet.callPublicFn(
+        "festies",
+        "revoke-approval",
+        [tokenId],
+        wallet1
+      );
+      
+      expect(revokeResult).toBeOk(Cl.bool(true));
+
+      // Verify approval was revoked
+      const { result: approvedResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-approved",
+        [tokenId],
+        wallet1
+      );
+      expect(approvedResult).toBeOk(Cl.none());
+    });
+
+    it("allows approved operator to transfer token", () => {
+      const tokenId = Cl.uint(1);
+      const operator = wallet2;
+      const recipient = wallet3;
+
+      // Approve operator
+      simnet.callPublicFn(
+        "festies",
+        "approve",
+        [tokenId, Cl.principal(operator)],
+        wallet1
+      );
+
+      // Transfer by approved operator
+      const { result: transferResult } = simnet.callPublicFn(
+        "festies",
+        "transfer",
+        [tokenId, Cl.principal(wallet1), Cl.principal(recipient)],
+        operator
+      );
+      
+      expect(transferResult).toBeOk(Cl.bool(true));
+
+      // Verify ownership changed
+      const { result: ownerResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-owner",
+        [tokenId],
+        operator
+      );
+      expect(ownerResult).toBeOk(Cl.some(Cl.principal(recipient)));
+
+      // Verify approval was cleared
+      const { result: approvedResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-approved",
+        [tokenId],
+        operator
+      );
+      expect(approvedResult).toBeOk(Cl.none());
+    });
   });
 
-  it("validates royalty percentage is not over 100%", () => {
-    const { result: setResult } = simnet.callPublicFn(
-      "festies",
-      "set-royalty-info",
-      [Cl.principal(wallet2), Cl.uint(101)],
-      deployer
-    );
-    expect(setResult).toBeErr(Cl.uint(102)); // err-invalid-input
+  describe("Transfer Functionality", () => {
+    beforeEach(() => {
+      // Mint an NFT for testing
+      simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(wallet1),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+    });
+
+    it("allows token owner to transfer token", () => {
+      const tokenId = Cl.uint(1);
+      const recipient = wallet2;
+
+      const { result: transferResult } = simnet.callPublicFn(
+        "festies",
+        "transfer",
+        [tokenId, Cl.principal(wallet1), Cl.principal(recipient)],
+        wallet1
+      );
+      
+      expect(transferResult).toBeOk(Cl.bool(true));
+
+      // Verify ownership changed
+      const { result: ownerResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-owner",
+        [tokenId],
+        wallet1
+      );
+      expect(ownerResult).toBeOk(Cl.some(Cl.principal(recipient)));
+    });
+
+    it("prevents non-owner from transferring token", () => {
+      const tokenId = Cl.uint(1);
+      const recipient = wallet3;
+
+      const { result: transferResult } = simnet.callPublicFn(
+        "festies",
+        "transfer",
+        [tokenId, Cl.principal(wallet1), Cl.principal(recipient)],
+        wallet2
+      );
+      
+      expect(transferResult).toBeErr(Cl.uint(101)); // ERR_NOT_TOKEN_OWNER
+    });
   });
 
-  it("calculates royalty correctly", () => {
-    const salePrice = 1000;
-    const { result: royaltyResult } = simnet.callReadOnlyFn(
-      "festies",
-      "calculate-royalty",
-      [Cl.uint(salePrice)],
-      deployer
-    );
-    // With default 5% royalty: 1000 * 5 / 100 = 50
-    expect(royaltyResult).toBeOk(Cl.uint(50));
-  });
-});
+  describe("Burning Functionality", () => {
+    beforeEach(() => {
+      // Mint an NFT for testing
+      simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(wallet1),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+    });
 
-describe("festies contract - Approval System", () => {
-  beforeEach(() => {
-    // Mint an NFT for testing
-    simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(wallet2),
-        Cl.stringAscii("Test Card"),
-        Cl.stringAscii("Test Message"),
-        Cl.stringAscii("Test Festival"),
-        Cl.stringAscii("https://example.com/image.png"),
-        Cl.stringAscii("https://example.com/metadata.json")
-      ],
-      wallet1
-    );
-  });
+    it("allows token owner to burn token", () => {
+      const tokenId = Cl.uint(1);
 
-  it("allows owner to approve an operator", () => {
-    const tokenId = Cl.uint(1);
-    const operator = wallet3;
+      const { result: burnResult } = simnet.callPublicFn(
+        "festies",
+        "burn-greeting-card",
+        [tokenId],
+        wallet1
+      );
+      
+      expect(burnResult).toBeOk(Cl.bool(true));
 
-    // Owner approves operator
-    const { result: approveResult } = simnet.callPublicFn(
-      "festies",
-      "approve",
-      [tokenId, Cl.principal(operator)],
-      wallet2 // wallet2 is the owner
-    );
-    expect(approveResult).toBeOk(Cl.bool(true));
+      // Verify token was burned
+      const { result: ownerResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-owner",
+        [tokenId],
+        wallet1
+      );
+      expect(ownerResult).toBeOk(Cl.none());
 
-    // Check that operator is approved
-    const { result: getApprovedResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-approved",
-      [tokenId],
-      wallet1
-    );
-    expect(getApprovedResult).toBeOk(Cl.some(Cl.principal(operator)));
-  });
+      // Verify total supply decreased
+      const { result: supplyResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-total-supply",
+        [],
+        wallet1
+      );
+      expect(supplyResult).toBeOk(Cl.uint(0));
+    });
 
-  it("prevents non-owner from approving", () => {
-    const tokenId = Cl.uint(1);
-    const operator = wallet3;
+    it("prevents non-owner from burning token", () => {
+      const tokenId = Cl.uint(1);
 
-    // Non-owner tries to approve
-    const { result: approveResult } = simnet.callPublicFn(
-      "festies",
-      "approve",
-      [tokenId, Cl.principal(operator)],
-      wallet1 // wallet1 is not the owner
-    );
-    expect(approveResult).toBeErr(Cl.uint(101)); // err-not-token-owner
+      const { result: burnResult } = simnet.callPublicFn(
+        "festies",
+        "burn-greeting-card",
+        [tokenId],
+        wallet2
+      );
+      
+      expect(burnResult).toBeErr(Cl.uint(101)); // ERR_NOT_TOKEN_OWNER
+    });
   });
 
-  it("allows owner to revoke approval", () => {
-    const tokenId = Cl.uint(1);
-    const operator = wallet3;
+  describe("Contract Management", () => {
+    it("allows contract owner to change ownership", () => {
+      const newOwner = wallet2;
 
-    // First approve
-    simnet.callPublicFn(
-      "festies",
-      "approve",
-      [tokenId, Cl.principal(operator)],
-      wallet2
-    );
+      const { result: changeResult } = simnet.callPublicFn(
+        "festies",
+        "set-contract-owner",
+        [Cl.principal(newOwner)],
+        deployer
+      );
+      
+      expect(changeResult).toBeOk(Cl.bool(true));
 
-    // Then revoke
-    const { result: revokeResult } = simnet.callPublicFn(
-      "festies",
-      "revoke-approval",
-      [tokenId],
-      wallet2
-    );
-    expect(revokeResult).toBeOk(Cl.bool(true));
+      // Verify ownership changed
+      const { result: ownerResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-contract-owner",
+        [],
+        deployer
+      );
+      expect(ownerResult).toBeOk(Cl.principal(newOwner));
+    });
 
-    // Check that approval is revoked
-    const { result: getApprovedResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-approved",
-      [tokenId],
-      wallet1
-    );
-    expect(getApprovedResult).toBeOk(Cl.none());
-  });
-});
+    it("prevents non-owner from changing ownership", () => {
+      const newOwner = wallet3;
 
-describe("festies contract - Transfer Functionality", () => {
-  beforeEach(() => {
-    // Mint an NFT for testing
-    simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(wallet2),
-        Cl.stringAscii("Test Card"),
-        Cl.stringAscii("Test Message"),
-        Cl.stringAscii("Test Festival"),
-        Cl.stringAscii("https://example.com/image.png"),
-        Cl.stringAscii("https://example.com/metadata.json")
-      ],
-      wallet1
-    );
-  });
+      const { result: changeResult } = simnet.callPublicFn(
+        "festies",
+        "set-contract-owner",
+        [Cl.principal(newOwner)],
+        wallet1
+      );
+      
+      expect(changeResult).toBeErr(Cl.uint(100)); // ERR_OWNER_ONLY
+    });
 
-  it("allows owner to transfer NFT", () => {
-    const tokenId = Cl.uint(1);
+    it("allows contract owner to pause and unpause contract", () => {
+      // Pause contract
+      const { result: pauseResult } = simnet.callPublicFn(
+        "festies",
+        "pause-contract",
+        [],
+        deployer
+      );
+      expect(pauseResult).toBeOk(Cl.bool(true));
 
-    // Owner transfers NFT
-    const { result: transferResult } = simnet.callPublicFn(
-      "festies",
-      "transfer",
-      [tokenId, Cl.principal(wallet2), Cl.principal(wallet3)],
-      wallet2
-    );
-    expect(transferResult).toBeOk(Cl.bool(true));
+      // Verify contract is paused
+      const { result: statusResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-contract-status",
+        [],
+        deployer
+      );
+      expect(statusResult).toBeOk(Cl.tuple({
+        owner: Cl.principal(deployer),
+        paused: Cl.bool(true),
+        "total-supply": Cl.uint(0),
+        "next-token-id": Cl.uint(1),
+        "royalty-percentage": Cl.uint(5),
+        "royalty-recipient": Cl.principal(deployer)
+      }));
 
-    // Check new ownership
-    const { result: ownerResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-owner",
-      [tokenId],
-      wallet1
-    );
-    expect(ownerResult).toBeOk(Cl.some(Cl.principal(wallet3)));
-  });
+      // Unpause contract
+      const { result: unpauseResult } = simnet.callPublicFn(
+        "festies",
+        "unpause-contract",
+        [],
+        deployer
+      );
+      expect(unpauseResult).toBeOk(Cl.bool(true));
 
-  it("allows approved operator to transfer NFT", () => {
-    const tokenId = Cl.uint(1);
-    const operator = wallet3;
+      // Verify contract is unpaused
+      const { result: statusResult2 } = simnet.callReadOnlyFn(
+        "festies",
+        "get-contract-status",
+        [],
+        deployer
+      );
+      expect(statusResult2).toBeOk(Cl.tuple({
+        owner: Cl.principal(deployer),
+        paused: Cl.bool(false),
+        "total-supply": Cl.uint(0),
+        "next-token-id": Cl.uint(1),
+        "royalty-percentage": Cl.uint(5),
+        "royalty-recipient": Cl.principal(deployer)
+      }));
+    });
 
-    // Owner approves operator
-    simnet.callPublicFn(
-      "festies",
-      "approve",
-      [tokenId, Cl.principal(operator)],
-      wallet2
-    );
+    it("prevents operations when contract is paused", () => {
+      // Pause contract
+      simnet.callPublicFn(
+        "festies",
+        "pause-contract",
+        [],
+        deployer
+      );
 
-    // Operator transfers NFT
-    const { result: transferResult } = simnet.callPublicFn(
-      "festies",
-      "transfer",
-      [tokenId, Cl.principal(wallet2), Cl.principal(wallet1)],
-      operator
-    );
-    expect(transferResult).toBeOk(Cl.bool(true));
-
-    // Check new ownership
-    const { result: ownerResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-owner",
-      [tokenId],
-      wallet1
-    );
-    expect(ownerResult).toBeOk(Cl.some(Cl.principal(wallet1)));
-
-    // Check that approval is cleared after transfer
-    const { result: getApprovedResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-approved",
-      [tokenId],
-      wallet1
-    );
-    expect(getApprovedResult).toBeOk(Cl.none());
-  });
-
-  it("prevents unauthorized transfer", () => {
-    const tokenId = Cl.uint(1);
-
-    // Unauthorized user tries to transfer
-    const { result: transferResult } = simnet.callPublicFn(
-      "festies",
-      "transfer",
-      [tokenId, Cl.principal(wallet2), Cl.principal(wallet3)],
-      wallet1 // wallet1 is not owner or approved
-    );
-    expect(transferResult).toBeErr(Cl.uint(101)); // err-not-token-owner
-  });
-});
-
-describe("festies contract - Burn Functionality", () => {
-  beforeEach(() => {
-    // Mint an NFT for testing
-    simnet.callPublicFn(
-      "festies",
-      "mint-greeting-card",
-      [
-        Cl.principal(wallet2),
-        Cl.stringAscii("Test Card"),
-        Cl.stringAscii("Test Message"),
-        Cl.stringAscii("Test Festival"),
-        Cl.stringAscii("https://example.com/image.png"),
-        Cl.stringAscii("https://example.com/metadata.json")
-      ],
-      wallet1
-    );
+      // Try to mint when paused
+      const { result: mintResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(wallet2),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      
+      expect(mintResult).toBeErr(Cl.uint(103)); // ERR_NOT_AUTHORIZED
+    });
   });
 
-  it("allows owner to burn NFT", () => {
-    const tokenId = Cl.uint(1);
+  describe("Error Handling and Edge Cases", () => {
+    it("handles non-existent token operations gracefully", () => {
+      const nonExistentTokenId = Cl.uint(999);
 
-    // Owner burns NFT
-    const { result: burnResult } = simnet.callPublicFn(
-      "festies",
-      "burn-greeting-card",
-      [tokenId],
-      wallet2
-    );
-    expect(burnResult).toBeOk(Cl.bool(true));
+      // Try to get owner of non-existent token
+      const { result: ownerResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-owner",
+        [nonExistentTokenId],
+        wallet1
+      );
+      expect(ownerResult).toBeOk(Cl.none());
 
-    // Check that NFT no longer exists
-    const { result: ownerResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-owner",
-      [tokenId],
-      wallet1
-    );
-    expect(ownerResult).toBeOk(Cl.none());
+      // Try to get metadata of non-existent token
+      const { result: metadataResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-token-metadata",
+        [nonExistentTokenId],
+        wallet1
+      );
+      expect(metadataResult).toBeErr(Cl.uint(104)); // ERR_TOKEN_NOT_FOUND
+    });
 
-    // Check that greeting data is deleted
-    const { result: greetingResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-greeting-card",
-      [tokenId],
-      wallet1
-    );
-    expect(greetingResult).toBeErr(Cl.uint(404));
-  });
+    it("maintains data consistency across operations", () => {
+      const recipient = wallet2;
 
-  it("prevents non-owner from burning NFT", () => {
-    const tokenId = Cl.uint(1);
+      // Mint NFT
+      const { result: mintResult } = simnet.callPublicFn(
+        "festies",
+        "mint-greeting-card",
+        [
+          Cl.principal(recipient),
+          Cl.stringAscii(TEST_NAME),
+          Cl.stringAscii(TEST_MESSAGE),
+          Cl.stringAscii(TEST_FESTIVAL),
+          Cl.stringAscii(TEST_IMAGE_URI),
+          Cl.stringAscii(TEST_METADATA_URI)
+        ],
+        wallet1
+      );
+      
+      const tokenId = Cl.uint(1);
+      expect(mintResult).toBeOk(tokenId);
 
-    // Non-owner tries to burn
-    const { result: burnResult } = simnet.callPublicFn(
-      "festies",
-      "burn-greeting-card",
-      [tokenId],
-      wallet1 // wallet1 is not the owner
-    );
-    expect(burnResult).toBeErr(Cl.uint(101)); // err-not-token-owner
-  });
+      // Verify all data is consistent
+      const { result: metadataResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-token-metadata",
+        [tokenId],
+        wallet1
+      );
+      
+      expect(metadataResult).toBeOk(Cl.some(Cl.tuple({
+        name: Cl.stringAscii(TEST_NAME),
+        festival: Cl.stringAscii(TEST_FESTIVAL),
+        message: Cl.stringAscii(TEST_MESSAGE),
+        "image-uri": Cl.stringAscii(TEST_IMAGE_URI),
+        "metadata-uri": Cl.stringAscii(TEST_METADATA_URI),
+        sender: Cl.principal(wallet1),
+        recipient: Cl.principal(recipient),
+        "created-at": Cl.uint(1)
+      })));
 
-  it("handles burning non-existent token", () => {
-    const nonExistentTokenId = Cl.uint(999);
+      // Burn token
+      simnet.callPublicFn(
+        "festies",
+        "burn-greeting-card",
+        [tokenId],
+        recipient
+      );
 
-    const { result: burnResult } = simnet.callPublicFn(
-      "festies",
-      "burn-greeting-card",
-      [nonExistentTokenId],
-      wallet1
-    );
-    expect(burnResult).toBeErr(Cl.uint(404));
-  });
-});
+      // Verify token is completely removed
+      const { result: ownerResult } = simnet.callReadOnlyFn(
+        "festies",
+        "get-owner",
+        [tokenId],
+        wallet1
+      );
+      expect(ownerResult).toBeOk(Cl.none());
 
-describe("festies contract - Edge Cases", () => {
-  it("handles getting data for non-existent token", () => {
-    const nonExistentTokenId = Cl.uint(999);
-
-    // Test get-greeting-card
-    const { result: greetingResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-greeting-card",
-      [nonExistentTokenId],
-      wallet1
-    );
-    expect(greetingResult).toBeErr(Cl.uint(404));
-
-    // Test get-token-uri
-    const { result: uriResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-token-uri",
-      [nonExistentTokenId],
-      wallet1
-    );
-    expect(uriResult).toBeOk(Cl.none());
-
-    // Test get-owner
-    const { result: ownerResult } = simnet.callReadOnlyFn(
-      "festies",
-      "get-owner",
-      [nonExistentTokenId],
-      wallet1
-    );
-    expect(ownerResult).toBeOk(Cl.none());
-  });
-
-  it("handles approval operations on non-existent token", () => {
-    const nonExistentTokenId = Cl.uint(999);
-
-    // Test approve
-    const { result: approveResult } = simnet.callPublicFn(
-      "festies",
-      "approve",
-      [nonExistentTokenId, Cl.principal(wallet3)],
-      wallet1
-    );
-    expect(approveResult).toBeErr(Cl.uint(404));
-
-    // Test revoke-approval
-    const { result: revokeResult } = simnet.callPublicFn(
-      "festies",
-      "revoke-approval",
-      [nonExistentTokenId],
-      wallet1
-    );
-    expect(revokeResult).toBeErr(Cl.uint(404));
+      const { result: metadataResult2 } = simnet.callReadOnlyFn(
+        "festies",
+        "get-token-metadata",
+        [tokenId],
+        wallet1
+      );
+      expect(metadataResult2).toBeErr(Cl.uint(104)); // ERR_TOKEN_NOT_FOUND
+    });
   });
 });
