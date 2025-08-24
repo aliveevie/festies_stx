@@ -1,18 +1,33 @@
 ---
 id: 0
-name: Devnet deployment
+name: "Festies NFT Contracts - Devnet Deployment"
+description: "Professional NFT contracts for Festival Greetings deployment on devnet"
 network: devnet
 stacks-node: "http://localhost:20443"
 bitcoin-node: "http://devnet:devnet@localhost:18443"
 plan:
   batches:
     - id: 0
+      name: "Core Contracts Deployment"
+      description: "Deploy main NFT contract and trait interface"
       transactions:
+        - contract-publish:
+            contract-name: nft-trait
+            expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            cost: 15000
+            path: contracts/nft-trait.clar
+            anchor-block-only: true
+            clarity-version: 2
         - contract-publish:
             contract-name: festies
             expected-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            cost: 18080
+            cost: 25000
             path: contracts/festies.clar
             anchor-block-only: true
             clarity-version: 2
+            depends-on: "nft-trait"
       epoch: "2.5"
+      requirements:
+        - "nft-trait contract must be deployed first"
+        - "Minimum STX balance: 0.05 STX"
+        - "Network must be accessible"
