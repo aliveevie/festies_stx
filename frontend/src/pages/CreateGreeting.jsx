@@ -74,42 +74,104 @@ const CreateGreeting = () => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    
+    if (!isConnected) {
+      toast.error('Please connect your wallet first');
+      return;
+    }
+
+    if (contractStatus?.paused) {
+      toast.error('Contract is currently paused. Please try again later.');
+      return;
+    }
+
     setIsSubmitting(true);
+    setTransactionStatus('preparing');
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Validate required fields
+      if (!formData.recipientName.trim() || !formData.message.trim()) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      if (!formData.recipientAddress.trim()) {
+        throw new Error('Please enter recipient address');
+      }
+
+      // Generate metadata URIs (in a real app, these would be uploaded to IPFS)
+      const imageUri = formData.imageUri || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.recipientName}`;
+      const metadataUri = formData.metadataUri || `https://festies-metadata.com/${Date.now()}`;
+
+      const greetingData = {
+        recipient: formData.recipientAddress,
+        name: formData.recipientName,
+        message: formData.message,
+        festival: formData.festival,
+        imageUri,
+        metadataUri
+      };
+
+      setTransactionStatus('minting');
+      toast.loading('Minting your greeting card...', { id: 'minting' });
+
+      // Mint the NFT
+      const result = await mintGreetingCard(greetingData);
       
-      toast.success('Greeting created successfully! 🎉');
-      // Reset form or redirect
-      setFormData({
-        recipientName: '',
-        message: '',
-        theme: 'festival',
-        fontStyle: 'modern',
-        colorScheme: 'warm',
-        isPrivate: false,
-        includeGift: false,
-        giftType: 'virtual'
-      });
+      setTransactionStatus('confirming');
+      toast.loading('Confirming transaction...', { id: 'confirming' });
+
+      // Wait for transaction confirmation
+      const confirmation = await waitForTransaction(result.txId);
+      
+      if (confirmation.success) {
+        setTransactionStatus('success');
+        setMintedTokenId(confirmation.data.tx_result?.value?.value || 'Unknown');
+        toast.success('Greeting card minted successfully! 🎉', { id: 'success' });
+        
+        // Reset form
+        setFormData({
+          recipientName: '',
+          message: '',
+          festival: 'Festival',
+          theme: 'festival',
+          fontStyle: 'modern',
+          colorScheme: 'warm',
+          isPrivate: false,
+          includeGift: false,
+          giftType: 'virtual',
+          recipientAddress: '',
+          imageUri: '',
+          metadataUri: ''
+        });
+      } else {
+        throw new Error('Transaction failed');
+      }
     } catch (error) {
-      toast.error('Failed to create greeting. Please try again.');
+      setTransactionStatus('error');
+      const errorMessage = handleBlockchainError(error);
+      toast.error(errorMessage, { id: 'error' });
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData]);
+  }, [formData, isConnected, contractStatus]);
 
   const resetForm = useCallback(() => {
     setFormData({
       recipientName: '',
       message: '',
+      festival: 'Festival',
       theme: 'festival',
       fontStyle: 'modern',
       colorScheme: 'warm',
       isPrivate: false,
       includeGift: false,
-      giftType: 'virtual'
+      giftType: 'virtual',
+      recipientAddress: '',
+      imageUri: '',
+      metadataUri: ''
     });
+    setTransactionStatus(null);
+    setMintedTokenId(null);
     toast.success('Form reset successfully!');
   }, []);
 
