@@ -241,6 +241,65 @@ const CreateGreeting = () => {
             animate="visible"
           >
             <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+              {/* Wallet Connection Status */}
+              <motion.div 
+                className="mb-6 p-4 rounded-xl border-2"
+                variants={itemVariants}
+                animate={{
+                  borderColor: isConnected ? '#10B981' : '#EF4444',
+                  backgroundColor: isConnected ? '#F0FDF4' : '#FEF2F2'
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  {isConnected ? (
+                    <FaCheckCircle className="text-green-500 text-xl" />
+                  ) : (
+                    <FaExclamationTriangle className="text-red-500 text-xl" />
+                  )}
+                  <div>
+                    <h3 className="font-semibold text-gray-800">
+                      {isConnected ? 'Wallet Connected' : 'Wallet Not Connected'}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {isConnected 
+                        ? 'You can mint greeting cards' 
+                        : 'Please connect your wallet to continue'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Transaction Status */}
+              {transactionStatus && (
+                <motion.div 
+                  className="mb-6 p-4 rounded-xl border-2 border-blue-200 bg-blue-50"
+                  variants={itemVariants}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <div className="flex items-center gap-3">
+                    <FaSpinner className="text-blue-500 text-xl animate-spin" />
+                    <div>
+                      <h3 className="font-semibold text-blue-800">
+                        {transactionStatus === 'preparing' && 'Preparing Transaction...'}
+                        {transactionStatus === 'minting' && 'Minting NFT...'}
+                        {transactionStatus === 'confirming' && 'Confirming Transaction...'}
+                        {transactionStatus === 'success' && 'Success!'}
+                        {transactionStatus === 'error' && 'Transaction Failed'}
+                      </h3>
+                      <p className="text-sm text-blue-600">
+                        {transactionStatus === 'preparing' && 'Validating your data...'}
+                        {transactionStatus === 'minting' && 'Creating your greeting card on the blockchain...'}
+                        {transactionStatus === 'confirming' && 'Waiting for blockchain confirmation...'}
+                        {transactionStatus === 'success' && `Token ID: ${mintedTokenId}`}
+                        {transactionStatus === 'error' && 'Please try again'}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Recipient Name */}
                 <motion.div variants={itemVariants}>
@@ -252,6 +311,40 @@ const CreateGreeting = () => {
                     value={formData.recipientName}
                     onChange={(e) => handleInputChange('recipientName', e.target.value)}
                     placeholder="Enter the name of your loved one"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg"
+                    required
+                  />
+                </motion.div>
+
+                {/* Recipient Address */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-lg font-semibold text-gray-700 mb-3">
+                    <FaWallet className="inline mr-2" />
+                    Recipient's Stacks Address
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.recipientAddress}
+                    onChange={(e) => handleInputChange('recipientAddress', e.target.value)}
+                    placeholder="ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg font-mono"
+                    required
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    Enter the Stacks address where the NFT will be sent
+                  </p>
+                </motion.div>
+
+                {/* Festival */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-lg font-semibold text-gray-700 mb-3">
+                    Festival/Occasion
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.festival}
+                    onChange={(e) => handleInputChange('festival', e.target.value)}
+                    placeholder="e.g., Christmas, Birthday, New Year, etc."
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg"
                     required
                   />
