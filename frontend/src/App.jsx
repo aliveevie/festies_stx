@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
 import CreateGreeting from './pages/CreateGreeting';
+import GreetingCardGrid from './components/GreetingCardGrid';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -207,7 +208,7 @@ const App = () => {
                   }
                 />
 
-                {/* Placeholder routes for future pages */}
+                {/* Marketplace */}
                 <Route
                   path="/marketplace"
                   element={
@@ -218,14 +219,21 @@ const App = () => {
                       exit="out"
                       variants={pageVariants}
                       transition={pageTransition}
-                      className="min-h-screen flex items-center justify-center"
+                      className="min-h-screen py-12 px-4"
                     >
-                      <div className="text-center">
-                        <h1 className="text-4xl font-bold text-gray-800 mb-4">Marketplace</h1>
-                        <p className="text-xl text-gray-600 mb-8">Coming soon! Browse and trade greeting cards.</p>
-                        <div className="w-32 h-32 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mx-auto mb-6 flex items-center justify-center">
-                          <span className="text-4xl">🛍️</span>
+                      <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-12">
+                          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
+                            Marketplace
+                          </h1>
+                          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Browse and discover all the beautiful greeting cards created by our community
+                          </p>
                         </div>
+                        <GreetingCardGrid 
+                          showActions={false}
+                          maxItems={50}
+                        />
                       </div>
                     </motion.div>
                   }
@@ -241,14 +249,21 @@ const App = () => {
                       exit="out"
                       variants={pageVariants}
                       transition={pageTransition}
-                      className="min-h-screen flex items-center justify-center"
+                      className="min-h-screen py-12 px-4"
                     >
-                      <div className="text-center">
-                        <h1 className="text-4xl font-bold text-gray-800 mb-4">My Collection</h1>
-                        <p className="text-xl text-gray-600 mb-8">View and manage your greeting cards.</p>
-                        <div className="w-32 h-32 bg-gradient-to-r from-green-400 to-blue-400 rounded-full mx-auto mb-6 flex items-center justify-center">
-                          <span className="text-4xl">📚</span>
+                      <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-12">
+                          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
+                            My Collection
+                          </h1>
+                          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                            View and manage your greeting cards. Transfer, approve, or burn your NFTs.
+                          </p>
                         </div>
+                        <GreetingCardGrid 
+                          showActions={true}
+                          maxItems={100}
+                        />
                       </div>
                     </motion.div>
                   }
