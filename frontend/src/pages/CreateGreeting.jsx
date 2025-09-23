@@ -1,22 +1,51 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaHeart, FaGift, FaSmile, FaRocket, FaPaperPlane, FaImage, FaPalette, FaFont, FaUndo, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaHeart, FaGift, FaSmile, FaRocket, FaPaperPlane, FaImage, FaPalette, FaFont, FaUndo, FaSave, FaEye, FaEyeSlash, FaWallet, FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import { getAuthStatus, mintGreetingCard, waitForTransaction, handleBlockchainError, getContractStatus } from '../utils/blockchain';
 
 const CreateGreeting = () => {
   const [formData, setFormData] = useState({
     recipientName: '',
     message: '',
+    festival: 'Festival',
     theme: 'festival',
     fontStyle: 'modern',
     colorScheme: 'warm',
     isPrivate: false,
     includeGift: false,
-    giftType: 'virtual'
+    giftType: 'virtual',
+    recipientAddress: '',
+    imageUri: '',
+    metadataUri: ''
   });
 
   const [previewMode, setPreviewMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [contractStatus, setContractStatus] = useState(null);
+  const [transactionStatus, setTransactionStatus] = useState(null);
+  const [mintedTokenId, setMintedTokenId] = useState(null);
+
+  // Check authentication and contract status on component mount
+  useEffect(() => {
+    const checkAuthAndContract = async () => {
+      try {
+        const authStatus = getAuthStatus();
+        setIsConnected(authStatus.isSignedIn);
+        
+        if (authStatus.isSignedIn) {
+          const status = await getContractStatus();
+          setContractStatus(status);
+        }
+      } catch (error) {
+        console.error('Failed to check auth and contract status:', error);
+        toast.error('Failed to load contract information');
+      }
+    };
+
+    checkAuthAndContract();
+  }, []);
 
   const themes = [
     { id: 'festival', name: 'Festival', icon: <FaHeart className="text-pink-500" />, colors: 'from-pink-400 to-purple-500' },

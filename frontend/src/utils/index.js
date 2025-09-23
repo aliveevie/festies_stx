@@ -2,6 +2,9 @@
  * Utility functions for Festies NFT Frontend
  */
 
+// Export blockchain utilities
+export * from './blockchain';
+
 /**
  * Format STX amount with proper decimal places
  * @param {number} amount - Amount in microSTX
