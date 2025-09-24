@@ -5,6 +5,9 @@
 // Export blockchain utilities
 export * from './blockchain';
 
+// Export metadata utilities
+export * from './metadata';
+
 /**
  * Format STX amount with proper decimal places
  * @param {number} amount - Amount in microSTX

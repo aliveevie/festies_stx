@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { FaHeart, FaGift, FaSmile, FaRocket, FaPaperPlane, FaImage, FaPalette, FaFont, FaUndo, FaSave, FaEye, FaEyeSlash, FaWallet, FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { getAuthStatus, mintGreetingCard, waitForTransaction, handleBlockchainError, getContractStatus } from '../utils/blockchain';
+import { processGreetingData, validateMetadata, generatePlaceholderImage } from '../utils/metadata';
+import { useAuth } from '../contexts/AuthContext';
 
 const CreateGreeting = () => {
   const [formData, setFormData] = useState({
@@ -22,30 +24,22 @@ const CreateGreeting = () => {
 
   const [previewMode, setPreviewMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const [contractStatus, setContractStatus] = useState(null);
   const [transactionStatus, setTransactionStatus] = useState(null);
   const [mintedTokenId, setMintedTokenId] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
 
-  // Check authentication and contract status on component mount
+  const { 
+    isConnected, 
+    contractStatus, 
+    isContractPaused, 
+    userAddress,
+    refreshContractStatus 
+  } = useAuth();
+
+  // Refresh contract status on mount
   useEffect(() => {
-    const checkAuthAndContract = async () => {
-      try {
-        const authStatus = getAuthStatus();
-        setIsConnected(authStatus.isSignedIn);
-        
-        if (authStatus.isSignedIn) {
-          const status = await getContractStatus();
-          setContractStatus(status);
-        }
-      } catch (error) {
-        console.error('Failed to check auth and contract status:', error);
-        toast.error('Failed to load contract information');
-      }
-    };
-
-    checkAuthAndContract();
-  }, []);
+    refreshContractStatus();
+  }, [refreshContractStatus]);
 
   const themes = [
     { id: 'festival', name: 'Festival', icon: <FaHeart className="text-pink-500" />, colors: 'from-pink-400 to-purple-500' },
@@ -80,7 +74,7 @@ const CreateGreeting = () => {
       return;
     }
 
-    if (contractStatus?.paused) {
+    if (isContractPaused) {
       toast.error('Contract is currently paused. Please try again later.');
       return;
     }
@@ -98,18 +92,11 @@ const CreateGreeting = () => {
         throw new Error('Please enter recipient address');
       }
 
-      // Generate metadata URIs (in a real app, these would be uploaded to IPFS)
-      const imageUri = formData.imageUri || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.recipientName}`;
-      const metadataUri = formData.metadataUri || `https://festies-metadata.com/${Date.now()}`;
-
-      const greetingData = {
-        recipient: formData.recipientAddress,
-        name: formData.recipientName,
-        message: formData.message,
-        festival: formData.festival,
-        imageUri,
-        metadataUri
-      };
+      // Process greeting data with metadata validation and IPFS integration
+      const greetingData = await processGreetingData({
+        ...formData,
+        sender: userAddress
+      }, userAddress);
 
       setTransactionStatus('minting');
       toast.loading('Minting your greeting card...', { id: 'minting' });
@@ -153,7 +140,7 @@ const CreateGreeting = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, isConnected, contractStatus]);
+  }, [formData, isConnected, isContractPaused, userAddress]);
 
   const resetForm = useCallback(() => {
     setFormData({
