@@ -8,6 +8,9 @@ export * from './blockchain';
 // Export metadata utilities
 export * from './metadata';
 
+// Export search utilities
+export * from './search';
+
 /**
  * Format STX amount with proper decimal places
  * @param {number} amount - Amount in microSTX
