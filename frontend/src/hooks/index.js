@@ -375,3 +375,6 @@ export const useThrottle = (value, limit) => {
 
   return throttledValue;
 };
+
+// Export responsive hooks
+export * from './responsive';

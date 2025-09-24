@@ -64,7 +64,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 shadow-lg rounded-b-2xl sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+    <header className="hidden lg:block w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 shadow-lg rounded-b-2xl sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between min-h-[72px]">
           {/* Logo */}

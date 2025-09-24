@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
+import MobileNavigation from './components/MobileNavigation';
 import CreateGreeting from './pages/CreateGreeting';
 import Dashboard from './pages/Dashboard';
 import GreetingCardGrid from './components/GreetingCardGrid';
@@ -367,6 +368,9 @@ const App = () => {
 
           {/* Footer */}
           <Footer />
+          
+          {/* Mobile Navigation */}
+          <MobileNavigation />
         </div>
       </Router>
       </AuthProvider>
