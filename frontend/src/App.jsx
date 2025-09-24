@@ -10,6 +10,7 @@ import CreateGreeting from './pages/CreateGreeting';
 import GreetingCardGrid from './components/GreetingCardGrid';
 import ContractInfo from './components/ContractInfo';
 import RoyaltyInfo from './components/RoyaltyInfo';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -142,8 +143,9 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
           {/* Toast notifications */}
           <Toaster
             position="top-right"
@@ -349,6 +351,7 @@ const App = () => {
           <Footer />
         </div>
       </Router>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

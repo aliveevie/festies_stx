@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
-import {
-  AppConfig,
-  UserSession,
-  showConnect,
-} from "@stacks/connect";
 import { FaTicketAlt, FaWallet, FaUser, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatAddress } from '../utils';
 import { useLocalStorage, useBoolean } from '../hooks';
+import { useAuth } from '../contexts/AuthContext';
 
 const navLinks = [
   { name: "Home", href: "/", icon: "🏠" },
@@ -19,43 +15,39 @@ const navLinks = [
 ];
 
 const Header = () => {
-  const [userData, setUserData] = useState(undefined);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useBoolean(false);
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useBoolean(false);
   const [theme, setTheme] = useLocalStorage('theme', 'light');
-
-  const appConfig = new AppConfig(["store_write"]);
-  const userSession = new UserSession({ appConfig });
-
-  const appDetails = {
-    name: "Festies NFT",
-    icon: "https://freesvg.org/img/1541103084.png",
-  };
-
-  useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      setUserData(userSession.loadUserData());
-    }
-  }, []);
+  
+  const { 
+    user, 
+    isConnected, 
+    userAddress, 
+    userDisplayName, 
+    connectWallet, 
+    disconnectWallet 
+  } = useAuth();
 
   useEffect(() => {
     // Apply theme to document
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
-  const connectWallet = () => {
-    showConnect({
-      appDetails,
-      onFinish: () => window.location.reload(),
-      userSession,
-    });
+  const handleConnectWallet = async () => {
+    try {
+      await connectWallet();
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
   };
 
-  const disconnectWallet = () => {
-    userSession.signUserOut();
-    setUserData(undefined);
-    setIsWalletMenuOpen.setFalse();
-    window.location.reload();
+  const handleDisconnectWallet = () => {
+    try {
+      disconnectWallet();
+      setIsWalletMenuOpen.setFalse();
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+    }
   };
 
   const toggleTheme = () => {
@@ -120,9 +112,9 @@ const Header = () => {
             </motion.button>
 
             {/* Wallet Connect/User Menu */}
-            {!userData ? (
+            {!isConnected ? (
               <motion.button
-                onClick={connectWallet}
+                onClick={handleConnectWallet}
                 className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 font-bold rounded-xl shadow-lg hover:bg-blue-50 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
@@ -140,7 +132,7 @@ const Header = () => {
                 >
                   <FaUser className="text-lg" />
                   <span className="font-mono text-sm font-medium">
-                    {formatAddress(userData.profile.stxAddress.mainnet)}
+                    {formatAddress(userAddress)}
                   </span>
                 </motion.button>
 
@@ -161,10 +153,10 @@ const Header = () => {
                           </div>
                           <div>
                             <p className="font-semibold text-gray-900">
-                              {userData.profile.name || 'Anonymous User'}
+                              {userDisplayName}
                             </p>
                             <p className="text-sm text-gray-500 font-mono">
-                              {formatAddress(userData.profile.stxAddress.mainnet)}
+                              {formatAddress(userAddress)}
                             </p>
                           </div>
                         </div>
@@ -172,7 +164,7 @@ const Header = () => {
                       
                       <div className="p-2">
                         <button
-                          onClick={disconnectWallet}
+                          onClick={handleDisconnectWallet}
                           className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                         >
                           <FaSignOutAlt className="text-red-500" />
