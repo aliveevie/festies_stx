@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
 import CreateGreeting from './pages/CreateGreeting';
+import Dashboard from './pages/Dashboard';
 import GreetingCardGrid from './components/GreetingCardGrid';
 import ContractInfo from './components/ContractInfo';
 import RoyaltyInfo from './components/RoyaltyInfo';
@@ -208,6 +209,23 @@ const App = () => {
                       transition={pageTransition}
                     >
                       <CreateGreeting />
+                    </motion.div>
+                  }
+                />
+
+                {/* Dashboard */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <motion.div
+                      key="dashboard"
+                      initial="initial"
+                      animate="in"
+                      exit="out"
+                      variants={pageVariants}
+                      transition={pageTransition}
+                    >
+                      <Dashboard />
                     </motion.div>
                   }
                 />
