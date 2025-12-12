@@ -8,14 +8,18 @@ Festies NFT Contracts provide a comprehensive solution for creating, managing, a
 
 ## ✨ Features
 
+- **Clarity 4 Compatibility**: Fully updated to use Clarity 4 features including `stacks-block-time`, `to-ascii?`, and `contract-hash?`
 - **NFT Standards Compliance**: Implements comprehensive NFT standards with metadata support
-- **Royalty System**: Built-in royalty mechanism for creators and artists
+- **Royalty System**: Built-in royalty mechanism for creators and artists with detailed calculations
 - **Approval System**: Advanced approval and operator management for secure trading
-- **Batch Operations**: Efficient batch minting for multiple NFTs
+- **Batch Operations**: Efficient batch minting and batch transfer for multiple NFTs
 - **Pause Functionality**: Emergency pause/unpause capability for contract management
-- **Event Tracking**: Comprehensive event logging for transparency
+- **Event Tracking**: Comprehensive event logging with timestamps and ASCII conversions
 - **Input Validation**: Robust input validation and error handling
 - **Metadata Management**: Rich metadata support with creation timestamps
+- **Time-based Utilities**: Token age calculation and time range queries using Clarity 4 `stacks-block-time`
+- **Contract Verification**: On-chain contract hash verification for template checking
+- **Owner Statistics**: Track token counts per owner with analytics functions
 
 ## 🏗️ Architecture
 
@@ -208,8 +212,19 @@ For support and questions:
 
 ## 🔄 Version History
 
+- **v2.1.0**: Clarity 4 update with `stacks-block-time`, `to-ascii?`, `contract-hash?`, batch transfers, operator approvals, and enhanced utilities
 - **v2.0.0**: Enhanced features, professional structure, comprehensive testing
 - **v1.0.0**: Initial implementation with basic NFT functionality
+
+## 🆕 Clarity 4 Features
+
+This contract now leverages Clarity 4 capabilities:
+
+- **`stacks-block-time`**: Accurate block timestamps for all NFT creation and events
+- **`to-ascii?`**: Principal and boolean to ASCII string conversion for better event logging
+- **`contract-hash?`**: On-chain contract verification for template checking
+- **Enhanced Events**: All events now include timestamps and ASCII-formatted addresses
+- **Time-based Queries**: Token age calculation and time range validation
 
 ## 📚 Additional Resources
 
