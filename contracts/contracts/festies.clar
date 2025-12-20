@@ -67,7 +67,7 @@
     (begin
         (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
         (var-set contract-owner new-owner)
-        (print {event: "owner-update", new-owner: new-owner, old-owner: tx-sender, timestamp: stacks-block-time, new-owner-ascii: (to-ascii? new-owner)})
+        (print {event: "owner-update", new-owner: new-owner, old-owner: tx-sender, timestamp: stacks-block-time})
         (ok true)
     )
 )
@@ -76,7 +76,7 @@
     (begin
         (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
         (var-set is-paused true)
-        (print {event: EVENT_PAUSE_UPDATE, paused: true, by: tx-sender, timestamp: stacks-block-time, owner-ascii: (to-ascii? tx-sender)})
+        (print {event: EVENT_PAUSE_UPDATE, paused: true, by: tx-sender, timestamp: stacks-block-time})
         (ok true)
     )
 )
@@ -85,7 +85,7 @@
     (begin
         (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
         (var-set is-paused false)
-        (print {event: EVENT_PAUSE_UPDATE, paused: false, by: tx-sender, timestamp: stacks-block-time, owner-ascii: (to-ascii? tx-sender)})
+        (print {event: EVENT_PAUSE_UPDATE, paused: false, by: tx-sender, timestamp: stacks-block-time})
         (ok true)
     )
 )
@@ -98,7 +98,7 @@
         (asserts! (<= percentage u100) ERR_INVALID_ROYALTY)
         (var-set royalty-recipient recipient)
         (var-set royalty-percentage percentage)
-        (print {event: EVENT_ROYALTY_UPDATE, recipient: recipient, percentage: percentage, timestamp: stacks-block-time, recipient-ascii: (to-ascii? recipient)})
+        (print {event: EVENT_ROYALTY_UPDATE, recipient: recipient, percentage: percentage, timestamp: stacks-block-time})
         (ok true)
     )
 )
@@ -201,7 +201,7 @@
                     (begin
                         (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
                         (map-set token-approvals token-id operator)
-                        (print {event: EVENT_APPROVAL, token-id: token-id, owner: actual-owner, operator: operator, timestamp: stacks-block-time, owner-ascii: (to-ascii? actual-owner), operator-ascii: (to-ascii? operator)})
+                        (print {event: EVENT_APPROVAL, token-id: token-id, owner: actual-owner, operator: operator, timestamp: stacks-block-time})
                         (ok true)
                     )
                 )
@@ -222,7 +222,7 @@
                     (begin
                         (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
                         (map-delete token-approvals token-id)
-                        (print {event: EVENT_APPROVAL, token-id: token-id, owner: actual-owner, operator: none, timestamp: stacks-block-time, owner-ascii: (to-ascii? actual-owner)})
+                        (print {event: EVENT_APPROVAL, token-id: token-id, owner: actual-owner, operator: none, timestamp: stacks-block-time})
                         (ok true)
                     )
                 )
@@ -259,7 +259,7 @@
                 (begin
                     (try! (nft-transfer? GreetingCard token-id sender recipient))
                     ;; Clarity 4: Include block timestamp in transfer events with ASCII conversion
-                    (print {event: EVENT_TRANSFER, token-id: token-id, from: sender, to: recipient, operator: tx-sender, timestamp: stacks-block-time, from-ascii: (to-ascii? sender), to-ascii: (to-ascii? recipient)})
+                    (print {event: EVENT_TRANSFER, token-id: token-id, from: sender, to: recipient, operator: tx-sender, timestamp: stacks-block-time})
                     (ok true)
                 )
             )
@@ -319,7 +319,7 @@
                 )
                 
                 ;; Emit event with Clarity 4 features
-                (print {event: EVENT_MINT, token-id: new-token-id, to: recipient, from: tx-sender, created-at: current-block-time, recipient-ascii: (to-ascii? recipient), sender-ascii: (to-ascii? tx-sender)})
+                (print {event: EVENT_MINT, token-id: new-token-id, to: recipient, from: tx-sender, created-at: current-block-time})
                 (ok new-token-id)
             )
         )
@@ -349,7 +349,7 @@
                             )
                         )
                         
-                        (print {event: EVENT_BURN, token-id: token-id, owner: actual-owner, timestamp: stacks-block-time, owner-ascii: (to-ascii? actual-owner), burned-at: stacks-block-time})
+                        (print {event: EVENT_BURN, token-id: token-id, owner: actual-owner, timestamp: stacks-block-time, burned-at: stacks-block-time})
                         (ok true)
                     )
                 )
@@ -365,7 +365,6 @@
     (ok (tuple 
         (owner owner)
         (token-count (default-to u0 (map-get? owner-token-count owner)))
-        (owner-ascii (to-ascii? owner))
     ))
 )
 
@@ -417,58 +416,8 @@
     )
 )
 
-;; --- Clarity 4 Utility Functions ---
 
-;; Get current block timestamp (Clarity 4 feature)
-(define-read-only (get-current-block-time)
-    (ok stacks-block-time)
-)
 
-;; Convert principal to ASCII string (Clarity 4 feature)
-(define-read-only (principal-to-ascii (addr principal))
-    (ok (to-ascii? addr))
-)
-
-;; Convert boolean to ASCII string (Clarity 4 feature)
-(define-read-only (bool-to-ascii (value bool))
-    (ok (to-ascii? value))
-)
-
-;; Get formatted address string for display
-(define-read-only (get-formatted-address (addr principal))
-    (ok (to-ascii? addr))
-)
-
-;; Verify contract hash for template verification (Clarity 4 feature)
-;; Useful for verifying that another contract follows a specific template
-(define-read-only (verify-contract-hash (contract-principal principal) (expected-hash (buff 32)))
-    (let ((contract-hash (contract-hash? contract-principal)))
-        (if (is-some contract-hash)
-            (ok (is-eq (unwrap! contract-hash ERR_INVALID_INPUT) expected-hash))
-            (err ERR_CONTRACT_NOT_FOUND)
-        )
-    )
-)
-
-;; Get contract hash for a given principal (Clarity 4 feature)
-(define-read-only (get-contract-hash (contract-principal principal))
-    (let ((contract-hash (contract-hash? contract-principal)))
-        (if (is-some contract-hash)
-            (ok (some (unwrap! contract-hash ERR_CONTRACT_NOT_FOUND)))
-            (ok none)
-        )
-    )
-)
-
-;; Check if a contract exists and is verified
-(define-read-only (is-contract-verified (contract-principal principal) (expected-hash (buff 32)))
-    (let ((contract-hash (contract-hash? contract-principal)))
-        (if (is-some contract-hash)
-            (ok (is-eq (unwrap! contract-hash ERR_CONTRACT_NOT_FOUND) expected-hash))
-            (ok false)
-        )
-    )
-)
 
 ;; --- Time-based Utility Functions (Clarity 4) ---
 
@@ -527,9 +476,8 @@
         (next-token-id (var-get next-token-id))
         (royalty-percentage (var-get royalty-percentage))
         (royalty-recipient (var-get royalty-recipient))
+        (royalty-recipient (var-get royalty-recipient))
         (current-block-time stacks-block-time)
-        (owner-ascii (to-ascii? (var-get contract-owner)))
-        (royalty-recipient-ascii (to-ascii? (var-get royalty-recipient)))
     ))
 )
 
@@ -642,9 +590,7 @@
                     (created-at created-at)
                     (age-seconds age)
                     (is-new (< age u86400)) ;; Considered new if less than 24 hours old
-                    (owner-ascii (to-ascii? token-owner))
                     (status "active")
-                    (formatted-time (to-ascii? created-at)) ;; Placeholder for actual formatting if available
                 ))
             )
             (err ERR_TOKEN_NOT_FOUND)
