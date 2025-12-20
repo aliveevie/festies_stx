@@ -45,3 +45,4 @@ Boost activity: fix(logic): correct edge case in token-age calculation - Sat Dec
 Boost activity: refactor(utils): move helper functions to bottom - Sat Dec 20 15:10:24 WAT 2025
 Boost activity: style(comments): improve docstrings for public functions - Sat Dec 20 15:10:25 WAT 2025
 Boost activity: chore(release): prepare candidate for v2.2.0 - Sat Dec 20 15:10:25 WAT 2025
+Boost activity: fix(compat): ensure retroactive compatibility with clarity 2 - Sat Dec 20 15:10:25 WAT 2025
