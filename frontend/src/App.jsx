@@ -13,6 +13,7 @@ import GreetingCardGrid from './components/GreetingCardGrid';
 import ContractInfo from './components/ContractInfo';
 import RoyaltyInfo from './components/RoyaltyInfo';
 import { AuthProvider } from './contexts/AuthContext';
+import ChainhookActivityFeed from './components/ChainhookActivityFeed';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -148,231 +149,236 @@ const App = () => {
       <AuthProvider>
         <Router>
           <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-          {/* Toast notifications */}
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-                borderRadius: '12px',
-                padding: '16px',
-                fontSize: '14px',
-              },
-              success: {
-                iconTheme: {
-                  primary: '#10B981',
-                  secondary: '#fff',
+            {/* Toast notifications */}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  fontSize: '14px',
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#EF4444',
-                  secondary: '#fff',
+                success: {
+                  iconTheme: {
+                    primary: '#10B981',
+                    secondary: '#fff',
+                  },
                 },
-              },
-            }}
-          />
+                error: {
+                  iconTheme: {
+                    primary: '#EF4444',
+                    secondary: '#fff',
+                  },
+                },
+              }}
+            />
 
-          {/* Header */}
-          <Header />
+            {/* Header */}
+            <Header />
 
-          {/* Main content with page transitions */}
-          <main className="flex-1">
-            <AnimatePresence mode="wait">
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <motion.div
-                      key="home"
-                      initial="initial"
-                      animate="in"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                    >
-                      <Hero />
-                    </motion.div>
-                  }
-                />
-                
-                <Route
-                  path="/create"
-                  element={
-                    <motion.div
-                      key="create"
-                      initial="initial"
-                      animate="in"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                    >
-                      <CreateGreeting />
-                    </motion.div>
-                  }
-                />
+            {/* Main content with page transitions */}
+            <main className="flex-1">
+              <AnimatePresence mode="wait">
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <motion.div
+                        key="home"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                      >
+                        <Hero />
+                      </motion.div>
+                    }
+                  />
 
-                {/* Dashboard */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <motion.div
-                      key="dashboard"
-                      initial="initial"
-                      animate="in"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                    >
-                      <Dashboard />
-                    </motion.div>
-                  }
-                />
+                  <Route
+                    path="/create"
+                    element={
+                      <motion.div
+                        key="create"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                      >
+                        <CreateGreeting />
+                      </motion.div>
+                    }
+                  />
 
-                {/* Marketplace */}
-                <Route
-                  path="/marketplace"
-                  element={
-                    <motion.div
-                      key="marketplace"
-                      initial="initial"
-                      animate="in"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                      className="min-h-screen py-12 px-4"
-                    >
-                      <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-12">
-                          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
-                            Marketplace
-                          </h1>
-                          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Browse and discover all the beautiful greeting cards created by our community
-                          </p>
+                  {/* Dashboard */}
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <motion.div
+                        key="dashboard"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                      >
+                        <Dashboard />
+                      </motion.div>
+                    }
+                  />
+
+                  {/* Marketplace */}
+                  <Route
+                    path="/marketplace"
+                    element={
+                      <motion.div
+                        key="marketplace"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                        className="min-h-screen py-12 px-4"
+                      >
+                        <div className="max-w-7xl mx-auto">
+                          <div className="text-center mb-12">
+                            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
+                              Marketplace
+                            </h1>
+                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                              Browse and discover all the beautiful greeting cards created by our community
+                            </p>
+                          </div>
+                          <GreetingCardGrid
+                            showActions={false}
+                            maxItems={50}
+                          />
                         </div>
-                        <GreetingCardGrid 
-                          showActions={false}
-                          maxItems={50}
-                        />
-                      </div>
-                    </motion.div>
-                  }
-                />
+                      </motion.div>
+                    }
+                  />
 
-                <Route
-                  path="/collection"
-                  element={
-                    <motion.div
-                      key="collection"
-                      initial="initial"
-                      animate="in"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                      className="min-h-screen py-12 px-4"
-                    >
-                      <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-12">
-                          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
-                            My Collection
-                          </h1>
-                          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            View and manage your greeting cards. Transfer, approve, or burn your NFTs.
-                          </p>
+                  <Route
+                    path="/collection"
+                    element={
+                      <motion.div
+                        key="collection"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                        className="min-h-screen py-12 px-4"
+                      >
+                        <div className="max-w-7xl mx-auto">
+                          <div className="text-center mb-12">
+                            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
+                              My Collection
+                            </h1>
+                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                              View and manage your greeting cards. Transfer, approve, or burn your NFTs.
+                            </p>
+                          </div>
+                          <GreetingCardGrid
+                            showActions={true}
+                            maxItems={100}
+                          />
                         </div>
-                        <GreetingCardGrid 
-                          showActions={true}
-                          maxItems={100}
-                        />
-                      </div>
-                    </motion.div>
-                  }
-                />
+                      </motion.div>
+                    }
+                  />
 
-                <Route
-                  path="/about"
-                  element={
-                    <motion.div
-                      key="about"
-                      initial="initial"
-                      animate="in"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                      className="min-h-screen py-12 px-4"
-                    >
-                      <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-12">
-                          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
-                            About Festies
-                          </h1>
-                          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Learn more about our mission, how the technology works, and the contract details.
-                          </p>
-                        </div>
+                  <Route
+                    path="/about"
+                    element={
+                      <motion.div
+                        key="about"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                        className="min-h-screen py-12 px-4"
+                      >
+                        <div className="max-w-7xl mx-auto">
+                          <div className="text-center mb-12">
+                            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
+                              About Festies
+                            </h1>
+                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                              Learn more about our mission, how the technology works, and the contract details.
+                            </p>
+                          </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                          {/* Contract Information */}
-                          <ContractInfo />
-                          
-                          {/* Royalty Information */}
-                          <RoyaltyInfo />
-                        </div>
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                            {/* Contract Information */}
+                            <ContractInfo />
 
-                        {/* Mission Section */}
-                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-200">
-                          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Our Mission</h2>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="text-center">
-                              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl">💝</span>
+                            {/* Royalty Information */}
+                            <RoyaltyInfo />
+                          </div>
+
+                          {/* Mission Section */}
+                          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-200">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Our Mission</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                              <div className="text-center">
+                                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                  <span className="text-2xl">💝</span>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-800 mb-2">Spread Joy</h3>
+                                <p className="text-gray-600">
+                                  Create lasting memories through personalized digital greetings that touch hearts and bring people together.
+                                </p>
                               </div>
-                              <h3 className="text-xl font-semibold text-gray-800 mb-2">Spread Joy</h3>
-                              <p className="text-gray-600">
-                                Create lasting memories through personalized digital greetings that touch hearts and bring people together.
-                              </p>
-                            </div>
-                            <div className="text-center">
-                              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl">🔗</span>
+                              <div className="text-center">
+                                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                  <span className="text-2xl">🔗</span>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-800 mb-2">Blockchain Technology</h3>
+                                <p className="text-gray-600">
+                                  Leverage the power of Stacks blockchain to ensure your greetings are permanent, verifiable, and truly yours.
+                                </p>
                               </div>
-                              <h3 className="text-xl font-semibold text-gray-800 mb-2">Blockchain Technology</h3>
-                              <p className="text-gray-600">
-                                Leverage the power of Stacks blockchain to ensure your greetings are permanent, verifiable, and truly yours.
-                              </p>
-                            </div>
-                            <div className="text-center">
-                              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl">🎨</span>
+                              <div className="text-center">
+                                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                  <span className="text-2xl">🎨</span>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-800 mb-2">Creator Support</h3>
+                                <p className="text-gray-600">
+                                  Built-in royalty system ensures creators continue to benefit from their work through secondary sales.
+                                </p>
                               </div>
-                              <h3 className="text-xl font-semibold text-gray-800 mb-2">Creator Support</h3>
-                              <p className="text-gray-600">
-                                Built-in royalty system ensures creators continue to benefit from their work through secondary sales.
-                              </p>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  }
-                />
+                      </motion.div>
+                    }
+                  />
 
-                {/* Catch all route - redirect to home */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </AnimatePresence>
-          </main>
+                  {/* Catch all route - redirect to home */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </AnimatePresence>
+            </main>
 
-          {/* Footer */}
-          <Footer />
-          
-          {/* Mobile Navigation */}
-          <MobileNavigation />
-        </div>
-      </Router>
+            {/* Footer */}
+            <Footer />
+
+            {/* Mobile Navigation */}
+            <MobileNavigation />
+
+            {/* Real-time Chainhook Activity Feed - Floating Widget */}
+            <div className="fixed bottom-24 right-4 z-40 hidden md:block">
+              <ChainhookActivityFeed />
+            </div>
+          </div>
+        </Router>
       </AuthProvider>
     </QueryClientProvider>
   );
