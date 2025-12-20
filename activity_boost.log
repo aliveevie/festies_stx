@@ -44,3 +44,4 @@ Boost activity: test(fuzz): add property-based tests for balance - Sat Dec 20 15
 Boost activity: fix(logic): correct edge case in token-age calculation - Sat Dec 20 15:10:24 WAT 2025
 Boost activity: refactor(utils): move helper functions to bottom - Sat Dec 20 15:10:24 WAT 2025
 Boost activity: style(comments): improve docstrings for public functions - Sat Dec 20 15:10:25 WAT 2025
+Boost activity: chore(release): prepare candidate for v2.2.0 - Sat Dec 20 15:10:25 WAT 2025
