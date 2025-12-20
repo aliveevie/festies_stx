@@ -36,3 +36,4 @@ Boost activity: fix(types): resolve ambiguous tuple types in response - Sat Dec 
 Boost activity: style(fmt): align parentheses in contract definitions - Sat Dec 20 15:10:23 WAT 2025
 Boost activity: test(simnet): verify error codes for invalid inputs - Sat Dec 20 15:10:23 WAT 2025
 Boost activity: chore(config): tune analysis strictness settings - Sat Dec 20 15:10:23 WAT 2025
+Boost activity: refactor(burn): standartize event parameters - Sat Dec 20 15:10:23 WAT 2025
