@@ -147,7 +147,7 @@
     (let ((data (map-get? greeting-data token-id)))
         (if (is-some data)
             (ok (some data))
-            (err ERR_TOKEN_NOT_FOUND)
+            ERR_TOKEN_NOT_FOUND
         )
     )
 )
@@ -313,33 +313,26 @@
 ;; --- Enhanced Burning Function ---
 
 (define-public (burn-greeting-card (token-id uint))
-    (begin
+    (let (
+        (owner (unwrap! (nft-get-owner? GreetingCard token-id) ERR_TOKEN_NOT_FOUND))
+    )
         (asserts! (not (var-get is-paused)) ERR_NOT_AUTHORIZED)
-        (let ((owner (nft-get-owner? GreetingCard token-id)))
-            (if (is-some owner)
-                (let ((actual-owner (unwrap! owner ERR_NOT_TOKEN_OWNER)))
-                    (begin
-                        (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
-                        (try! (nft-burn? GreetingCard token-id actual-owner))
-                        (map-delete greeting-data token-id)
-                        (map-delete token-approvals token-id)
-                        
-                        ;; Update total supply and owner statistics
-                        (var-set total-supply (- (var-get total-supply) u1))
-                        (let ((current-count (default-to u0 (map-get? owner-token-count actual-owner))))
-                            (if (> current-count u0)
-                                (map-set owner-token-count actual-owner (- current-count u1))
-                                (map-delete owner-token-count actual-owner)
-                            )
-                        )
-                        
-                        (print {event: EVENT_BURN, token-id: token-id, owner: actual-owner, timestamp: block-height, burned-at: block-height})
-                        (ok true)
-                    )
-                )
-                (err ERR_TOKEN_NOT_FOUND)
+        (asserts! (is-eq tx-sender owner) ERR_NOT_TOKEN_OWNER)
+        (try! (nft-burn? GreetingCard token-id owner))
+        (map-delete greeting-data token-id)
+        (map-delete token-approvals token-id)
+        
+        ;; Update total supply and owner statistics
+        (var-set total-supply (- (var-get total-supply) u1))
+        (let ((current-count (default-to u0 (map-get? owner-token-count owner))))
+            (if (> current-count u0)
+                (map-set owner-token-count owner (- current-count u1))
+                (map-delete owner-token-count owner)
             )
         )
+        
+        (print {event: EVENT_BURN, token-id: token-id, owner: owner, timestamp: block-height, burned-at: block-height})
+        (ok true)
     )
 )
 
@@ -358,7 +351,7 @@
     (let ((owner (nft-get-owner? GreetingCard token-id)))
         (if (is-some owner)
             (ok (map-get? greeting-data token-id))
-            (err ERR_TOKEN_NOT_FOUND)
+            ERR_TOKEN_NOT_FOUND
         )
     )
 )
@@ -410,7 +403,7 @@
     (let ((data (map-get? greeting-data token-id)))
         (if (is-some data)
             (ok (- block-height (get created-at (unwrap! data ERR_TOKEN_NOT_FOUND))))
-            (err ERR_TOKEN_NOT_FOUND)
+            ERR_TOKEN_NOT_FOUND
         )
     )
 )
@@ -420,7 +413,7 @@
     (let ((data (map-get? greeting-data token-id)))
         (if (is-some data)
             (ok (> (get created-at (unwrap! data ERR_TOKEN_NOT_FOUND)) timestamp))
-            (err ERR_TOKEN_NOT_FOUND)
+            ERR_TOKEN_NOT_FOUND
         )
     )
 )
@@ -430,7 +423,7 @@
     (let ((data (map-get? greeting-data token-id)))
         (if (is-some data)
             (ok (< (get created-at (unwrap! data ERR_TOKEN_NOT_FOUND)) timestamp))
-            (err ERR_TOKEN_NOT_FOUND)
+            ERR_TOKEN_NOT_FOUND
         )
     )
 )
@@ -460,7 +453,6 @@
         (next-token-id (var-get next-token-id))
         (royalty-percentage (var-get royalty-percentage))
         (royalty-recipient (var-get royalty-recipient))
-        (royalty-recipient (var-get royalty-recipient))
         (current-block-time block-height)
     ))
 )
@@ -482,71 +474,70 @@
 
 ;; --- Batch Transfer Operations ---
 
-(define-public (batch-transfer (token-ids (list uint)) (sender principal) (recipient principal))
+(define-public (batch-transfer (token-ids (list 20 uint)) (sender principal) (recipient principal))
     (begin
         (asserts! (not (var-get is-paused)) ERR_NOT_AUTHORIZED)
         (asserts! (> (len token-ids) u0) ERR_INVALID_INPUT)
-        (fold transfer-single-token token-ids (tuple (sender sender) (recipient recipient)))
+        (fold transfer-single-token token-ids (ok (tuple (sender sender) (recipient recipient))))
     )
 )
 
-(define-private (transfer-single-token (acc (tuple (sender principal) (recipient principal))) (token-id uint))
-    (let ((owner (nft-get-owner? GreetingCard token-id)))
-        (if (is-some owner)
-            (let ((actual-owner (unwrap! owner ERR_NOT_TOKEN_OWNER)))
-                (begin
-                    (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
-                    (try! (nft-transfer? GreetingCard token-id actual-owner (get recipient acc)))
-                    (map-delete token-approvals token-id)
-                    (print {event: EVENT_TRANSFER, token-id: token-id, from: actual-owner, to: (get recipient acc), timestamp: block-height})
-                    acc
-                )
-            )
-            acc
+(define-private (transfer-single-token (token-id uint) (return-value (response (tuple (sender principal) (recipient principal)) uint)))
+    (match return-value
+        acc
+        (let (
+            (owner (nft-get-owner? GreetingCard token-id))
+            (sender (get sender acc))
+            (recipient (get recipient acc))
         )
+            (if (is-some owner)
+                (let ((actual-owner (unwrap! owner ERR_NOT_TOKEN_OWNER)))
+                    (begin
+                        (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
+                        (try! (nft-transfer? GreetingCard token-id actual-owner recipient))
+                        (map-delete token-approvals token-id)
+                        (print {event: EVENT_TRANSFER, token-id: token-id, from: actual-owner, to: recipient, timestamp: block-height})
+                        (ok acc)
+                    )
+                )
+                (ok acc)
+            )
+        )
+        err-value
+        (err err-value)
     )
 )
 
 ;; --- Batch Operations for Efficiency ---
 
-(define-public (batch-mint-greeting-cards
-    (recipients (list principal))
-    (names (list (string-ascii 40)))
-    (messages (list (string-ascii 500)))
-    (festivals (list (string-ascii 100)))
-    (image-uris (list (string-ascii 500)))
-    (metadata-uris (list (string-ascii 500)))
-)
+(define-public (batch-mint-greeting-cards (entries (list 20 (tuple (recipient principal) (name (string-ascii 40)) (message (string-ascii 500)) (festival (string-ascii 100)) (image-uri (string-ascii 500)) (metadata-uri (string-ascii 500))))))
     (begin
         (asserts! (not (var-get is-paused)) ERR_NOT_AUTHORIZED)
-        (asserts! (and 
-            (is-eq (len recipients) (len names))
-            (is-eq (len recipients) (len messages))
-            (is-eq (len recipients) (len festivals))
-            (is-eq (len recipients) (len image-uris))
-            (is-eq (len recipients) (len metadata-uris))
-        ) ERR_INVALID_INPUT)
-        
-        (fold mint-single-card (list 
-            recipients names messages festivals image-uris metadata-uris
-        ) (list))
+        (fold mint-single-card entries (ok (list)))
     )
 )
 
-(define-private (mint-single-card
-    (acc (list uint))
-    (recipient principal)
-    (name (string-ascii 40))
-    (message (string-ascii 500))
-    (festival (string-ascii 100))
-    (image-uri (string-ascii 500))
-    (metadata-uri (string-ascii 500))
+(define-private (mint-single-card 
+    (entry (tuple (recipient principal) (name (string-ascii 40)) (message (string-ascii 500)) (festival (string-ascii 100)) (image-uri (string-ascii 500)) (metadata-uri (string-ascii 500))))
+    (result-acc (response (list 20 uint) uint))
 )
-    (let ((mint-result (mint-greeting-card recipient name message festival image-uri metadata-uri)))
-        (if (is-ok mint-result)
-            (append acc (list (unwrap! mint-result ERR_INVALID_INPUT)))
-            acc
+    (match result-acc
+        acc
+        (let (
+            (recipient (get recipient entry))
+            (name (get name entry))
+            (message (get message entry))
+            (festival (get festival entry))
+            (image-uri (get image-uri entry))
+            (metadata-uri (get metadata-uri entry))
+            (mint-result (mint-greeting-card recipient name message festival image-uri metadata-uri))
         )
+            (match mint-result
+                token-id (ok (unwrap-panic (as-max-len? (append acc token-id) u20)))
+                error (err error)
+            )
+        )
+        err-value (err err-value)
     )
 )
 
@@ -577,7 +568,7 @@
                     (status "active")
                 ))
             )
-            (err ERR_TOKEN_NOT_FOUND)
+            ERR_TOKEN_NOT_FOUND
         )
     )
 )
