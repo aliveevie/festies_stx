@@ -38,3 +38,4 @@ Boost activity: test(simnet): verify error codes for invalid inputs - Sat Dec 20
 Boost activity: chore(config): tune analysis strictness settings - Sat Dec 20 15:10:23 WAT 2025
 Boost activity: refactor(burn): standartize event parameters - Sat Dec 20 15:10:23 WAT 2025
 Boost activity: fix(security): add extra validation for zero-address - Sat Dec 20 15:10:24 WAT 2025
+Boost activity: feat(events): enhance visibility of contract actions - Sat Dec 20 15:10:24 WAT 2025
