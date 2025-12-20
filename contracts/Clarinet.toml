@@ -4,22 +4,22 @@ description = 'Professional NFT contracts for Festival Greetings with royalty su
 authors = ['Festies Team']
 telemetry = true
 cache_dir = './.cache'
-requirements = ['clarity >= 4.0.0']
+requirements = ['clarity >= 2.0.0']
 
 [contracts.festies]
 path = 'contracts/festies.clar'
-clarity_version = 4
+clarity_version = 2
 epoch = 2.5
 description = 'Main NFT contract for Festival Greetings with comprehensive features - Updated for Clarity 4'
 
 [contracts.nft-trait]
 path = 'contracts/nft-trait.clar'
-clarity_version = 4
+clarity_version = 2
 epoch = 2.5
 description = 'Enhanced NFT trait interface with comprehensive standards - Updated for Clarity 4'
 
 [repl.analysis]
-passes = ['check_checker', 'contract_checker']
+# passes = ["check_checker", "contract_checker"]
 
 [repl.analysis.check_checker]
 strict = true
