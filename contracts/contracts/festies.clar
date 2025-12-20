@@ -617,3 +617,37 @@
         )
     )
 )
+
+;; --- Additional Clarity 4 Enhanced Features ---
+
+;; Get a detailed summary of a token for dashboard display
+;; Combines metadata, ownership, and time-based calculations
+(define-read-only (get-token-summary-detailed (token-id uint))
+    (let (
+        (data (map-get? greeting-data token-id))
+        (owner (nft-get-owner? GreetingCard token-id))
+    )
+        (if (and (is-some data) (is-some owner))
+            (let (
+                (token-data (unwrap! data ERR_TOKEN_NOT_FOUND))
+                (token-owner (unwrap! owner ERR_TOKEN_NOT_FOUND))
+                (created-at (get created-at token-data))
+                (age (- stacks-block-time created-at))
+            )
+                (ok (tuple 
+                    (token-id token-id)
+                    (owner token-owner)
+                    (name (get name token-data))
+                    (festival (get festival token-data))
+                    (created-at created-at)
+                    (age-seconds age)
+                    (is-new (< age u86400)) ;; Considered new if less than 24 hours old
+                    (owner-ascii (to-ascii? token-owner))
+                    (status "active")
+                    (formatted-time (to-ascii? created-at)) ;; Placeholder for actual formatting if available
+                ))
+            )
+            (err ERR_TOKEN_NOT_FOUND)
+        )
+    )
+)
