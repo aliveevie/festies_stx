@@ -31,3 +31,4 @@ Boost activity: fix(batch): optimize fold operation gas usage - Sat Dec 20 15:10
 Boost activity: chore(deps): update clarinet-sdk dependencies - Sat Dec 20 15:10:22 WAT 2025
 Boost activity: docs(api): document new batch-mint signature - Sat Dec 20 15:10:22 WAT 2025
 Boost activity: refactor(auth): simplify owner assertion logic - Sat Dec 20 15:10:23 WAT 2025
+Boost activity: perf(storage): optimize map-get operations - Sat Dec 20 15:10:23 WAT 2025
