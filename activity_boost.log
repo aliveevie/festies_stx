@@ -47,3 +47,4 @@ Boost activity: style(comments): improve docstrings for public functions - Sat D
 Boost activity: chore(release): prepare candidate for v2.2.0 - Sat Dec 20 15:10:25 WAT 2025
 Boost activity: fix(compat): ensure retroactive compatibility with clarity 2 - Sat Dec 20 15:10:25 WAT 2025
 Boost activity: test(e2e): sanity check full lifecycle - Sat Dec 20 15:10:25 WAT 2025
+Boost activity: docs(changelog): update record of recent fixes - Sat Dec 20 15:10:25 WAT 2025
