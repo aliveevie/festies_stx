@@ -25,3 +25,4 @@ Boost activity: test(e2e): sanity check full lifecycle - Sat Dec 20 15:10:04 WAT
 Boost activity: docs(changelog): update record of recent fixes - Sat Dec 20 15:10:04 WAT 2025
 Boost activity: fix(core): ensure strict type compliance for mainnet - Sat Dec 20 15:10:22 WAT 2025
 Boost activity: refactor(trait): remove unused contract-info signature - Sat Dec 20 15:10:22 WAT 2025
+Boost activity: style(lint): format clarity contracts - Sat Dec 20 15:10:22 WAT 2025
