@@ -1,0 +1,23 @@
+---
+name: "festies-nft-hook"
+version: 1
+chain: "stacks"
+networks:
+  devnet:
+    predicate:
+      type: "contract-call"
+      scope: "contract"
+      contract-id: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.festies"
+      method: "mint-greeting-card"
+    action:
+      type: "http-post"
+      url: "http://localhost:3000/api/chainhook"
+  testnet:
+    predicate:
+      type: "contract-call"
+      scope: "contract"
+      contract-id: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.festies"
+      method: "mint-greeting-card"
+    action:
+      type: "http-post"
+      url: "https://festies.app/api/chainhook"
