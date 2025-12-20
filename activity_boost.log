@@ -39,3 +39,4 @@ Boost activity: chore(config): tune analysis strictness settings - Sat Dec 20 15
 Boost activity: refactor(burn): standartize event parameters - Sat Dec 20 15:10:23 WAT 2025
 Boost activity: fix(security): add extra validation for zero-address - Sat Dec 20 15:10:24 WAT 2025
 Boost activity: feat(events): enhance visibility of contract actions - Sat Dec 20 15:10:24 WAT 2025
+Boost activity: docs(deploy): updated testnet deployment address - Sat Dec 20 15:10:24 WAT 2025
