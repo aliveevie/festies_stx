@@ -67,7 +67,7 @@
     (begin
         (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
         (var-set contract-owner new-owner)
-        (print {event: "owner-update", new-owner: new-owner, old-owner: tx-sender, timestamp: stacks-block-time})
+        (print {event: "owner-update", new-owner: new-owner, old-owner: tx-sender, timestamp: block-height})
         (ok true)
     )
 )
@@ -76,7 +76,7 @@
     (begin
         (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
         (var-set is-paused true)
-        (print {event: EVENT_PAUSE_UPDATE, paused: true, by: tx-sender, timestamp: stacks-block-time})
+        (print {event: EVENT_PAUSE_UPDATE, paused: true, by: tx-sender, timestamp: block-height})
         (ok true)
     )
 )
@@ -85,7 +85,7 @@
     (begin
         (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
         (var-set is-paused false)
-        (print {event: EVENT_PAUSE_UPDATE, paused: false, by: tx-sender, timestamp: stacks-block-time})
+        (print {event: EVENT_PAUSE_UPDATE, paused: false, by: tx-sender, timestamp: block-height})
         (ok true)
     )
 )
@@ -98,7 +98,7 @@
         (asserts! (<= percentage u100) ERR_INVALID_ROYALTY)
         (var-set royalty-recipient recipient)
         (var-set royalty-percentage percentage)
-        (print {event: EVENT_ROYALTY_UPDATE, recipient: recipient, percentage: percentage, timestamp: stacks-block-time})
+        (print {event: EVENT_ROYALTY_UPDATE, recipient: recipient, percentage: percentage, timestamp: block-height})
         (ok true)
     )
 )
@@ -181,7 +181,7 @@
     (begin
         (asserts! (not (var-get is-paused)) ERR_NOT_AUTHORIZED)
         (map-set operator-approvals (tuple (owner tx-sender) (operator operator)) approved)
-        (print {event: "operator-approval", owner: tx-sender, operator: operator, approved: approved, timestamp: stacks-block-time})
+        (print {event: "operator-approval", owner: tx-sender, operator: operator, approved: approved, timestamp: block-height})
         (ok true)
     )
 )
@@ -193,42 +193,26 @@
 ;; --- Approval System Implementation ---
 
 (define-public (approve (token-id uint) (operator principal))
-    (begin
+    (let (
+        (owner (unwrap! (nft-get-owner? GreetingCard token-id) ERR_TOKEN_NOT_FOUND))
+    )
         (asserts! (not (var-get is-paused)) ERR_NOT_AUTHORIZED)
-        (let ((owner (nft-get-owner? GreetingCard token-id)))
-            (if (is-some owner)
-                (let ((actual-owner (unwrap! owner ERR_NOT_TOKEN_OWNER)))
-                    (begin
-                        (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
-                        (map-set token-approvals token-id operator)
-                        (print {event: EVENT_APPROVAL, token-id: token-id, owner: actual-owner, operator: operator, timestamp: stacks-block-time})
-                        (ok true)
-                    )
-                )
-                (begin
-                    (err ERR_TOKEN_NOT_FOUND)
-                )
-            )
-        )
+        (asserts! (is-eq tx-sender owner) ERR_NOT_TOKEN_OWNER)
+        (map-set token-approvals token-id operator)
+        (print {event: EVENT_APPROVAL, token-id: token-id, owner: owner, operator: operator, timestamp: block-height})
+        (ok true)
     )
 )
 
 (define-public (revoke-approval (token-id uint))
-    (begin
+    (let (
+        (owner (unwrap! (nft-get-owner? GreetingCard token-id) ERR_TOKEN_NOT_FOUND))
+    )
         (asserts! (not (var-get is-paused)) ERR_NOT_AUTHORIZED)
-        (let ((owner (nft-get-owner? GreetingCard token-id)))
-            (if (is-some owner)
-                (let ((actual-owner (unwrap! owner ERR_NOT_TOKEN_OWNER)))
-                    (begin
-                        (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
-                        (map-delete token-approvals token-id)
-                        (print {event: EVENT_APPROVAL, token-id: token-id, owner: actual-owner, operator: none, timestamp: stacks-block-time})
-                        (ok true)
-                    )
-                )
-                (err ERR_TOKEN_NOT_FOUND)
-            )
-        )
+        (asserts! (is-eq tx-sender owner) ERR_NOT_TOKEN_OWNER)
+        (map-delete token-approvals token-id)
+        (print {event: EVENT_APPROVAL, token-id: token-id, owner: owner, operator: none, timestamp: block-height})
+        (ok true)
     )
 )
 
@@ -237,7 +221,7 @@
 )
 
 ;; --- Enhanced Transfer Function ---
-;; Clarity 4: Enhanced with stacks-block-time for event timestamps
+;; Clarity 4: Enhanced with block-height for event timestamps
 
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
     (begin
@@ -259,7 +243,7 @@
                 (begin
                     (try! (nft-transfer? GreetingCard token-id sender recipient))
                     ;; Clarity 4: Include block timestamp in transfer events with ASCII conversion
-                    (print {event: EVENT_TRANSFER, token-id: token-id, from: sender, to: recipient, operator: tx-sender, timestamp: stacks-block-time})
+                    (print {event: EVENT_TRANSFER, token-id: token-id, from: sender, to: recipient, operator: tx-sender, timestamp: block-height})
                     (ok true)
                 )
             )
@@ -282,7 +266,7 @@
         (let
             (
                 (new-token-id (var-get next-token-id))
-                (current-block-time stacks-block-time)
+                (current-block-time block-height)
                 (nft-data (tuple 
                     (name name)
                     (festival festival)
@@ -349,7 +333,7 @@
                             )
                         )
                         
-                        (print {event: EVENT_BURN, token-id: token-id, owner: actual-owner, timestamp: stacks-block-time, burned-at: stacks-block-time})
+                        (print {event: EVENT_BURN, token-id: token-id, owner: actual-owner, timestamp: block-height, burned-at: block-height})
                         (ok true)
                     )
                 )
@@ -425,7 +409,7 @@
 (define-read-only (get-token-age (token-id uint))
     (let ((data (map-get? greeting-data token-id)))
         (if (is-some data)
-            (ok (- stacks-block-time (get created-at (unwrap! data ERR_TOKEN_NOT_FOUND))))
+            (ok (- block-height (get created-at (unwrap! data ERR_TOKEN_NOT_FOUND))))
             (err ERR_TOKEN_NOT_FOUND)
         )
     )
@@ -453,7 +437,7 @@
 
 ;; Validate timestamp is not in the future
 (define-read-only (is-valid-timestamp (timestamp uint))
-    (ok (<= timestamp stacks-block-time))
+    (ok (<= timestamp block-height))
 )
 
 ;; Check if token was created in a time range
@@ -477,7 +461,7 @@
         (royalty-percentage (var-get royalty-percentage))
         (royalty-recipient (var-get royalty-recipient))
         (royalty-recipient (var-get royalty-recipient))
-        (current-block-time stacks-block-time)
+        (current-block-time block-height)
     ))
 )
 
@@ -490,7 +474,7 @@
         (description CONTRACT_DESCRIPTION)
         (total-supply (var-get total-supply))
         (next-token-id (var-get next-token-id))
-        (current-block-time stacks-block-time)
+        (current-block-time block-height)
         (is-paused (var-get is-paused))
         (clarity-version "4.0")
     ))
@@ -514,7 +498,7 @@
                     (asserts! (is-eq tx-sender actual-owner) ERR_NOT_TOKEN_OWNER)
                     (try! (nft-transfer? GreetingCard token-id actual-owner (get recipient acc)))
                     (map-delete token-approvals token-id)
-                    (print {event: EVENT_TRANSFER, token-id: token-id, from: actual-owner, to: (get recipient acc), timestamp: stacks-block-time})
+                    (print {event: EVENT_TRANSFER, token-id: token-id, from: actual-owner, to: (get recipient acc), timestamp: block-height})
                     acc
                 )
             )
@@ -580,7 +564,7 @@
                 (token-data (unwrap! data ERR_TOKEN_NOT_FOUND))
                 (token-owner (unwrap! owner ERR_TOKEN_NOT_FOUND))
                 (created-at (get created-at token-data))
-                (age (- stacks-block-time created-at))
+                (age (- block-height created-at))
             )
                 (ok (tuple 
                     (token-id token-id)
