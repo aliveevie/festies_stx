@@ -18,6 +18,26 @@ clarity_version = 2
 epoch = 2.5
 description = 'Enhanced NFT trait interface with comprehensive standards - Updated for Clarity 4'
 
+[contracts.dao-core]
+path = 'contracts/dao-core.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.badge-nft]
+path = 'contracts/badge-nft.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.market-stall]
+path = 'contracts/market-stall.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.quest-system]
+path = 'contracts/quest-system.clar'
+clarity_version = 2
+epoch = 2.5
+
 [repl.analysis]
 # passes = ["check_checker", "contract_checker"]
 
