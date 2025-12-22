@@ -11,3 +11,4 @@ Frontend boost: style(typography): update heading font weights - Mon Dec 22 13:3
 Frontend boost: refactor(hooks): extract custom hook for chainhook data - Mon Dec 22 13:33:17 WAT 2025
 Frontend boost: fix(layout): correct z-index stacking context - Mon Dec 22 13:33:17 WAT 2025
 Frontend boost: feat(nav): add sticky header on scroll - Mon Dec 22 13:33:17 WAT 2025
+Frontend boost: style(buttons): enhance hover states with scale effect - Mon Dec 22 13:33:17 WAT 2025
