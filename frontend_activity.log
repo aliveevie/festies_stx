@@ -9,3 +9,4 @@ Frontend boost: fix(animations): smooth out transition timing - Mon Dec 22 13:33
 Frontend boost: feat(ux): add loading skeletons for data fetch - Mon Dec 22 13:33:17 WAT 2025
 Frontend boost: style(typography): update heading font weights - Mon Dec 22 13:33:17 WAT 2025
 Frontend boost: refactor(hooks): extract custom hook for chainhook data - Mon Dec 22 13:33:17 WAT 2025
+Frontend boost: fix(layout): correct z-index stacking context - Mon Dec 22 13:33:17 WAT 2025
