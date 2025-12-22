@@ -17,3 +17,4 @@ Frontend boost: feat(notifications): integrate toast messages for events - Mon D
 Frontend boost: fix(search): debounce input handler - Mon Dec 22 13:33:18 WAT 2025
 Frontend boost: refactor(types): stricter typescript definitions for props - Mon Dec 22 13:33:18 WAT 2025
 Frontend boost: style(grid): use css grid for gallery layout - Mon Dec 22 13:33:18 WAT 2025
+Frontend boost: feat(dashboard): add charts for token statistics - Mon Dec 22 13:33:18 WAT 2025
