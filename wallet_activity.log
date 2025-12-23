@@ -10,3 +10,4 @@ Wallet boost: style(theme): adjust dropdown shadow for dark mode - Tue Dec 23 08
 Wallet boost: fix(mobile): stack network indicator in mobile menu - Tue Dec 23 08:08:10 WAT 2025
 Wallet boost: refactor(const): move network configs to separate file - Tue Dec 23 08:08:10 WAT 2025
 Wallet boost: style(btn): add hover gradient to verify button - Tue Dec 23 08:08:10 WAT 2025
+Wallet boost: perf(wallet): memoize auth status check - Tue Dec 23 08:08:10 WAT 2025
