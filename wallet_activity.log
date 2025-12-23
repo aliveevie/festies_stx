@@ -4,3 +4,4 @@ Wallet boost: feat(ui): add tooltip for network status - Tue Dec 23 08:08:09 WAT
 Wallet boost: refactor(hooks): start isolating wallet logic - Tue Dec 23 08:08:09 WAT 2025
 Wallet boost: style(balance): font mono for numeric display - Tue Dec 23 08:08:09 WAT 2025
 Wallet boost: test(wallet): add unit test for address validation - Tue Dec 23 08:08:09 WAT 2025
+Wallet boost: chore(deps): bump stacks-connect version - Tue Dec 23 08:08:09 WAT 2025
