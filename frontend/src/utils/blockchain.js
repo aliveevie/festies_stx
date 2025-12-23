@@ -46,8 +46,18 @@ const NETWORK_CONFIG = {
 
 // Get current network (default to testnet for development)
 const getCurrentNetwork = () => {
-  const network = process.env.NODE_ENV === 'production' ? 'mainnet' : 'testnet';
+  const network = localStorage.getItem('network') || (process.env.NODE_ENV === 'production' ? 'mainnet' : 'testnet');
   return NETWORK_CONFIG[network];
+};
+
+/**
+ * Switch network configuration
+ */
+export const switchNetwork = (networkName) => {
+  if (NETWORK_CONFIG[networkName]) {
+    localStorage.setItem('network', networkName);
+    window.location.reload();
+  }
 };
 
 // Initialize Stacks configuration
