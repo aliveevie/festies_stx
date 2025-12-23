@@ -7,3 +7,4 @@ Wallet boost: test(wallet): add unit test for address validation - Tue Dec 23 08
 Wallet boost: chore(deps): bump stacks-connect version - Tue Dec 23 08:08:09 WAT 2025
 Wallet boost: feat(a11y): add keyboard navigation for wallet menu - Tue Dec 23 08:08:09 WAT 2025
 Wallet boost: style(theme): adjust dropdown shadow for dark mode - Tue Dec 23 08:08:09 WAT 2025
+Wallet boost: fix(mobile): stack network indicator in mobile menu - Tue Dec 23 08:08:10 WAT 2025
