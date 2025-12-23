@@ -66,6 +66,15 @@ export const getAuthStatus = () => {
 };
 
 /**
+ * Validate Stacks address
+ */
+export const validateAddress = (address) => {
+  if (!address) return false;
+  // Basic validation for mainnet (SP) or testnet (ST) addresses
+  return /^[S][MP][0-9A-Z]{38,39}$/.test(address);
+};
+
+/**
  * Connect wallet
  */
 export const connectWallet = async () => {
