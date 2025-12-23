@@ -7,7 +7,6 @@ import { formatAddress } from '../utils';
 import { useLocalStorage, useBoolean } from '../hooks';
 import { useAuth } from '../contexts/AuthContext';
 import WalletBalance from './WalletBalance';
-import WalletBalance from './WalletBalance';
 import ConnectWalletButton from './ConnectWalletButton';
 import NetworkIndicator from './NetworkIndicator';
 
