@@ -111,6 +111,7 @@ const Header = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-4">
+            <NetworkIndicator />
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
