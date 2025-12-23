@@ -58,6 +58,13 @@ const Header = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
+  const copyAddress = () => {
+    if (userAddress) {
+      navigator.clipboard.writeText(userAddress);
+      toast.success('Address copied to clipboard!');
+    }
+  };
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen.toggle();
   };
