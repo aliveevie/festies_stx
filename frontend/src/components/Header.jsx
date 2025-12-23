@@ -7,6 +7,7 @@ import { formatAddress } from '../utils';
 import { useLocalStorage, useBoolean } from '../hooks';
 import { useAuth } from '../contexts/AuthContext';
 import WalletBalance from './WalletBalance';
+import ConnectWalletButton from './ConnectWalletButton';
 
 const navLinks = [
   { name: "Home", href: "/", icon: "🏠" },
