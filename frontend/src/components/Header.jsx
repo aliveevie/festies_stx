@@ -166,6 +166,21 @@ const Header = () => {
 
                       <div className="p-2">
                         <button
+                          onClick={async () => {
+                            try {
+                              const { signMessage } = await import('../utils/blockchain');
+                              await signMessage('Verifying ownership for Festies STX');
+                              toast.success('Identity verified successfully!');
+                            } catch (e) {
+                              toast.error('Verification failed');
+                            }
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                        >
+                          <span>🔐</span>
+                          <span>Verify Identity</span>
+                        </button>
+                        <button
                           onClick={handleDisconnectWallet}
                           className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                         >
