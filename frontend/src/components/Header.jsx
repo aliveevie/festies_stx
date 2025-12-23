@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaTicketAlt, FaWallet, FaUser, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
+import { toast } from 'react-hot-toast';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatAddress } from '../utils';
