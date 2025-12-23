@@ -16,3 +16,4 @@ Wallet boost: feat(ui): add loading state to balance fetch - Tue Dec 23 08:08:10
 Wallet boost: fix(z-index): ensure dropdown appears above overlays - Tue Dec 23 08:08:10 WAT 2025
 Wallet boost: style(toast): customize success icon for wallet actions - Tue Dec 23 08:08:11 WAT 2025
 Wallet boost: chore(i18n): prepare wallet strings for translation - Tue Dec 23 08:08:11 WAT 2025
+Wallet boost: refactor(header): simplify auth conditional rendering - Tue Dec 23 08:08:11 WAT 2025
