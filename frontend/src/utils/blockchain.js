@@ -674,6 +674,10 @@ export const handleBlockchainError = (error) => {
     return 'Token not found';
   } else if (error.message.includes('paused')) {
     return 'Contract is currently paused';
+  } else if (error.message.includes('ConflictingNonceInMempool')) {
+    return 'Transaction pending. Please wait for previous transaction to confirm.';
+  } else if (error.message.includes('NoEstimateAvailable')) {
+    return 'Could not estimate fee. Network might be congested.';
   } else {
     return error.message || 'An unexpected error occurred';
   }
