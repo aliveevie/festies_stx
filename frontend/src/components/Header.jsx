@@ -19,14 +19,14 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useBoolean(false);
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useBoolean(false);
   const [theme, setTheme] = useLocalStorage('theme', 'light');
-  
-  const { 
-    user, 
-    isConnected, 
-    userAddress, 
-    userDisplayName, 
-    connectWallet, 
-    disconnectWallet 
+
+  const {
+    user,
+    isConnected,
+    userAddress,
+    userDisplayName,
+    connectWallet,
+    disconnectWallet
   } = useAuth();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between min-h-[72px]">
           {/* Logo */}
-          <motion.div 
+          <motion.div
             className="flex items-center gap-3 pr-8"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -86,10 +86,9 @@ const Header = () => {
                 key={link.name}
                 to={link.href}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 text-white text-lg font-semibold hover:text-blue-200 transition-all duration-200 px-3 py-2 rounded-lg ${
-                    isActive 
-                      ? 'bg-white/20 text-blue-100 shadow-lg' 
-                      : 'hover:bg-white/10'
+                  `flex items-center gap-2 text-white text-lg font-semibold hover:text-blue-200 transition-all duration-200 px-3 py-2 rounded-lg ${isActive
+                    ? 'bg-white/20 text-blue-100 shadow-lg'
+                    : 'hover:bg-white/10'
                   }`
                 }
                 end={link.href === '/'}
@@ -148,7 +147,7 @@ const Header = () => {
                       className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
                     >
                       <div className="p-4 border-b border-gray-100">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 mb-3">
                           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                             <FaUser className="text-white text-lg" />
                           </div>
@@ -161,8 +160,9 @@ const Header = () => {
                             </p>
                           </div>
                         </div>
+                        <WalletBalance />
                       </div>
-                      
+
                       <div className="p-2">
                         <button
                           onClick={handleDisconnectWallet}
@@ -205,10 +205,9 @@ const Header = () => {
                     to={link.href}
                     onClick={() => setIsMobileMenuOpen.setFalse()}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 text-white text-lg font-semibold px-4 py-3 rounded-lg transition-all duration-200 ${
-                        isActive 
-                          ? 'bg-white/20 text-blue-100' 
-                          : 'hover:bg-white/10'
+                      `flex items-center gap-3 text-white text-lg font-semibold px-4 py-3 rounded-lg transition-all duration-200 ${isActive
+                        ? 'bg-white/20 text-blue-100'
+                        : 'hover:bg-white/10'
                       }`
                     }
                     end={link.href === '/'}
