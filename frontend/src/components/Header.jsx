@@ -157,9 +157,13 @@ const Header = () => {
                             <p className="font-semibold text-gray-900">
                               {userDisplayName}
                             </p>
-                            <p className="text-sm text-gray-500 font-mono">
+                            <button
+                              onClick={copyAddress}
+                              className="text-sm text-gray-500 font-mono hover:text-blue-500 transition-colors text-left"
+                              title="Click to copy address"
+                            >
                               {formatAddress(userAddress)}
-                            </p>
+                            </button>
                           </div>
                         </div>
                         <WalletBalance />
