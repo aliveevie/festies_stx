@@ -1,3 +1,4 @@
 Wallet boost: style(wallet): improve connect modal backdrop blur - Tue Dec 23 08:08:08 WAT 2025
 Wallet boost: fix(wallet): ensure disconnect clears local storage - Tue Dec 23 08:08:08 WAT 2025
 Wallet boost: feat(ui): add tooltip for network status - Tue Dec 23 08:08:09 WAT 2025
+Wallet boost: refactor(hooks): start isolating wallet logic - Tue Dec 23 08:08:09 WAT 2025
