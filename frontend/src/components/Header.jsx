@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { formatAddress } from '../utils';
 import { useLocalStorage, useBoolean } from '../hooks';
 import { useAuth } from '../contexts/AuthContext';
+import WalletBalance from './WalletBalance';
 
 const navLinks = [
   { name: "Home", href: "/", icon: "🏠" },
