@@ -115,15 +115,7 @@ const Header = () => {
 
             {/* Wallet Connect/User Menu */}
             {!isConnected ? (
-              <motion.button
-                onClick={handleConnectWallet}
-                className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 font-bold rounded-xl shadow-lg hover:bg-blue-50 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <FaWallet className="text-lg" />
-                Connect Wallet
-              </motion.button>
+              <ConnectWalletButton />
             ) : (
               <div className="relative">
                 <motion.button
