@@ -89,6 +89,36 @@ export const connectWallet = async () => {
 };
 
 /**
+ * Sign a message for verification
+ */
+export const signMessage = async (message) => {
+  try {
+    const { openSignatureRequestPopup } = await import('@stacks/connect');
+    const network = getCurrentNetwork();
+
+    return new Promise((resolve, reject) => {
+      openSignatureRequestPopup({
+        message,
+        network: network.network,
+        appDetails: {
+          name: 'Festies - Stacks NFT Experience',
+          icon: 'https://assets.website-files.com/5f8b9e7o/f3.png',
+        },
+        onFinish: (data) => {
+          resolve(data);
+        },
+        onCancel: () => {
+          reject(new Error('Signature request cancelled'));
+        },
+      });
+    });
+  } catch (error) {
+    console.error('Failed to sign message:', error);
+    throw new Error('Failed to sign message');
+  }
+};
+
+/**
  * Disconnect wallet
  */
 export const disconnectWallet = () => {
