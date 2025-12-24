@@ -174,3 +174,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
+// Logic phase 21
