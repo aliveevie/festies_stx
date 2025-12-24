@@ -118,3 +118,8 @@ Project Link: [https://github.com/aliveevie/festies_stx](https://github.com/aliv
 - Clarity Language
 - React Community
 - All contributors and supporters
+## Technical Stack
+- **Frontend**: React, Vite, Framer Motion, Tailwind CSS
+- **Smart Contracts**: Clarity (Stacks Blockchain)
+- **Data Indexing**: Chainhook
+- **State Management**: React Query
