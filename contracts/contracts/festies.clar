@@ -13,7 +13,7 @@
 (define-non-fungible-token GreetingCard uint)
 
 ;; Enhanced error constants with descriptive codes
-(define-constant ERR_OWNER_ONLY (err u100))
+(define-constant ERR_OWNER_ONLY (err u403))
 (define-constant ERR_NOT_TOKEN_OWNER (err u101))
 (define-constant ERR_INVALID_INPUT (err u102))
 (define-constant ERR_NOT_AUTHORIZED (err u103))
