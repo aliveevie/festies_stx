@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { FaTicketAlt, FaWallet, FaUser, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import { toast } from 'react-hot-toast';
@@ -248,4 +249,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header; Header.propTypes = {};
