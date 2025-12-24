@@ -26,3 +26,4 @@
         (ok true)
     )
 )
+;; Quest System for Festival Gamification
