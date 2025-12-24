@@ -24,3 +24,4 @@ const ConnectWalletButton = ({ className, label = "Connect Wallet" }) => {
 
 export default ConnectWalletButton;
 // UI phase 36
+// UI phase 37
