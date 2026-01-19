@@ -245,3 +245,4 @@ export default Footer; // Footer build 1
 // Footer docs update
 // Footer style update
 // Footer v1.1.0
+// Footer cleanup
