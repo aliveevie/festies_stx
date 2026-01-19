@@ -276,3 +276,4 @@ export default GreetingCard;
 // Card refactor 1
 // Card docs update
 // Card style update
+// Card v1.1.0
