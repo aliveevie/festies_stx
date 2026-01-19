@@ -39,3 +39,4 @@
 // Badge refactor 1
 // Badge docs update
 // Badge style update
+// Badge v1.1.0
