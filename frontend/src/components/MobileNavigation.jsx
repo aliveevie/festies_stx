@@ -203,3 +203,4 @@ const MobileNavigation = () => {
 };
 
 export default MobileNavigation;
+// Style improvement 31
