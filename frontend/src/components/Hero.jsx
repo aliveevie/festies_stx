@@ -221,3 +221,4 @@ const Hero = () => {
 
 export default Hero; // Hero build 1
 // Hero build 2
+// Hero optimization 1
