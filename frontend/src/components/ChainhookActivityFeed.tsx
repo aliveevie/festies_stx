@@ -52,15 +52,31 @@ const ChainhookActivityFeed: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-6 shadow-xl w-full max-w-md">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+    <motion.div 
+      className="bg-gradient-to-br from-white/20 via-purple-50/20 to-pink-50/20 backdrop-blur-xl border-2 border-white/30 rounded-2xl p-6 shadow-2xl w-full max-w-md"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ scale: 1.02 }}
+    >
+      <div className="flex items-center justify-between mb-6">
+        <motion.h3 
+          className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500"
+          animate={{ 
+            backgroundPosition: ["0%", "100%", "0%"],
+          }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
           Live Chain Activity
-        </h3>
-        <span className="flex h-3 w-3 relative">
+        </motion.h3>
+        <motion.span 
+          className="flex h-4 w-4 relative"
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-        </span>
+          <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 shadow-lg shadow-green-500/50"></span>
+        </motion.span>
       </div>
       
       <div className="space-y-4">
@@ -68,11 +84,12 @@ const ChainhookActivityFeed: React.FC = () => {
           {events.map((event) => (
             <motion.div
               key={event.id}
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="bg-black/20 rounded-lg p-3 border border-white/5 hover:border-white/10 transition-colors"
+              initial={{ opacity: 0, y: -20, scale: 0.9, x: -20 }}
+              animate={{ opacity: 1, y: 0, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.9, x: 20 }}
+              transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+              className="bg-gradient-to-r from-black/20 via-black/10 to-transparent rounded-xl p-4 border-2 border-white/10 hover:border-white/30 transition-all duration-300 backdrop-blur-sm"
+              whileHover={{ scale: 1.05, x: 5 }}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-full ${
