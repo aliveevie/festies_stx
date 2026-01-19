@@ -226,3 +226,4 @@ export default Hero; // Hero build 1
 // Hero docs update
 // Hero style update
 // Hero v1.1.0
+// Hero cleanup
