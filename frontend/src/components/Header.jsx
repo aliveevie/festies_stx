@@ -257,3 +257,4 @@ export default Header; Header.propTypes = {};
 // Header docs update
 // Header style update
 // Header v1.1.0
+// Header cleanup
