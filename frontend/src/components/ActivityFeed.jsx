@@ -360,3 +360,4 @@ export default ActivityFeed;
 // Activity refactor 1
 // Activity docs update
 // Activity style update
+// Activity v1.1.0
