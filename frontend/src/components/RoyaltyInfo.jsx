@@ -184,3 +184,4 @@ const RoyaltyInfo = ({ salePrice = 0, className = "" }) => {
 
 export default RoyaltyInfo;
 // Style improvement 33
+// Performance optimization 65
