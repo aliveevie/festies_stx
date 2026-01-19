@@ -196,3 +196,4 @@ const About = () => {
 };
 
 export default About;
+// Style improvement 38
