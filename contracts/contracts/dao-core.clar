@@ -51,3 +51,4 @@
     (ok (map-get? proposals id))
 )
 // DAO v1.0.1
+// DAO v1.0.2
