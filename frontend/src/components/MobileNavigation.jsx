@@ -54,12 +54,22 @@ const MobileNavigation = () => {
   return (
     <>
       {/* Mobile Menu Button */}
-      <button
+      <motion.button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-110"
+        className="lg:hidden fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-blue-500/50 transition-all duration-300"
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
+        animate={{ 
+          boxShadow: [
+            "0 20px 25px -5px rgba(59, 130, 246, 0.3)",
+            "0 20px 25px -5px rgba(147, 51, 234, 0.4)",
+            "0 20px 25px -5px rgba(59, 130, 246, 0.3)"
+          ]
+        }}
+        transition={{ duration: 2, repeat: Infinity }}
       >
         <FaBars className="text-xl" />
-      </button>
+      </motion.button>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
@@ -80,43 +90,60 @@ const MobileNavigation = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 lg:hidden"
+              className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 backdrop-blur-md shadow-2xl z-50 lg:hidden border-l border-gray-200"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-800">Menu</h2>
-                <button
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-purple-500">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <span className="text-2xl">🎁</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-white">Festies Menu</h2>
+                </div>
+                <motion.button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                  className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors"
+                  whileHover={{ rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <FaTimes className="text-xl" />
-                </button>
+                </motion.button>
               </div>
 
               {/* Navigation Items */}
               <nav className="flex-1 overflow-y-auto">
                 <div className="p-4 space-y-2">
-                  {navItems.map((item) => (
-                    <NavLink
+                  {navItems.map((item, idx) => (
+                    <motion.div
                       key={item.name}
-                      to={item.href}
-                      className={({ isActive }) =>
-                        `flex items-center gap-4 p-4 rounded-xl transition-all duration-200 ${
-                          isActive
-                            ? 'bg-blue-50 text-blue-600 border border-blue-200'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`
-                      }
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        location.pathname === item.href
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {item.icon}
-                      </div>
-                      <span className="font-semibold">{item.name}</span>
-                    </NavLink>
+                      <NavLink
+                        to={item.href}
+                        className={({ isActive }) =>
+                          `flex items-center gap-4 p-4 rounded-xl transition-all duration-300 transform ${
+                            isActive
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                              : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:scale-102'
+                          }`
+                        }
+                      >
+                        <motion.div 
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                            location.pathname === item.href
+                              ? 'bg-white/20 backdrop-blur-sm text-white'
+                              : 'bg-gray-100 text-gray-600 group-hover:bg-blue-100'
+                          }`}
+                          whileHover={{ rotate: 360 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          {item.icon}
+                        </motion.div>
+                        <span className="font-semibold text-lg">{item.name}</span>
+                      </NavLink>
+                    </motion.div>
                   ))}
                 </div>
 
