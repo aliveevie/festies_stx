@@ -40,3 +40,4 @@
 // Badge docs update
 // Badge style update
 // Badge v1.1.0
+// Badge cleanup
