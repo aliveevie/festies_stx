@@ -1,18 +1,38 @@
-;; Enhanced Festival Greetings NFT Contract
+;; ============================================================================
+;; Festies - Festival Greetings NFT Contract v2.3.0
+;; ============================================================================
 ;; Professional NFT implementation with comprehensive features and standards
 ;; Updated for Clarity 4 compatibility
+;; 
+;; Features:
+;; - SIP-009 compliant NFT standard
+;; - Royalty support for creators
+;; - Advanced approval system
+;; - Batch operations for efficiency
+;; - Time-based utility functions
+;; - Comprehensive event tracking
+;; ============================================================================
+
 (impl-trait .nft-trait.nft-trait)
 
-;; Contract metadata and configuration
+;; ----------------------------------------------------------------------------
+;; Contract Metadata and Configuration
+;; ----------------------------------------------------------------------------
 (define-constant CONTRACT_NAME "Festival Greetings")
 (define-constant CONTRACT_SYMBOL "FESTIE")
-(define-constant CONTRACT_VERSION "2.1.0")
+(define-constant CONTRACT_VERSION "2.3.0")
 (define-constant CONTRACT_DESCRIPTION "Professional NFT contract for festival greetings with royalty support and advanced features - Updated for Clarity 4")
 
-;; Define the NFT type
+;; ----------------------------------------------------------------------------
+;; NFT Token Definition
+;; ----------------------------------------------------------------------------
+;; Each GreetingCard is a unique non-fungible token identified by a uint ID
 (define-non-fungible-token GreetingCard uint)
 
-;; Enhanced error constants with descriptive codes
+;; ----------------------------------------------------------------------------
+;; Error Constants
+;; ----------------------------------------------------------------------------
+;; Comprehensive error codes for better debugging and user experience
 (define-constant ERR_OWNER_ONLY (err u403))
 (define-constant ERR_NOT_TOKEN_OWNER (err u101))
 (define-constant ERR_INVALID_INPUT (err u102))
@@ -24,17 +44,25 @@
 (define-constant ERR_INVALID_TIMESTAMP (err u108))
 (define-constant ERR_CONTRACT_NOT_FOUND (err u109))
 
-;; Contract state variables
+;; ----------------------------------------------------------------------------
+;; Contract State Variables
+;; ----------------------------------------------------------------------------
 (define-data-var contract-owner principal tx-sender)
 (define-data-var next-token-id uint u1)
 (define-data-var total-supply uint u0)
 (define-data-var is-paused bool false)
 
-;; Royalty configuration
-(define-data-var royalty-percentage uint u5) ;; 5% default
+;; ----------------------------------------------------------------------------
+;; Royalty Configuration
+;; ----------------------------------------------------------------------------
+;; Default royalty is 5% (u5 represents 5%)
+(define-data-var royalty-percentage uint u5)
 (define-data-var royalty-recipient principal tx-sender)
 
-;; Enhanced data structure with creation timestamp
+;; ----------------------------------------------------------------------------
+;; NFT Metadata Structure
+;; ----------------------------------------------------------------------------
+;; Comprehensive data structure storing all greeting card information
 (define-map greeting-data uint (tuple 
     (name (string-ascii 40))
     (festival (string-ascii 100))
@@ -46,14 +74,23 @@
     (created-at uint)
 ))
 
-;; Approval system
+;; ----------------------------------------------------------------------------
+;; Approval System
+;; ----------------------------------------------------------------------------
+;; Single token approvals and operator approvals for marketplace integration
 (define-map token-approvals uint principal)
 (define-map operator-approvals (tuple (owner principal) (operator principal)) bool)
 
-;; Owner statistics tracking
+;; ----------------------------------------------------------------------------
+;; Owner Statistics
+;; ----------------------------------------------------------------------------
+;; Track token counts per owner for efficient queries
 (define-map owner-token-count principal uint)
 
-;; Events for better tracking
+;; ----------------------------------------------------------------------------
+;; Event Constants
+;; ----------------------------------------------------------------------------
+;; Standardized event names for blockchain event tracking
 (define-constant EVENT_MINT "mint")
 (define-constant EVENT_TRANSFER "transfer")
 (define-constant EVENT_BURN "burn")
