@@ -213,46 +213,81 @@ const ActivityFeed = ({
   }
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg border border-gray-200 p-6 ${className}`}>
+    <motion.div 
+      className={`bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-8 ${className}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-            <FaBell className="text-white text-lg" />
-          </div>
+      <div className="flex items-center justify-between mb-8">
+        <motion.div 
+          className="flex items-center gap-4"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <motion.div 
+            className="w-14 h-14 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            <FaBell className="text-white text-xl" />
+          </motion.div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">Activity Feed</h3>
-            <p className="text-sm text-gray-600">
-              {activities.length} recent activities
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Activity Feed
+            </h3>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-bold text-blue-600">{activities.length}</span> recent activities
               {autoRefresh && (
-                <span className="ml-2 text-blue-600">
+                <motion.span 
+                  className="ml-2 text-green-600 font-semibold"
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
                   • Auto-refresh enabled
-                </span>
+                </motion.span>
               )}
             </p>
           </div>
-        </div>
+        </motion.div>
 
         <div className="flex items-center gap-3">
           {isRefreshing && (
-            <FaSpinner className="text-blue-500 animate-spin" />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            >
+              <FaSpinner className="text-blue-500 text-xl" />
+            </motion.div>
           )}
           
-          <button
+          <motion.button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-md hover:shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: isRefreshing ? 1 : 1.05 }}
+            whileTap={{ scale: isRefreshing ? 1 : 0.95 }}
           >
             <FaRefresh />
             Refresh
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* Last refresh indicator */}
-      <div className="mb-4 text-xs text-gray-500">
-        Last updated: {getTimeAgo(lastRefresh)}
-      </div>
+      <motion.div 
+        className="mb-6 text-xs text-gray-500 bg-blue-50 px-4 py-2 rounded-lg border border-blue-100"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+          <span>Last updated: <span className="font-semibold">{getTimeAgo(lastRefresh)}</span></span>
+        </div>
+      </motion.div>
 
       {/* Activity List */}
       <div className="space-y-4">
@@ -260,18 +295,23 @@ const ActivityFeed = ({
           {activities.map((activity, index) => (
             <motion.div
               key={activity.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: -20, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 20, scale: 0.95 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200"
+              className="flex items-start gap-4 p-5 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]"
+              whileHover={{ y: -2 }}
             >
               {/* Activity Icon */}
-              <div className="flex-shrink-0">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${activityTypes[activity.type].color}`}>
+              <motion.div 
+                className="flex-shrink-0"
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-md ${activityTypes[activity.type].color}`}>
                   {activityTypes[activity.type].icon}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Activity Content */}
               <div className="flex-1 min-w-0">
@@ -305,23 +345,27 @@ const ActivityFeed = ({
 
               {/* Actions */}
               <div className="flex items-center gap-2">
-                <button
+                <motion.button
                   onClick={() => handleCopyTxId(activity.txId)}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-2.5 text-gray-400 hover:text-blue-600 bg-gray-50 hover:bg-blue-50 rounded-lg transition-all duration-300"
                   title="Copy Transaction ID"
+                  whileHover={{ scale: 1.1, rotate: 180 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <FaCopy className="text-sm" />
-                </button>
+                </motion.button>
                 
-                <a
+                <motion.a
                   href={activity.explorerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-2.5 text-gray-400 hover:text-purple-600 bg-gray-50 hover:bg-purple-50 rounded-lg transition-all duration-300"
                   title="View on Explorer"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <FaExternalLinkAlt className="text-sm" />
-                </a>
+                </motion.a>
               </div>
             </motion.div>
           ))}
