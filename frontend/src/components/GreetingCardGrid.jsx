@@ -242,44 +242,103 @@ const GreetingCardGrid = ({
   if (isLoading) {
     return (
       <div className={`flex items-center justify-center h-64 ${className}`}>
-        <div className="text-center">
-          <FaSpinner className="text-blue-500 text-3xl animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading greeting cards...</p>
-        </div>
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+            <FaSpinner className="text-blue-500 text-4xl mx-auto mb-4" />
+          </motion.div>
+          <motion.p 
+            className="text-gray-600 text-lg font-medium"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            Loading greeting cards...
+          </motion.p>
+          <div className="flex gap-2 justify-center mt-4">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="w-2 h-2 bg-blue-500 rounded-full"
+                animate={{
+                  scale: [1, 1.5, 1],
+                  opacity: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+              />
+            ))}
+          </div>
+        </motion.div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={`text-center py-12 ${className}`}>
-        <FaExclamationTriangle className="text-red-500 text-4xl mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Cards</h3>
-        <p className="text-gray-600 mb-4">{error}</p>
-        <button
+      <motion.div 
+        className={`text-center py-12 ${className}`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <FaExclamationTriangle className="text-red-500 text-5xl mx-auto mb-4" />
+        </motion.div>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Cards</h3>
+        <p className="text-gray-600 mb-6 text-lg">{error}</p>
+        <motion.button
           onClick={loadNFTs}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mx-auto"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl mx-auto font-semibold"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           <FaRefresh />
           Try Again
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
     );
   }
 
   if (filteredAndSortedNFTs.length === 0) {
     return (
-      <div className={`text-center py-12 ${className}`}>
-        <div className="text-6xl mb-4">🎁</div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">No Greeting Cards Found</h3>
-        <p className="text-gray-600 mb-4">
+      <motion.div 
+        className={`text-center py-16 ${className}`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          className="text-8xl mb-6"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [0, 10, -10, 0]
+          }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
+          🎁
+        </motion.div>
+        <h3 className="text-3xl font-bold text-gray-800 mb-3">No Greeting Cards Found</h3>
+        <p className="text-gray-600 mb-6 text-lg max-w-md mx-auto">
           {nfts.length === 0 
             ? "No greeting cards have been minted yet. Be the first to create one!"
             : "No cards match your current filters. Try adjusting your search criteria."
           }
         </p>
         {nfts.length > 0 && (
-          <button
+          <motion.button
             onClick={() => {
               setSearchTerm('');
               setFilters((prev) => ({
@@ -289,12 +348,14 @@ const GreetingCardGrid = ({
                 sortOrder: 'desc'
               }));
             }}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl hover:from-gray-200 hover:to-gray-300 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             Clear Filters
-          </button>
+          </motion.button>
         )}
-      </div>
+      </motion.div>
     );
   }
 
@@ -310,15 +371,25 @@ const GreetingCardGrid = ({
       />
 
       {/* Refresh Button */}
-      <div className="flex justify-end mb-6">
-        <button
+      <motion.div 
+        className="flex justify-between items-center mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="text-sm text-gray-600 font-medium">
+          Showing <span className="font-bold text-blue-600">{filteredAndSortedNFTs.length}</span> of <span className="font-bold text-gray-800">{nfts.length}</span> cards
+        </div>
+        <motion.button
           onClick={loadNFTs}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           <FaRefresh />
           Refresh
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* NFT Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
