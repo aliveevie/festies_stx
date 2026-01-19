@@ -255,3 +255,4 @@ export default Header; Header.propTypes = {};
 // Header optimization 1
 // Header refactor 1
 // Header docs update
+// Header style update
