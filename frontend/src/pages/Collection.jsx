@@ -191,3 +191,4 @@ const Collection = () => {
 };
 
 export default Collection;
+// Style improvement 39
