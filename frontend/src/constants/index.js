@@ -15,3 +15,4 @@
 // Constants docs update
 // Constants style update
 // Constants v1.1.0
+// Constants cleanup
