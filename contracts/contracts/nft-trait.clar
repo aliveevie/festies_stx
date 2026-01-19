@@ -27,3 +27,4 @@
 // Trait refactor 1
 // Trait docs update
 // Trait style update
+// Trait v1.1.0
