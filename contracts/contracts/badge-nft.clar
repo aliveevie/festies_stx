@@ -36,3 +36,4 @@
 // Badge v1.0.1
 // Badge v1.0.2
 // Badge optimization 1
+// Badge refactor 1
