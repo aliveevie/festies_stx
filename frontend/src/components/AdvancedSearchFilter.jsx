@@ -362,3 +362,4 @@ const AdvancedSearchFilter = ({
 
 export default AdvancedSearchFilter;
 // Style improvement 27
+// Performance optimization 58
