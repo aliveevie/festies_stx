@@ -124,3 +124,4 @@ export const VALIDATION = {
   FESTIVAL_MAX_LENGTH: 100,
   URI_MAX_LENGTH: 500,
 };
+// Style improvement 50
