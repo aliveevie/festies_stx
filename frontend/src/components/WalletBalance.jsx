@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FaCoins, FaSpinner } from 'react-icons/fa';
 import { useAuth } from '../contexts/AuthContext';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
 
@@ -39,14 +40,36 @@ const WalletBalance = () => {
     if (!userAddress) return null;
 
     return (
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50/50 rounded-lg border border-blue-100">
-            <span className="text-xs font-bold text-blue-600">STX</span>
+        <motion.div 
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 shadow-md hover:shadow-lg transition-all duration-300"
+            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+        >
+            <motion.div
+                animate={{ rotate: isLoading ? 360 : 0 }}
+                transition={{ duration: 1, repeat: isLoading ? Infinity : 0, ease: "linear" }}
+            >
+                {isLoading ? (
+                    <FaSpinner className="text-blue-500 text-sm" />
+                ) : (
+                    <FaCoins className="text-blue-600 text-sm" />
+                )}
+            </motion.div>
+            <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-md">STX</span>
             {isLoading ? (
-                <div className="w-12 h-4 bg-blue-200/50 animate-pulse rounded" />
+                <div className="w-16 h-4 bg-gradient-to-r from-blue-200 to-purple-200 animate-pulse rounded-md" />
             ) : (
-                <span className="font-mono font-medium text-gray-700">{balance ?? '0.00'}</span>
+                <motion.span 
+                    className="font-mono font-semibold text-gray-800"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    {balance ?? '0.00'}
+                </motion.span>
             )}
-        </div>
+        </motion.div>
     );
 };
 
