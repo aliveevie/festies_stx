@@ -287,3 +287,4 @@ export const scrollToElement = (target, options = {}) => {
 // Utils build 2
 // Utils optimization 1
 // Utils refactor 1
+// Utils docs update
