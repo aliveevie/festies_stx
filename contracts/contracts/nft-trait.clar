@@ -1,5 +1,6 @@
-;; Enhanced NFT Trait for Festival Greetings
-;; Implements comprehensive NFT standards with metadata and approval support
+;; Enhanced NFT Trait for Festival Greetings v1.0.0
+;; Implements SIP-009 compliant NFT interface
+;; Provides standard methods for NFT operations
 
 (define-trait nft-trait (
   (get-last-token-id

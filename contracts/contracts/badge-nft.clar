@@ -1,5 +1,6 @@
-;; Badge NFT
-;; Soulbound token for achievements
+;; Badge NFT v1.0.0
+;; Soulbound achievement token for Festies platform
+;; Non-transferable recognition tokens
 
 (impl-trait .nft-trait.nft-trait)
 

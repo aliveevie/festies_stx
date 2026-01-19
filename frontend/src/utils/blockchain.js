@@ -1,9 +1,302 @@
-// Updated with JSDoc
 /**
- * Fetches the current STX address from the connected wallet.
- * @returns {Promise<string|null>} The STX address or null if not connected.
+ * Lightweight mock blockchain helpers to keep the UI usable without a live Stacks backend.
+ * All functions mirror the real contract interfaces but operate on local state.
  */
-export const getSTXAddress = async () => {
-  // Implementation...
-  return null;
+
+const SESSION_KEY = 'stacks-session';
+const STATE_KEY = 'festies-mock-chain';
+const DEFAULT_OWNER = 'ST3J2GVMMM2R07ZFBJDWTYEYAR8HX1YY6B7Z4KSB9';
+const DEFAULT_ROYALTY_RECIPIENT = 'ST2C2YYX8Z9W8Z4G3V1N2N5T2V1G5Q5C6Z7T5KX5Z';
+const DEFAULT_ROYALTY_PERCENTAGE = 5;
+
+const canUseStorage = typeof localStorage !== 'undefined';
+
+const sampleTokens = () => {
+  const now = Math.floor(Date.now() / 1000);
+  return [
+    {
+      tokenId: 1,
+      metadata: {
+        name: 'Alex',
+        message: 'Thanks for celebrating with me!',
+        festival: 'Festival',
+        imageUri: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80',
+        metadataUri: 'https://festies.example.com/meta/1',
+        sender: DEFAULT_OWNER,
+        recipient: DEFAULT_OWNER,
+        createdAt: now - 86400
+      },
+      owner: DEFAULT_OWNER,
+      approvedOperator: null
+    },
+    {
+      tokenId: 2,
+      metadata: {
+        name: 'Jordan',
+        message: 'Happy Birthday! Wishing you all the joy in the world.',
+        festival: 'Birthday',
+        imageUri: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=600&q=80',
+        metadataUri: 'https://festies.example.com/meta/2',
+        sender: DEFAULT_OWNER,
+        recipient: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+        createdAt: now - 432000
+      },
+      owner: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      approvedOperator: null
+    }
+  ];
+};
+
+const loadState = () => {
+  if (canUseStorage) {
+    try {
+      const stored = localStorage.getItem(STATE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch (error) {
+      console.warn('Unable to load stored mock chain state:', error);
+    }
+  }
+
+  const tokens = sampleTokens();
+  return {
+    tokens,
+    lastTokenId: tokens.length,
+    owner: DEFAULT_OWNER,
+    paused: false,
+    royalty: {
+      recipient: DEFAULT_ROYALTY_RECIPIENT,
+      percentage: DEFAULT_ROYALTY_PERCENTAGE
+    }
+  };
+};
+
+let inMemoryState = loadState();
+
+const persistState = () => {
+  if (!canUseStorage) return;
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify(inMemoryState));
+  } catch (error) {
+    console.warn('Unable to persist mock chain state:', error);
+  }
+};
+
+const getState = () => {
+  if (!inMemoryState) {
+    inMemoryState = loadState();
+  }
+  return inMemoryState;
+};
+
+const delay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const formatSTX = (amount = 0, decimals = 6) => {
+  const numericAmount = Number.isFinite(amount) ? amount : 0;
+  const stxAmount = numericAmount / Math.pow(10, decimals);
+
+  return `${stxAmount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 6
+  })} STX`;
+};
+
+export const getAuthStatus = () => {
+  if (canUseStorage) {
+    try {
+      const stored = localStorage.getItem(SESSION_KEY);
+      if (stored) {
+        return { isSignedIn: true, userData: JSON.parse(stored) };
+      }
+    } catch (error) {
+      console.warn('Failed to read auth session:', error);
+    }
+  }
+
+  return { isSignedIn: false, userData: null };
+};
+
+export const connectWallet = async () => {
+  const mockUser = {
+    profile: {
+      name: 'Festies Demo User',
+      username: 'festies-user',
+      stxAddress: {
+        testnet: 'ST2C2YYX8Z9W8Z4G3V1N2N5T2V1G5Q5C6Z7T5KX5Z',
+        mainnet: 'SP2C2YYX8Z9W8Z4G3V1N2N5T2V1G5Q5C6Z7T5KX5Z'
+      }
+    }
+  };
+
+  if (canUseStorage) {
+    try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(mockUser));
+      localStorage.setItem('stacks-session', JSON.stringify(mockUser));
+    } catch (error) {
+      console.warn('Failed to persist wallet session:', error);
+    }
+  }
+
+  return mockUser;
+};
+
+export const disconnectWallet = () => {
+  if (!canUseStorage) return;
+  try {
+    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem('stacks-session');
+  } catch (error) {
+    console.warn('Failed to clear wallet session:', error);
+  }
+};
+
+const getActiveAddress = () => {
+  const session = getAuthStatus();
+  return session.userData?.profile?.stxAddress?.testnet || null;
+};
+
+export const handleBlockchainError = (error) => {
+  if (!error) return 'Unknown error occurred';
+
+  if (typeof error === 'string') return error;
+  if (error?.message) return error.message;
+
+  return 'An unexpected blockchain error occurred';
+};
+
+export const getContractInfo = async () => ({
+  name: 'Festival Greetings',
+  symbol: 'FESTIE',
+  version: '2.1.0',
+  description: 'Professional NFT contract for festival greetings with royalty support and advanced metadata.'
+});
+
+export const getContractStatus = async () => {
+  const state = getState();
+  return {
+    owner: state.owner,
+    paused: !!state.paused,
+    royaltyPercentage: state.royalty.percentage,
+    royaltyRecipient: state.royalty.recipient
+  };
+};
+
+export const getRoyaltyInfo = async () => {
+  const status = await getContractStatus();
+  return {
+    recipient: status.royaltyRecipient,
+    percentage: status.royaltyPercentage
+  };
+};
+
+export const calculateRoyalty = async (salePrice) => {
+  const info = await getRoyaltyInfo();
+  const price = Number.isFinite(salePrice) ? salePrice : 0;
+  return Math.floor((price * info.percentage) / 100);
+};
+
+export const getTotalSupply = async () => getState().tokens.length;
+
+export const getLastTokenId = async () => getState().lastTokenId || 0;
+
+export const getTokenMetadata = async (tokenId) => {
+  const token = getState().tokens.find((t) => t.tokenId === Number(tokenId));
+  return token ? token.metadata : null;
+};
+
+export const getTokenOwner = async (tokenId) => {
+  const token = getState().tokens.find((t) => t.tokenId === Number(tokenId));
+  return token ? token.owner : null;
+};
+
+export const getApproved = async (tokenId) => {
+  const token = getState().tokens.find((t) => t.tokenId === Number(tokenId));
+  return token ? token.approvedOperator : null;
+};
+
+export const mintGreetingCard = async (greetingData) => {
+  const state = getState();
+  const nextTokenId = (state.lastTokenId || 0) + 1;
+  const sender = getActiveAddress() || greetingData.sender || state.owner;
+  const owner = greetingData.recipient || greetingData.recipientAddress || sender;
+
+  const metadata = {
+    name: greetingData.name || 'Festies Friend',
+    message: greetingData.message || '',
+    festival: greetingData.festival || 'Festival',
+    imageUri: greetingData.imageUri || '',
+    metadataUri: greetingData.metadataUri || '',
+    sender,
+    recipient: owner,
+    createdAt: Math.floor(Date.now() / 1000)
+  };
+
+  state.tokens.push({
+    tokenId: nextTokenId,
+    metadata,
+    owner,
+    approvedOperator: null
+  });
+
+  state.lastTokenId = nextTokenId;
+  persistState();
+
+  return { txId: `mock-tx-${nextTokenId}`, tokenId: nextTokenId };
+};
+
+export const waitForTransaction = async (txId) => {
+  await delay(700);
+  const tokenId = Number((txId || '').replace('mock-tx-', '')) || 0;
+
+  return {
+    success: true,
+    data: {
+      tx_status: 'success',
+      tx_id: txId,
+      tx_result: {
+        value: { value: tokenId }
+      }
+    }
+  };
+};
+
+export const transferNFT = async (tokenId, recipient) => {
+  const state = getState();
+  const token = state.tokens.find((t) => t.tokenId === Number(tokenId));
+
+  if (!token) throw new Error('Token not found');
+  token.owner = recipient;
+  token.approvedOperator = null;
+  persistState();
+  return true;
+};
+
+export const approveNFT = async (tokenId, operator) => {
+  const state = getState();
+  const token = state.tokens.find((t) => t.tokenId === Number(tokenId));
+
+  if (!token) throw new Error('Token not found');
+  token.approvedOperator = operator;
+  persistState();
+  return true;
+};
+
+export const revokeApproval = async (tokenId) => {
+  const state = getState();
+  const token = state.tokens.find((t) => t.tokenId === Number(tokenId));
+
+  if (!token) throw new Error('Token not found');
+  token.approvedOperator = null;
+  persistState();
+  return true;
+};
+
+export const burnNFT = async (tokenId) => {
+  const state = getState();
+  const index = state.tokens.findIndex((t) => t.tokenId === Number(tokenId));
+
+  if (index === -1) throw new Error('Token not found');
+
+  state.tokens.splice(index, 1);
+  persistState();
+  return true;
 };

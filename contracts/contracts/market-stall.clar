@@ -1,5 +1,6 @@
-;; Market Stall
-;; Simple marketplace for listing items
+;; Market Stall v1.0.0
+;; Marketplace contract for Festies NFT trading
+;; Enables listing and purchasing of greeting cards
 
 (define-data-var listing-fee uint u100)
 

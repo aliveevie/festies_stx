@@ -119,22 +119,29 @@ const GreetingCardGrid = ({
       }
 
       // Filter by festival
-      if (filterFestival) {
-        return nft.metadata.festival.toLowerCase().includes(filterFestival.toLowerCase());
+      if (filters.festival) {
+        return nft.metadata.festival.toLowerCase().includes(filters.festival.toLowerCase());
       }
 
       return true;
     })
     .sort((a, b) => {
+      const sortBy = filters.sortBy || 'newest';
+      const sortOrder = filters.sortOrder || 'desc';
+
       switch (sortBy) {
         case 'newest':
           return b.metadata.createdAt - a.metadata.createdAt;
         case 'oldest':
           return a.metadata.createdAt - b.metadata.createdAt;
         case 'name':
-          return a.metadata.name.localeCompare(b.metadata.name);
+          return sortOrder === 'asc'
+            ? a.metadata.name.localeCompare(b.metadata.name)
+            : b.metadata.name.localeCompare(a.metadata.name);
         case 'festival':
-          return a.metadata.festival.localeCompare(b.metadata.festival);
+          return sortOrder === 'asc'
+            ? a.metadata.festival.localeCompare(b.metadata.festival)
+            : b.metadata.festival.localeCompare(a.metadata.festival);
         default:
           return 0;
       }
@@ -275,7 +282,12 @@ const GreetingCardGrid = ({
           <button
             onClick={() => {
               setSearchTerm('');
-              setFilterFestival('');
+              setFilters((prev) => ({
+                ...prev,
+                festival: '',
+                sortBy: 'newest',
+                sortOrder: 'desc'
+              }));
             }}
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
           >

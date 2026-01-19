@@ -1,5 +1,6 @@
-;; DAO Core Logic
-;; Implements proposal creation and voting mechanisms
+;; DAO Core Logic v1.0.0
+;; Implements decentralized governance for Festies
+;; Supports proposal creation and community voting
 
 (define-constant ERR_UNAUTHORIZED (err u100))
 (define-constant ERR_ALREADY_VOTED (err u101))
