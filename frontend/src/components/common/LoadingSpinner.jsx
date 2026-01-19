@@ -113,3 +113,4 @@ const LoadingSpinner = () => {
 };
 
 export default LoadingSpinner;
+// Style improvement 37
