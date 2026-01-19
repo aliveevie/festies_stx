@@ -358,3 +358,4 @@ export default GreetingCardGrid;
 // Grid refactor 1
 // Grid docs update
 // Grid style update
+// Grid v1.1.0
