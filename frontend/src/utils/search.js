@@ -341,3 +341,4 @@ export default {
 // Search refactor 1
 // Search docs update
 // Search style update
+// Search v1.1.0
