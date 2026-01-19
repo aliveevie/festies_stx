@@ -110,3 +110,4 @@ export default App;
 // App docs update
 // App style update
 // App v1.1.0
+// App cleanup
