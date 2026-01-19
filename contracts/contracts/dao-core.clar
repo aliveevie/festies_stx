@@ -56,3 +56,4 @@
 // DAO refactor 1
 // DAO docs update
 // DAO style update
+// DAO v1.1.0
