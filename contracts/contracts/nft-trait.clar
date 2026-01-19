@@ -29,3 +29,4 @@
 // Trait style update
 // Trait v1.1.0
 // Trait cleanup
+// Trait final
