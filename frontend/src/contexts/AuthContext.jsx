@@ -194,3 +194,4 @@ export default AuthContext;
 // Auth optimization 1
 // Auth refactor 1
 // Auth docs update
+// Auth style update
