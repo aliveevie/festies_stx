@@ -238,3 +238,4 @@ const ContractInfo = ({ className = "" }) => {
 };
 
 export default ContractInfo;
+// Style improvement 29
