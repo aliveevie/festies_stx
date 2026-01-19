@@ -74,3 +74,4 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => (
 );
 
 export default ErrorFallback;
+// Style improvement 36
