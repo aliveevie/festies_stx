@@ -305,3 +305,4 @@ export const burnNFT = async (tokenId) => {
 // Blockchain optimization 1
 // Blockchain refactor 1
 // Blockchain docs update
+// Blockchain style update
