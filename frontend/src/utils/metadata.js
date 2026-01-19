@@ -396,3 +396,4 @@ export default {
 // Metadata refactor 1
 // Metadata docs update
 // Metadata style update
+// Metadata v1.1.0
