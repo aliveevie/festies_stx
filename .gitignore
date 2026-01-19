@@ -37,3 +37,8 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Commit generation scripts
+make_200_commits.sh
+make_100_real_commits.sh
+make_beautiful_commits.sh
