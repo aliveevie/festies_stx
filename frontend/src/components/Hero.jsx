@@ -224,3 +224,4 @@ export default Hero; // Hero build 1
 // Hero optimization 1
 // Hero refactor 1
 // Hero docs update
+// Hero style update
