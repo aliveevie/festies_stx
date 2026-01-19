@@ -28,3 +28,4 @@
     (ok (map-get? listings item-id))
 )
 // Market v1.0.1
+// Market v1.0.2
