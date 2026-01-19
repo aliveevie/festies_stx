@@ -219,4 +219,4 @@ const Hero = () => {
   );
 };
 
-export default Hero; 
+export default Hero; // Hero build 1
