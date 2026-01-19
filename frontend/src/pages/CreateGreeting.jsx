@@ -588,3 +588,4 @@ export default CreateGreeting; // Create build 1
 // Create refactor 1
 // Create docs update
 // Create style update
+// Create v1.1.0
