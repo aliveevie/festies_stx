@@ -384,3 +384,4 @@ export * from './responsive';
 // Hooks refactor 1
 // Hooks docs update
 // Hooks style update
+// Hooks v1.1.0
