@@ -44,3 +44,4 @@ export default ConnectWalletButton;
 // Wallet refactor 1
 // Wallet docs update
 // Wallet style update
+// Wallet v1.1.0
