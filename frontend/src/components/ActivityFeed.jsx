@@ -361,3 +361,4 @@ export default ActivityFeed;
 // Activity docs update
 // Activity style update
 // Activity v1.1.0
+// Activity cleanup
