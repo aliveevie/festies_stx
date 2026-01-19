@@ -210,65 +210,94 @@ const TransactionHistory = ({
   }
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg border border-gray-200 p-6 ${className}`}>
+    <motion.div 
+      className={`bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-8 ${className}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-          <FaHistory className="text-white text-lg" />
+      <motion.div 
+        className="flex items-center justify-between mb-8"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="flex items-center gap-4">
+          <motion.div 
+            className="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
+            animate={{ rotate: [0, -5, 5, 0] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            <FaHistory className="text-white text-xl" />
+          </motion.div>
+          <div>
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Transaction History
+            </h3>
+            <p className="text-sm text-gray-600 font-medium">
+              <span className="font-bold text-purple-600">{filteredTransactions.length}</span> of <span className="font-bold text-gray-800">{transactions.length}</span> transactions
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-bold text-gray-800">Transaction History</h3>
-          <p className="text-sm text-gray-600">
-            {filteredTransactions.length} of {transactions.length} transactions
-          </p>
-        </div>
-      </div>
+      </motion.div>
 
       {/* Filters */}
-      <div className="mb-6 space-y-4">
+      <motion.div 
+        className="mb-6 space-y-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
         {/* Search */}
         <div className="relative">
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
           <input
             type="text"
             placeholder="Search transactions..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-300 bg-white shadow-sm hover:shadow-md focus:shadow-lg"
           />
         </div>
 
         {/* Filter Controls */}
         <div className="flex flex-wrap gap-4">
-          <div className="flex items-center gap-2">
-            <FaFilter className="text-gray-400" />
+          <motion.div 
+            className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border-2 border-gray-200 shadow-sm"
+            whileHover={{ scale: 1.02, borderColor: "#a855f7" }}
+          >
+            <FaFilter className="text-purple-500" />
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="px-3 py-1 border-none focus:ring-0 focus:outline-none bg-transparent font-semibold text-gray-700 cursor-pointer"
             >
               <option value="all">All Types</option>
               {Object.entries(transactionTypes).map(([key, type]) => (
                 <option key={key} value={key}>{type.label}</option>
               ))}
             </select>
-          </div>
+          </motion.div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-gray-600">Sort by:</span>
+          <motion.div 
+            className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border-2 border-gray-200 shadow-sm"
+            whileHover={{ scale: 1.02, borderColor: "#a855f7" }}
+          >
+            <span className="text-gray-600 font-semibold">Sort:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="px-3 py-1 border-none focus:ring-0 focus:outline-none bg-transparent font-semibold text-gray-700 cursor-pointer"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
               <option value="type">Type</option>
               <option value="tokenId">Token ID</option>
             </select>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Transaction List */}
       <div className="space-y-3">
@@ -276,11 +305,12 @@ const TransactionHistory = ({
           {filteredTransactions.map((tx) => (
             <motion.div
               key={tx.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-md transition-all duration-200"
+              className="p-5 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl hover:border-purple-300 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.01]"
+              whileHover={{ y: -2 }}
             >
               <div className="flex items-center justify-between">
                 {/* Left side - Type and details */}
