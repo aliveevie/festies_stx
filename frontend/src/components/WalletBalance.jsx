@@ -74,3 +74,4 @@ const WalletBalance = () => {
 };
 
 export default WalletBalance;
+// Style improvement 35
