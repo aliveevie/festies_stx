@@ -45,3 +45,4 @@ export default ConnectWalletButton;
 // Wallet docs update
 // Wallet style update
 // Wallet v1.1.0
+// Wallet cleanup
