@@ -238,4 +238,4 @@ const Footer = () => {
   );
 };
 
-export default Footer; 
+export default Footer; // Footer build 1
