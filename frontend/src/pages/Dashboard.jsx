@@ -275,3 +275,4 @@ export default Dashboard;
 // Dashboard docs update
 // Dashboard style update
 // Dashboard v1.1.0
+// Dashboard cleanup
