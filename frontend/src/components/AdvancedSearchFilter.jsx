@@ -361,3 +361,4 @@ const AdvancedSearchFilter = ({
 };
 
 export default AdvancedSearchFilter;
+// Style improvement 27
