@@ -28,3 +28,4 @@ export default Marketplace;
 // Marketplace refactor 1
 // Marketplace docs update
 // Marketplace style update
+// Marketplace v1.1.0
