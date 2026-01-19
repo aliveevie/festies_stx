@@ -272,3 +272,4 @@ const GreetingCard = ({
 export default GreetingCard;
 // Card build 1
 // Card build 2
+// Card optimization 1
