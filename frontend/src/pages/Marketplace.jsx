@@ -27,3 +27,4 @@ export default Marketplace;
 // Marketplace optimization 1
 // Marketplace refactor 1
 // Marketplace docs update
+// Marketplace style update
