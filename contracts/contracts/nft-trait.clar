@@ -25,3 +25,4 @@
 // Trait v1.0.2
 // Trait optimization 1
 // Trait refactor 1
+// Trait docs update
