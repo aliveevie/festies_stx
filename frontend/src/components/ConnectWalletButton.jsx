@@ -38,3 +38,4 @@ export default ConnectWalletButton;
 // UI phase 48
 // UI phase 49
 // UI phase 50
+// Wallet build 1
