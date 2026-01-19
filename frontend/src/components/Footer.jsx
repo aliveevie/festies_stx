@@ -243,3 +243,4 @@ export default Footer; // Footer build 1
 // Footer optimization 1
 // Footer refactor 1
 // Footer docs update
+// Footer style update
