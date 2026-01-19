@@ -87,21 +87,33 @@ const ContractInfo = ({ className = "" }) => {
 
   return (
     <motion.div
-      className={`bg-white rounded-xl shadow-lg border border-gray-200 p-6 ${className}`}
+      className={`bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-8 ${className}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
+      whileHover={{ y: -5, shadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-          <FaInfoCircle className="text-white text-lg" />
-        </div>
+      <motion.div 
+        className="flex items-center gap-4 mb-8"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <motion.div 
+          className="w-14 h-14 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
+          animate={{ rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
+          <FaInfoCircle className="text-white text-xl" />
+        </motion.div>
         <div>
-          <h3 className="text-xl font-bold text-gray-800">Contract Information</h3>
-          <p className="text-gray-600">Festies NFT Contract Details</p>
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Contract Information
+          </h3>
+          <p className="text-gray-600 font-medium">Festies NFT Contract Details</p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Contract Details */}
       {contractInfo && (
