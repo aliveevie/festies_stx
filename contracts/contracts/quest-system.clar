@@ -106,3 +106,4 @@
 // Quest refactor 1
 // Quest docs update
 // Quest style update
+// Quest v1.1.0
