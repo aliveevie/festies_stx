@@ -274,3 +274,4 @@ export default Dashboard;
 // Dashboard refactor 1
 // Dashboard docs update
 // Dashboard style update
+// Dashboard v1.1.0
