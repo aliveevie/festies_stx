@@ -33,3 +33,4 @@
 // Market refactor 1
 // Market docs update
 // Market style update
+// Market v1.1.0
