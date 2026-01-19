@@ -342,3 +342,4 @@ export default {
 // Search docs update
 // Search style update
 // Search v1.1.0
+// Search cleanup
