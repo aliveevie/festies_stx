@@ -196,3 +196,4 @@ export default AuthContext;
 // Auth docs update
 // Auth style update
 // Auth v1.1.0
+// Auth cleanup
