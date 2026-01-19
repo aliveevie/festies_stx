@@ -14,3 +14,4 @@
 // Constants refactor 1
 // Constants docs update
 // Constants style update
+// Constants v1.1.0
