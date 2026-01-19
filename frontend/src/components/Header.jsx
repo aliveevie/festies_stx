@@ -254,3 +254,4 @@ export default Header; Header.propTypes = {};
 // Header build 2
 // Header optimization 1
 // Header refactor 1
+// Header docs update
