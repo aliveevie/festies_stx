@@ -6,6 +6,7 @@
 (define-constant ERR_QUEST_NOT_FOUND (err u404))
 (define-constant ERR_ALREADY_COMPLETED (err u409))
 (define-constant ERR_INVALID_REWARD (err u422))
+(define-constant ERR_QUEST_INACTIVE (err u423))
 
 (define-data-var contract-owner principal tx-sender)
 
