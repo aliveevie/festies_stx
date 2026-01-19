@@ -428,3 +428,4 @@ const TransactionHistory = ({
 };
 
 export default TransactionHistory;
+// Style improvement 34
