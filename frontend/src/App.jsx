@@ -112,3 +112,4 @@ export default App;
 // App v1.1.0
 // App cleanup
 // Frontend final
+// Release v1.0.0
