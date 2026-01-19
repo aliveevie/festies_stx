@@ -109,3 +109,4 @@ export default App;
 // App refactor 1
 // App docs update
 // App style update
+// App v1.1.0
