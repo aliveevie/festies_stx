@@ -256,3 +256,4 @@ export default Header; Header.propTypes = {};
 // Header refactor 1
 // Header docs update
 // Header style update
+// Header v1.1.0
