@@ -125,3 +125,4 @@
 (define-read-only (get-decimals)
     (ok TOKEN-DECIMALS)
 )
+// Documentation update
