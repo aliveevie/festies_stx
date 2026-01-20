@@ -70,3 +70,4 @@ const Accordion = ({ items, allowMultiple = false, className = "" }) => {
 };
 
 export default Accordion;
+// Style improvement
