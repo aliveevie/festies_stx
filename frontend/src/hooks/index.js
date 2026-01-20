@@ -378,6 +378,27 @@ export const useThrottle = (value, limit) => {
 
 // Export responsive hooks
 export * from './responsive';
+
+// Export scroll hooks
+export * from './useScroll';
+
+// Export resize hooks
+export * from './useResize';
+
+// Export window focus hooks
+export * from './useWindowFocus';
+
+// Export geolocation hooks
+export * from './useGeolocation';
+
+// Export clipboard hooks
+export * from './useClipboard';
+
+// Export intersection hooks
+export * from './useIntersection';
+
+// Export keyboard hooks
+export * from './useKeyboard';
 // Hooks build 1
 // Hooks build 2
 // Hooks optimization 1
