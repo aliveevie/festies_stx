@@ -84,3 +84,4 @@ export const getRolePermissions = (role) => {
 };
 // Style improvement
 // Performance optimization
+// Additional performance optimization
