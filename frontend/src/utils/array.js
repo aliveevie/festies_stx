@@ -130,3 +130,4 @@ export const takeLast = (array, n) => {
   return array.slice(-n);
 };
 // Style improvement
+// Performance optimization
