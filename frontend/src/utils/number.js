@@ -139,3 +139,4 @@ export const formatBytes = (bytes) => {
 };
 // Style improvement
 // Refactor improvement
+// Additional performance optimization
