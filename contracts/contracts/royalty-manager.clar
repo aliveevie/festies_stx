@@ -217,3 +217,4 @@
         (total-payments (var-get total-payments))
     ))
 )
+// Refactor improvement
