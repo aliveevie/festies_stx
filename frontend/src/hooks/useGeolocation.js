@@ -124,3 +124,4 @@ export const useCurrentPosition = (options = {}) => {
 
   return state;
 };
+// Style improvement
