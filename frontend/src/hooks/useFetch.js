@@ -46,3 +46,4 @@ export const useFetch = (url, options = {}) => {
 export default useFetch;
 // Style improvement
 // Performance optimization
+// Refactor improvement
