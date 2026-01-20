@@ -145,3 +145,4 @@ export const diffInDays = (date1, date2) => {
 };
 // Style improvement
 // Refactor improvement
+// Documentation update
