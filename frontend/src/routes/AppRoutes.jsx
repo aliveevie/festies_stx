@@ -10,6 +10,9 @@ import Settings from '../pages/Settings';
 import Profile from '../pages/Profile';
 import Explore from '../pages/Explore';
 import Help from '../pages/Help';
+import Contact from '../pages/Contact';
+import NotFound from '../pages/NotFound';
+import Blog from '../pages/Blog';
 
 // Page transition variants
 const pageVariants = {
@@ -196,8 +199,57 @@ const AppRoutes = () => {
                 }
             />
 
-            {/* Catch all route - redirect to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route
+                path="/contact"
+                element={
+                    <motion.div
+                        key="contact"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Contact />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/blog"
+                element={
+                    <motion.div
+                        key="blog"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Blog />
+                    </motion.div>
+                }
+            />
+
+            {/* 404 Not Found */}
+            <Route
+                path="/404"
+                element={
+                    <motion.div
+                        key="not-found"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <NotFound />
+                    </motion.div>
+                }
+            />
+
+            {/* Catch all route - redirect to 404 */}
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 };
