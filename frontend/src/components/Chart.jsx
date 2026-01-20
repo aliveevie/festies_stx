@@ -105,3 +105,4 @@ export const Chart = ({
     </div>
   );
 };
+// Style improvement
