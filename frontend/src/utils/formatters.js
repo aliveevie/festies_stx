@@ -178,3 +178,4 @@ export const formatPrice = (amount, currency = 'STX') => {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
   return `${formatSTX(num)} ${currency}`;
 };
+// Refactor improvement
