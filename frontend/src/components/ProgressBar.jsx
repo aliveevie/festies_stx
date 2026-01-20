@@ -78,3 +78,4 @@ const ProgressBar = ({
 };
 
 export default ProgressBar;
+// Style improvement
