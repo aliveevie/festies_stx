@@ -52,3 +52,4 @@ export const useDocumentVisibility = () => {
   return isVisible;
 };
 // Style improvement
+// Additional style improvement
