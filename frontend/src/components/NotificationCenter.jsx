@@ -157,3 +157,4 @@ const NotificationCenter = ({ className = "" }) => {
 };
 
 export default NotificationCenter;
+// Style improvement
