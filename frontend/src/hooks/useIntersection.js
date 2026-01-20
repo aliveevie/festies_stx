@@ -128,3 +128,4 @@ export const useMultipleIntersections = (options = {}) => {
 
   return { setRef, intersections };
 };
+// Style improvement
