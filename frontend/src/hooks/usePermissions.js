@@ -58,3 +58,4 @@ export const useRolePermissions = () => {
 };
 
 export default usePermission;
+// Style improvement
