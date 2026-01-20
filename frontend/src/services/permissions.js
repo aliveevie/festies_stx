@@ -83,3 +83,4 @@ export const getRolePermissions = (role) => {
   return rolePermissions[role] || [];
 };
 // Style improvement
+// Performance optimization
