@@ -143,3 +143,4 @@ export const diffInDays = (date1, date2) => {
   const diff = Math.abs(d1 - d2);
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 };
+// Style improvement
