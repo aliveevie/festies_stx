@@ -165,3 +165,4 @@ export const verifySignature = async (message, signature, secret) => {
     return false;
   }
 };
+// Style improvement
