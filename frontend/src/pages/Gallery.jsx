@@ -199,3 +199,4 @@ export const Gallery = () => {
   );
 };
 // Style improvement
+// Performance optimization
