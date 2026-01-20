@@ -49,3 +49,4 @@ const Tabs = ({ tabs, defaultTab = 0, className = "" }) => {
 };
 
 export default Tabs;
+// Style improvement
