@@ -85,3 +85,4 @@ export const getRolePermissions = (role) => {
 // Style improvement
 // Performance optimization
 // Additional performance optimization
+// Version bump v1.0.0
