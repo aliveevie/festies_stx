@@ -128,3 +128,4 @@ export const clearAnalytics = () => {
   localStorage.removeItem('festies_analytics');
 };
 // Refactor improvement
+// Documentation update
