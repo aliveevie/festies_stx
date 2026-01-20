@@ -59,3 +59,4 @@ const Card = ({
 };
 
 export default Card;
+// Style improvement
