@@ -136,3 +136,4 @@ export const cacheAsync = async (key, fn, ttl = DEFAULT_TTL) => {
   setCache(key, data, ttl);
   return data;
 };
+// Performance optimization
