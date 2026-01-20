@@ -209,3 +209,4 @@
     (ok (var-get quorum-threshold))
 )
 // Documentation update
+// Final polish v1.0.0
