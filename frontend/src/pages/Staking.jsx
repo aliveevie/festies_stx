@@ -206,3 +206,4 @@ export const Staking = () => {
   );
 };
 // Style improvement
+// Additional style improvement
