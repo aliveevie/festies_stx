@@ -137,3 +137,4 @@ export const useKeyPress = (targetKey) => {
   return keyPressed;
 };
 // Style improvement
+// Refactor improvement
