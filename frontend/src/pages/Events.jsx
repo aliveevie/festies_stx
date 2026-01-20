@@ -152,3 +152,4 @@ export const Events = () => {
     </div>
   );
 };
+// Style improvement
