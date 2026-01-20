@@ -86,3 +86,4 @@ const Modal = ({
 };
 
 export default Modal;
+// Style improvement
