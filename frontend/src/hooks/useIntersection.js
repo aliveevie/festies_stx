@@ -130,3 +130,4 @@ export const useMultipleIntersections = (options = {}) => {
 };
 // Style improvement
 // Performance optimization
+// Documentation update
