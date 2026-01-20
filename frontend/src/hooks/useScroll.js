@@ -89,3 +89,4 @@ export const useScrollDirection = () => {
   return direction;
 };
 // Style improvement
+// Performance optimization
