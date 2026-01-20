@@ -200,3 +200,4 @@ export const Gallery = () => {
 };
 // Style improvement
 // Performance optimization
+// Additional style improvement
