@@ -216,3 +216,4 @@ export const decryptAES = async (encrypted, password) => {
   return new TextDecoder().decode(decrypted);
 };
 // Style improvement
+// Refactor improvement
