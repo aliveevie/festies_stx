@@ -150,3 +150,4 @@ const Explore = () => {
 };
 
 export default Explore;
+// Style improvement
