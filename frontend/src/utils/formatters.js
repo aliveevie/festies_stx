@@ -179,3 +179,4 @@ export const formatPrice = (amount, currency = 'STX') => {
   return `${formatSTX(num)} ${currency}`;
 };
 // Refactor improvement
+// Documentation update
