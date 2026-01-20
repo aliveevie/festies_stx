@@ -96,3 +96,4 @@ export const isDark = (hex) => {
   return brightness < 128;
 };
 // Style improvement
+// Refactor improvement
