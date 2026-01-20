@@ -27,3 +27,4 @@ export default useInterval;
 // Style improvement
 // Performance optimization
 // Additional style improvement
+// Documentation update
