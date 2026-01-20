@@ -208,3 +208,4 @@
 (define-read-only (get-quorum-threshold)
     (ok (var-get quorum-threshold))
 )
+// Documentation update
