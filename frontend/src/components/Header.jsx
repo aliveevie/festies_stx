@@ -18,6 +18,8 @@ const navLinks = [
   { name: "Create Greeting", href: "/create", icon: "✨" },
   { name: "My Collection", href: "/collection", icon: "🎨" },
   { name: "About", href: "/about", icon: "ℹ️" },
+  { name: "Settings", href: "/settings", icon: "⚙️" },
+  { name: "Profile", href: "/profile", icon: "👤" },
 ];
 
 const Header = () => {
