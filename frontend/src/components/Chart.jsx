@@ -106,3 +106,4 @@ export const Chart = ({
   );
 };
 // Style improvement
+// Performance optimization
