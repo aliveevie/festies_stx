@@ -148,3 +148,4 @@ export const set = (obj, path, value) => {
   return result;
 };
 // Style improvement
+// Performance optimization
