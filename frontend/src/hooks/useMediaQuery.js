@@ -30,3 +30,4 @@ export const useMediaQuery = (query) => {
 };
 
 export default useMediaQuery;
+// Style improvement
