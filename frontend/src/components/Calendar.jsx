@@ -165,3 +165,4 @@ export const Calendar = ({
 };
 // Style improvement
 // Refactor improvement
+// Documentation update
