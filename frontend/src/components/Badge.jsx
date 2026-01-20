@@ -50,3 +50,4 @@ const Badge = ({
 };
 
 export default Badge;
+// Style improvement
