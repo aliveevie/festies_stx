@@ -102,3 +102,4 @@ const Slider = ({
 };
 
 export default Slider;
+// Style improvement
