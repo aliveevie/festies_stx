@@ -198,3 +198,4 @@ export const Gallery = () => {
     </div>
   );
 };
+// Style improvement
