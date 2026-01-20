@@ -164,3 +164,4 @@ export const Calendar = ({
   );
 };
 // Style improvement
+// Refactor improvement
