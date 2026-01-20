@@ -78,3 +78,4 @@ const StatsCard = ({
 };
 
 export default StatsCard;
+// Style improvement
