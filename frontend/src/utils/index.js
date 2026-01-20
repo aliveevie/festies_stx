@@ -11,6 +11,21 @@ export * from './metadata';
 // Export search utilities
 export * from './search';
 
+// Export validation utilities
+export * from './validation';
+
+// Export formatter utilities
+export * from './formatters';
+
+// Export API utilities
+export * from './api';
+
+// Export storage utilities
+export * from './storage';
+
+// Export constants
+export * from './constants';
+
 /**
  * Format STX amount with proper decimal places
  * @param {number} amount - Amount in microSTX
