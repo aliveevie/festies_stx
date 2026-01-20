@@ -29,7 +29,10 @@
 (define-map quest-completion-count principal uint)
 
 (define-private (assert-owner)
-    (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
+    (begin
+        (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_OWNER_ONLY)
+        (ok true)
+    )
 )
 
 (define-public (set-contract-owner (new-owner principal))
