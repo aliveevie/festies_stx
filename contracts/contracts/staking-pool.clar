@@ -238,3 +238,4 @@
         (total-rewards-distributed (var-get total-rewards-distributed))
     ))
 )
+// Refactor improvement
