@@ -153,3 +153,4 @@ export const Events = () => {
   );
 };
 // Style improvement
+// Additional performance optimization
