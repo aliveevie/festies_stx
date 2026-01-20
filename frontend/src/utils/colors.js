@@ -98,3 +98,4 @@ export const isDark = (hex) => {
 // Style improvement
 // Refactor improvement
 // Documentation update
+// Additional performance optimization
