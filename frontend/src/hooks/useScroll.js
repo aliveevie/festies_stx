@@ -90,3 +90,4 @@ export const useScrollDirection = () => {
 };
 // Style improvement
 // Performance optimization
+// Additional style improvement
