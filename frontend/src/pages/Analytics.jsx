@@ -136,3 +136,4 @@ export const Analytics = () => {
   );
 };
 // Style improvement
+// Refactor improvement
