@@ -3,9 +3,13 @@ import { motion } from 'framer-motion';
 import Hero from '../components/Hero';
 import CreateGreeting from '../pages/CreateGreeting';
 import Dashboard from '../pages/Dashboard';
-import Marketplace from '../pages/Marketplace'; // We will create this next
-import Collection from '../pages/Collection'; // We will create this next
-import About from '../pages/About'; // We will create this next
+import Marketplace from '../pages/Marketplace';
+import Collection from '../pages/Collection';
+import About from '../pages/About';
+import Settings from '../pages/Settings';
+import Profile from '../pages/Profile';
+import Explore from '../pages/Explore';
+import Help from '../pages/Help';
 
 // Page transition variants
 const pageVariants = {
@@ -124,6 +128,70 @@ const AppRoutes = () => {
                         transition={pageTransition}
                     >
                         <About />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/settings"
+                element={
+                    <motion.div
+                        key="settings"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Settings />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/profile"
+                element={
+                    <motion.div
+                        key="profile"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Profile />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/explore"
+                element={
+                    <motion.div
+                        key="explore"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Explore />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/help"
+                element={
+                    <motion.div
+                        key="help"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Help />
                     </motion.div>
                 }
             />
