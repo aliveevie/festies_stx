@@ -163,3 +163,4 @@ export const Calendar = ({
     </div>
   );
 };
+// Style improvement
