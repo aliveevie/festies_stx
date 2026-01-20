@@ -16,3 +16,4 @@ export const usePrevious = (value) => {
 };
 
 export default usePrevious;
+// Style improvement
