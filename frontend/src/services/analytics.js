@@ -127,3 +127,4 @@ export const clearAnalytics = () => {
   if (typeof window === 'undefined') return;
   localStorage.removeItem('festies_analytics');
 };
+// Refactor improvement
