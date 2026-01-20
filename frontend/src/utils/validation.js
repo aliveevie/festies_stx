@@ -212,3 +212,4 @@ export const validatePercentage = (value) => {
 };
 // Refactor improvement
 // Documentation update
+// Version bump
