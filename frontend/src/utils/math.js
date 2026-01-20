@@ -160,3 +160,4 @@ export const distance = (p1, p2) => {
 };
 // Style improvement
 // Additional style improvement
+// Additional performance optimization
