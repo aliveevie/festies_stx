@@ -166,3 +166,4 @@ export const verifySignature = async (message, signature, secret) => {
   }
 };
 // Style improvement
+// Performance optimization
