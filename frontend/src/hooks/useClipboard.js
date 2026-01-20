@@ -69,3 +69,4 @@ export const useClipboardRead = () => {
 
   return { read, text, error, loading };
 };
+// Style improvement
