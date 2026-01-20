@@ -205,3 +205,4 @@ export const Staking = () => {
     </div>
   );
 };
+// Style improvement
