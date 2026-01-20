@@ -93,3 +93,4 @@ export const Carousel = ({
   );
 };
 // Style improvement
+// Performance optimization
