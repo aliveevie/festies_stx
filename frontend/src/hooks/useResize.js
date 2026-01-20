@@ -99,3 +99,4 @@ export const useBreakpoint = (breakpoints = {
 
   return breakpoint;
 };
+// Style improvement
