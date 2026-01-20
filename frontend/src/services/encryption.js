@@ -217,3 +217,4 @@ export const decryptAES = async (encrypted, password) => {
 };
 // Style improvement
 // Refactor improvement
+// Version bump v1.0.0
