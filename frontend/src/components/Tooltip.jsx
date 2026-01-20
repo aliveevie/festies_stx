@@ -56,3 +56,4 @@ const Tooltip = ({
 };
 
 export default Tooltip;
+// Style improvement
