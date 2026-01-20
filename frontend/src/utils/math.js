@@ -159,3 +159,4 @@ export const distance = (p1, p2) => {
   return Math.sqrt(dx * dx + dy * dy);
 };
 // Style improvement
+// Additional style improvement
