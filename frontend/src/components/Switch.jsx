@@ -55,3 +55,4 @@ const Switch = ({
 };
 
 export default Switch;
+// Style improvement
