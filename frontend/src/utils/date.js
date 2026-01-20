@@ -144,3 +144,4 @@ export const diffInDays = (date1, date2) => {
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 };
 // Style improvement
+// Refactor improvement
