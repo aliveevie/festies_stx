@@ -13,6 +13,11 @@ import Help from '../pages/Help';
 import Contact from '../pages/Contact';
 import NotFound from '../pages/NotFound';
 import Blog from '../pages/Blog';
+import Admin from '../pages/Admin';
+import Analytics from '../pages/Analytics';
+import Events from '../pages/Events';
+import Gallery from '../pages/Gallery';
+import Staking from '../pages/Staking';
 
 // Page transition variants
 const pageVariants = {
@@ -227,6 +232,86 @@ const AppRoutes = () => {
                         transition={pageTransition}
                     >
                         <Blog />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/admin"
+                element={
+                    <motion.div
+                        key="admin"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Admin />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/analytics"
+                element={
+                    <motion.div
+                        key="analytics"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Analytics />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/events"
+                element={
+                    <motion.div
+                        key="events"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Events />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/gallery"
+                element={
+                    <motion.div
+                        key="gallery"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Gallery />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/staking"
+                element={
+                    <motion.div
+                        key="staking"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Staking />
                     </motion.div>
                 }
             />
