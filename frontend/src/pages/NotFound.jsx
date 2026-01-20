@@ -59,3 +59,4 @@ const NotFound = () => {
 
 export default NotFound;
 // Style improvement
+// Refactor improvement
