@@ -60,3 +60,4 @@ const Checkbox = ({
 };
 
 export default Checkbox;
+// Style improvement
