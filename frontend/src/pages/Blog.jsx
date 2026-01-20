@@ -124,3 +124,4 @@ const Blog = () => {
 };
 
 export default Blog;
+// Style improvement
