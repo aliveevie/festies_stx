@@ -163,3 +163,4 @@ const Contact = () => {
 };
 
 export default Contact;
+// Style improvement
