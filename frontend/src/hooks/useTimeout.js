@@ -24,3 +24,4 @@ export const useTimeout = (callback, delay) => {
 };
 
 export default useTimeout;
+// Style improvement
