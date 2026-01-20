@@ -152,3 +152,4 @@
 (define-read-only (get-voter-weight (voter principal))
     (ok (map-get? voter-weights voter))
 )
+// Documentation update
