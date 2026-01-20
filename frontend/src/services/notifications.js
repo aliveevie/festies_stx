@@ -107,3 +107,4 @@ export const show = (type, message, options = {}) => {
     ...options,
   });
 };
+// Style improvement
