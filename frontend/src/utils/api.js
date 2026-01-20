@@ -171,3 +171,4 @@ export const handleApiError = (error) => {
   }
   return error.message || 'An unexpected error occurred.';
 };
+// Performance optimization
