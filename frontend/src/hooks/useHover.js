@@ -31,3 +31,4 @@ export default useHover;
 // Style improvement
 // Performance optimization
 // Additional style improvement
+// Documentation update
