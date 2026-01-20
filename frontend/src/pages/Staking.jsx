@@ -207,3 +207,4 @@ export const Staking = () => {
 };
 // Style improvement
 // Additional style improvement
+// Final polish v1.0.0
