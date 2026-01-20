@@ -92,3 +92,4 @@ export const Carousel = ({
     </div>
   );
 };
+// Style improvement
