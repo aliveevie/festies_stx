@@ -290,3 +290,4 @@ export default AudioPlayer;
 // Performance optimization
 // Refactor improvement
 // Additional style improvement
+// Documentation update
