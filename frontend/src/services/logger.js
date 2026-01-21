@@ -66,7 +66,6 @@ class Logger {
   formatMessage(level, message, data) {
     const timestamp = new Date().toISOString();
     const levelName = LOG_LEVEL_NAMES[level] || 'UNKNOWN';
-    const prefix = `[${timestamp}] [${levelName}]`;
 
     if (data) {
       return { timestamp, level: levelName, message, data };
