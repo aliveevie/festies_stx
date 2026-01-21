@@ -134,4 +134,3 @@
 (define-read-only (get-bid (auction-id uint) (bidder principal))
     (ok (map-get? bids { auction-id: auction-id, bidder: bidder }))
 )
-// Refactor improvement
