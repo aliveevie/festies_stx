@@ -99,3 +99,4 @@ const Marquee = ({
 };
 
 export default Marquee;
+// Style improvement
