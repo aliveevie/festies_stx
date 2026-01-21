@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 
 /**
  * useVirtualList Hook
