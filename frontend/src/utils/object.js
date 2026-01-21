@@ -147,7 +147,3 @@ export const set = (obj, path, value) => {
   current[keys[keys.length - 1]] = value;
   return result;
 };
-// Style improvement
-// Performance optimization
-// Documentation update
-// Additional performance optimization
