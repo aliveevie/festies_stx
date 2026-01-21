@@ -21,6 +21,36 @@ import { formatAddress } from '../utils/formatters';
 import { getTimeAgo } from '../utils/time';
 import { copyToClipboard } from '../utils/browser';
 
+const ACTIVITY_TYPE_KEYS = ['mint', 'transfer', 'approve', 'revoke', 'burn', 'contract_update'];
+const FESTIVAL_NAMES = ['Christmas', 'Birthday', 'New Year', "Valentine's Day"];
+
+const generateMockActivities = (address, count) => {
+  const activities = [];
+
+  for (let i = 0; i < count; i++) {
+    const type = ACTIVITY_TYPE_KEYS[Math.floor(Math.random() * ACTIVITY_TYPE_KEYS.length)];
+    const timestamp = Date.now() - i * 10 * 60 * 1000; // Spread over hours
+
+    activities.push({
+      id: `activity_${i + 1}`,
+      type,
+      tokenId: Math.floor(Math.random() * 100) + 1,
+      user: address,
+      timestamp,
+      status: Math.random() > 0.05 ? 'success' : 'failed',
+      metadata: {
+        name: `Greeting Card #${Math.floor(Math.random() * 100) + 1}`,
+        festival: FESTIVAL_NAMES[Math.floor(Math.random() * FESTIVAL_NAMES.length)],
+        recipient: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM'
+      },
+      txId: `tx_${i + 1}`,
+      explorerUrl: `https://explorer.hiro.so/txid/tx_${i + 1}`
+    });
+  }
+
+  return activities.sort((a, b) => b.timestamp - a.timestamp);
+};
+
 const ActivityFeed = ({ 
   userAddress,
   maxActivities = 20,
@@ -99,35 +129,6 @@ const ActivityFeed = ({
       setIsRefreshing(false);
     }
   }, [userAddress, maxActivities]);
-
-  // Generate mock activity data
-  const generateMockActivities = (address, count) => {
-    const types = Object.keys(activityTypes);
-    const activities = [];
-
-    for (let i = 0; i < count; i++) {
-      const type = types[Math.floor(Math.random() * types.length)];
-      const timestamp = Date.now() - (i * 10 * 60 * 1000); // Spread over hours
-      
-      activities.push({
-        id: `activity_${i + 1}`,
-        type,
-        tokenId: Math.floor(Math.random() * 100) + 1,
-        user: address,
-        timestamp,
-        status: Math.random() > 0.05 ? 'success' : 'failed',
-        metadata: {
-          name: `Greeting Card #${Math.floor(Math.random() * 100) + 1}`,
-          festival: ['Christmas', 'Birthday', 'New Year', 'Valentine\'s Day'][Math.floor(Math.random() * 4)],
-          recipient: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM'
-        },
-        txId: `tx_${i + 1}`,
-        explorerUrl: `https://explorer.stacks.co/txid/tx_${i + 1}`
-      });
-    }
-
-    return activities.sort((a, b) => b.timestamp - a.timestamp);
-  };
 
   // Manual refresh
   const handleRefresh = useCallback(() => {
@@ -385,8 +386,8 @@ const ActivityFeed = ({
           </span>
         </div>
       </div>
-	    </motion.div>
-	  );
-	};
-	
+    </motion.div>
+  );
+};
+
 export default ActivityFeed;
