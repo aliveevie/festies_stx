@@ -210,6 +210,3 @@ export const validateNumberRange = (value, min, max) => {
 export const validatePercentage = (value) => {
   return validateNumberRange(value, 0, 100);
 };
-// Refactor improvement
-// Documentation update
-// Version bump
