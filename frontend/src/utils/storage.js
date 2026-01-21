@@ -140,7 +140,7 @@ export const isStorageAvailable = (type = 'localStorage') => {
     storage.setItem(x, x);
     storage.removeItem(x);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
