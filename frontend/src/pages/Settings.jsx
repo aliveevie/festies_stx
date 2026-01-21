@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FaCog, 
@@ -18,7 +17,6 @@ import ThemeToggle from '../components/ThemeToggle';
 import ProgressBar from '../components/ProgressBar';
 
 const Settings = () => {
-  const [theme, setTheme] = useLocalStorage('theme', 'light');
   const [notifications, setNotifications] = useLocalStorage('notifications', true);
   const [sounds, setSounds] = useLocalStorage('sounds', true);
   const [language, setLanguage] = useLocalStorage('language', 'en');
