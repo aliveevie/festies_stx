@@ -2,8 +2,8 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaHeart, FaGift, FaSmile, FaRocket, FaPaperPlane, FaImage, FaPalette, FaFont, FaUndo, FaSave, FaEye, FaEyeSlash, FaWallet, FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
-import { getAuthStatus, mintGreetingCard, waitForTransaction, handleBlockchainError, getContractStatus } from '../utils/blockchain';
-import { processGreetingData, validateMetadata, generatePlaceholderImage } from '../utils/metadata';
+import { mintGreetingCard, waitForTransaction, handleBlockchainError } from '../utils/blockchain';
+import { processGreetingData } from '../utils/metadata';
 import { useAuth } from '../contexts/AuthContext';
 
 const CreateGreeting = () => {
@@ -26,11 +26,9 @@ const CreateGreeting = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState(null);
   const [mintedTokenId, setMintedTokenId] = useState(null);
-  const [validationErrors, setValidationErrors] = useState([]);
 
   const { 
     isConnected, 
-    contractStatus, 
     isContractPaused, 
     userAddress,
     refreshContractStatus 
