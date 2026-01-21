@@ -82,3 +82,4 @@ export default InfiniteScroll;
 // Style improvement
 // Performance optimization
 // Additional style improvement
+// Documentation update
