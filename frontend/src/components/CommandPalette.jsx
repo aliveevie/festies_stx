@@ -151,7 +151,7 @@ const CommandPalette = ({
                     <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                       {category}
                     </div>
-                    {commands.map((command, index) => {
+                    {commands.map((command) => {
                       const globalIndex = filteredCommands.indexOf(command);
                       const isSelected = globalIndex === selectedIndex;
 
