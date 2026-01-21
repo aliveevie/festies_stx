@@ -174,3 +174,4 @@ const Legal = () => {
 export default Legal;
 // Style improvement
 // Refactor improvement
+// Additional style improvement
