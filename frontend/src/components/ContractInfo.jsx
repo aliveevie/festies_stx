@@ -13,7 +13,7 @@ import {
   FaPercentage
 } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
-import { getContractInfo, getContractStatus, getTotalSupply, getLastTokenId, formatSTX } from '../utils/blockchain';
+import { getContractInfo, getContractStatus, getTotalSupply, getLastTokenId } from '../utils/blockchain';
 
 const ContractInfo = ({ className = "" }) => {
   const [contractInfo, setContractInfo] = useState(null);
@@ -238,10 +238,3 @@ const ContractInfo = ({ className = "" }) => {
 };
 
 export default ContractInfo;
-// Style improvement 29
-// Performance optimization 64
-// Refactor improvement 92
-// Documentation update 117
-// Version 142
-// Final polish 167
-// Release prep 192
