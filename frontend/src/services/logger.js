@@ -207,3 +207,4 @@ export default logger;
 // Export for configuration
 export { LOG_LEVELS, LOG_LEVEL_NAMES };
 // Style improvement
+// Refactor improvement
