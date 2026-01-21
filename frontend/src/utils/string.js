@@ -147,7 +147,3 @@ export const isValidUrl = (url) => {
     return false;
   }
 };
-// Style improvement
-// Performance optimization
-// Documentation update
-// Additional performance optimization
