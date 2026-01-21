@@ -72,29 +72,13 @@ if [[ "$created_count" -lt "$TARGET_COMMITS" ]]; then
   remaining=$((TARGET_COMMITS - created_count))
   echo "Padding $remaining commits with safe markers..."
 
-  SAFE_FILES=(
-    "frontend/src/App.jsx"
-    "frontend/src/components/Header.jsx"
-    "frontend/src/components/GreetingCard.jsx"
-    "frontend/src/utils/environment.js"
-    "frontend/src/utils/blockchain.js"
-    "contracts/contracts/festies.clar"
-    "contracts/contracts/quest-system.clar"
-  )
+  MARKER_FILE="tools/commit-markers.md"
+  mkdir -p "$(dirname "$MARKER_FILE")"
+  touch "$MARKER_FILE"
 
   for n in $(seq 1 "$remaining"); do
-    idx=$(( (n - 1) % ${#SAFE_FILES[@]} + 1 ))
-    file="${SAFE_FILES[$idx]}"
-
-    [[ -f "$file" ]] || continue
-
-    case "$file" in
-      *.clar) echo ";; Beautiful padding marker ${n}/${remaining}" >> "$file" ;;
-      *.md) echo "<!-- Beautiful padding marker ${n}/${remaining} -->" >> "$file" ;;
-      *) echo "// Beautiful padding marker ${n}/${remaining}" >> "$file" ;;
-    esac
-
-    git add -A -- "$file" 2>/dev/null
+    printf '\n- Beautiful padding marker %s/%s (%s)\n' "$n" "$remaining" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$MARKER_FILE"
+    git add -A -- "$MARKER_FILE" 2>/dev/null
     git commit -m "chore(padding): marker ${n}/${remaining}" 2>/dev/null || true
   done
 fi
@@ -105,4 +89,3 @@ echo "DONE. Target: $TARGET_COMMITS commits"
 echo "=========================================="
 echo ""
 echo "Run 'git log --oneline -$TARGET_COMMITS' to see the newest commits"
-
