@@ -6,21 +6,29 @@
 /**
  * Get environment variable
  */
-export const getEnv = (key, defaultValue = null) => {
-  if (typeof window === 'undefined') {
-    // Server-side
-    return process.env[key] || defaultValue;
-  }
-  
-  // Client-side - check window.env or import.meta.env
-  if (window.env && window.env[key] !== undefined) {
+const readFromSources = (key) => {
+  if (typeof window !== 'undefined' && window?.env && window.env[key] !== undefined) {
     return window.env[key];
   }
-  
-  if (typeof import !== 'undefined' && import.meta && import.meta.env) {
-    return import.meta.env[key] || defaultValue;
+
+  if (import.meta?.env && import.meta.env[key] !== undefined) {
+    return import.meta.env[key];
   }
-  
+
+  const processEnv = globalThis?.process?.env;
+  if (processEnv && processEnv[key] !== undefined) return processEnv[key];
+
+  return undefined;
+};
+
+export const getEnv = (key, defaultValue = null) => {
+  const keys = Array.isArray(key) ? key : [key];
+
+  for (const candidate of keys) {
+    const value = readFromSources(candidate);
+    if (value !== undefined && value !== null && value !== '') return value;
+  }
+
   return defaultValue;
 };
 
@@ -28,21 +36,25 @@ export const getEnv = (key, defaultValue = null) => {
  * Check if development environment
  */
 export const isDevelopment = () => {
-  return getEnv('NODE_ENV', 'development') === 'development';
+  const devFlag = getEnv(['DEV'], null);
+  if (typeof devFlag === 'boolean') return devFlag;
+  return getEnv(['MODE', 'NODE_ENV'], 'development') === 'development';
 };
 
 /**
  * Check if production environment
  */
 export const isProduction = () => {
-  return getEnv('NODE_ENV', 'development') === 'production';
+  const prodFlag = getEnv(['PROD'], null);
+  if (typeof prodFlag === 'boolean') return prodFlag;
+  return getEnv(['MODE', 'NODE_ENV'], 'development') === 'production' || getEnv(['NODE_ENV'], '') === 'production';
 };
 
 /**
  * Check if test environment
  */
 export const isTest = () => {
-  return getEnv('NODE_ENV', 'development') === 'test';
+  return getEnv(['MODE', 'NODE_ENV'], 'development') === 'test';
 };
 
 /**
@@ -50,9 +62,7 @@ export const isTest = () => {
  */
 export const getApiUrl = () => {
   return (
-    getEnv('REACT_APP_API_URL') ||
-    getEnv('VITE_API_URL') ||
-    getEnv('NEXT_PUBLIC_API_URL') ||
+    getEnv(['VITE_API_URL', 'REACT_APP_API_URL', 'NEXT_PUBLIC_API_URL']) ||
     (isDevelopment() ? 'http://localhost:3001' : 'https://api.festies.io')
   );
 };
@@ -62,9 +72,7 @@ export const getApiUrl = () => {
  */
 export const getNetwork = () => {
   return (
-    getEnv('REACT_APP_NETWORK') ||
-    getEnv('VITE_NETWORK') ||
-    getEnv('NEXT_PUBLIC_NETWORK') ||
+    getEnv(['VITE_NETWORK', 'REACT_APP_NETWORK', 'NEXT_PUBLIC_NETWORK']) ||
     'mainnet'
   );
 };
@@ -73,22 +81,29 @@ export const getNetwork = () => {
  * Get contract address
  */
 export const getContractAddress = (contractName) => {
-  const key = `REACT_APP_${contractName.toUpperCase()}_CONTRACT` ||
-              `VITE_${contractName.toUpperCase()}_CONTRACT` ||
-              `NEXT_PUBLIC_${contractName.toUpperCase()}_CONTRACT`;
-  
-  return getEnv(key) || null;
+  const upper = String(contractName || '').toUpperCase();
+  return (
+    getEnv(
+      [
+        `VITE_${upper}_CONTRACT`,
+        `VITE_${upper}_CONTRACT_ADDRESS`,
+        `REACT_APP_${upper}_CONTRACT`,
+        `NEXT_PUBLIC_${upper}_CONTRACT`
+      ],
+      null
+    ) || null
+  );
 };
 
 /**
  * Check if feature flag is enabled
  */
 export const isFeatureEnabled = (featureName) => {
-  const key = `REACT_APP_FEATURE_${featureName.toUpperCase()}` ||
-              `VITE_FEATURE_${featureName.toUpperCase()}` ||
-              `NEXT_PUBLIC_FEATURE_${featureName.toUpperCase()}`;
-  
-  const value = getEnv(key, 'false');
+  const upper = String(featureName || '').toUpperCase();
+  const value = getEnv(
+    [`VITE_FEATURE_${upper}`, `REACT_APP_FEATURE_${upper}`, `NEXT_PUBLIC_FEATURE_${upper}`],
+    'false'
+  );
   return value === 'true' || value === '1' || value === 'yes';
 };
 
@@ -97,9 +112,7 @@ export const isFeatureEnabled = (featureName) => {
  */
 export const getAppVersion = () => {
   return (
-    getEnv('REACT_APP_VERSION') ||
-    getEnv('VITE_APP_VERSION') ||
-    getEnv('NEXT_PUBLIC_APP_VERSION') ||
+    getEnv(['VITE_APP_VERSION', 'REACT_APP_VERSION', 'NEXT_PUBLIC_APP_VERSION']) ||
     '1.0.0'
   );
 };
@@ -109,9 +122,7 @@ export const getAppVersion = () => {
  */
 export const getBuildTimestamp = () => {
   return (
-    getEnv('REACT_APP_BUILD_TIMESTAMP') ||
-    getEnv('VITE_BUILD_TIMESTAMP') ||
-    getEnv('NEXT_PUBLIC_BUILD_TIMESTAMP') ||
+    getEnv(['VITE_BUILD_TIMESTAMP', 'REACT_APP_BUILD_TIMESTAMP', 'NEXT_PUBLIC_BUILD_TIMESTAMP']) ||
     new Date().toISOString()
   );
 };
@@ -121,9 +132,7 @@ export const getBuildTimestamp = () => {
  */
 export const getAnalyticsId = () => {
   return (
-    getEnv('REACT_APP_ANALYTICS_ID') ||
-    getEnv('VITE_ANALYTICS_ID') ||
-    getEnv('NEXT_PUBLIC_ANALYTICS_ID') ||
+    getEnv(['VITE_ANALYTICS_ID', 'REACT_APP_ANALYTICS_ID', 'NEXT_PUBLIC_ANALYTICS_ID']) ||
     null
   );
 };
@@ -133,9 +142,7 @@ export const getAnalyticsId = () => {
  */
 export const getSentryDsn = () => {
   return (
-    getEnv('REACT_APP_SENTRY_DSN') ||
-    getEnv('VITE_SENTRY_DSN') ||
-    getEnv('NEXT_PUBLIC_SENTRY_DSN') ||
+    getEnv(['VITE_SENTRY_DSN', 'REACT_APP_SENTRY_DSN', 'NEXT_PUBLIC_SENTRY_DSN']) ||
     null
   );
 };
@@ -144,21 +151,11 @@ export const getSentryDsn = () => {
  * Get all environment variables as object
  */
 export const getAllEnv = () => {
-  if (typeof window === 'undefined') {
-    return process.env || {};
-  }
-  
-  const env = {};
-  
-  if (window.env) {
-    Object.assign(env, window.env);
-  }
-  
-  if (typeof import !== 'undefined' && import.meta && import.meta.env) {
-    Object.assign(env, import.meta.env);
-  }
-  
-  return env;
+  return {
+    ...(globalThis?.process?.env ? globalThis.process.env : {}),
+    ...(import.meta?.env ? import.meta.env : {}),
+    ...(typeof window !== 'undefined' && window?.env ? window.env : {})
+  };
 };
 
 /**
@@ -172,8 +169,4 @@ export const isDebugMode = () => {
     (!isProduction() && typeof window !== 'undefined' && window.localStorage?.getItem('debug') === 'true')
   );
 };
-// Style improvement
-// Refactor improvement
-// Additional style improvement
-// Documentation update
-// Additional performance optimization
+// Beautiful padding marker 4/300
