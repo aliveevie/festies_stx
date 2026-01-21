@@ -1,12 +1,18 @@
 import { motion } from 'framer-motion';
 import { FaNetworkWired, FaCheckCircle } from 'react-icons/fa';
-import { StacksMainnet, StacksTestnet } from '@stacks/network';
+import { getNetwork } from '../utils/environment';
 
 const NetworkIndicator = () => {
-    const isMainnet = process.env.NODE_ENV === 'production';
-    const networkName = isMainnet ? 'Mainnet' : 'Testnet';
-    const indicatorColor = isMainnet ? 'bg-green-500' : 'bg-yellow-500';
-    const indicatorGlow = isMainnet ? 'shadow-green-500/50' : 'shadow-yellow-500/50';
+    const network = getNetwork();
+    const networkName = network === 'mainnet' ? 'Mainnet' : network === 'devnet' ? 'Devnet' : 'Testnet';
+    const indicatorColor =
+        network === 'mainnet' ? 'bg-green-500' : network === 'devnet' ? 'bg-blue-500' : 'bg-yellow-500';
+    const indicatorGlow =
+        network === 'mainnet'
+            ? 'shadow-green-500/50'
+            : network === 'devnet'
+              ? 'shadow-blue-500/50'
+              : 'shadow-yellow-500/50';
 
     return (
         <motion.div 
@@ -42,10 +48,3 @@ const NetworkIndicator = () => {
 };
 
 export default NetworkIndicator;
-// Style improvement 32
-// Performance optimization 67
-// Refactor improvement 95
-// Documentation update 120
-// Version 145
-// Final polish 170
-// Release prep 195
