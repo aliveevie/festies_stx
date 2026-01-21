@@ -77,7 +77,7 @@ export const isUrlReachable = async (url, timeout = 5000) => {
     
     clearTimeout(timeoutId);
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
