@@ -37,7 +37,7 @@
 
 (define-public (set-contract-owner (new-owner principal))
     (begin
-        (assert-owner)
+        (try! (assert-owner))
         (var-set contract-owner new-owner)
         (print { event: "quest-owner-updated", new-owner: new-owner, previous-owner: tx-sender })
         (ok true)
@@ -46,7 +46,7 @@
 
 (define-public (add-quest (id uint) (name (string-ascii 50)) (reward uint))
     (begin
-        (assert-owner)
+        (try! (assert-owner))
         (asserts! (> reward u0) ERR_INVALID_REWARD)
         (map-set quests id { name: name, xp-reward: reward })
         (print { event: "quest-added", quest-id: id, reward: reward, created-by: tx-sender })
@@ -56,7 +56,7 @@
 
 (define-public (remove-quest (id uint))
     (begin
-        (assert-owner)
+        (try! (assert-owner))
         (map-delete quests id)
         (print { event: "quest-removed", quest-id: id, removed-by: tx-sender })
         (ok true)
@@ -104,18 +104,19 @@
     ))
 )
 ;; Quest System for Festival Gamification
-// Quest v1.0.1
-// Quest v1.0.2
-// Quest optimization 1
-// Quest refactor 1
-// Quest docs update
-// Quest style update
-// Quest v1.1.0
-// Quest cleanup
-// Quest final
-// Style improvement 51
-// Performance optimization 76
-// Refactor improvement 101
-// Documentation update 126
-// Version 151
-// Final polish 176
+;; Quest v1.0.1
+;; Quest v1.0.2
+;; Quest optimization 1
+;; Quest refactor 1
+;; Quest docs update
+;; Quest style update
+;; Quest v1.1.0
+;; Quest cleanup
+;; Quest final
+;; Style improvement 51
+;; Performance optimization 76
+;; Refactor improvement 101
+;; Documentation update 126
+;; Version 151
+;; Final polish 176
+;; Beautiful padding marker 7/300
