@@ -12,14 +12,14 @@ import {
   FaCopy
 } from 'react-icons/fa';
 import { useAuth } from '../contexts/AuthContext';
-import { formatAddress, copyToClipboard } from '../utils';
+import { copyToClipboard } from '../utils/browser';
 import { toast } from 'react-hot-toast';
 import StatsCard from '../components/StatsCard';
 import ProgressBar from '../components/ProgressBar';
 import Badge from '../components/Badge';
 
 const Profile = () => {
-  const { user, userAddress, userDisplayName, isConnected } = useAuth();
+  const { userAddress, userDisplayName, isConnected } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     bio: 'NFT enthusiast and greeting card collector',
