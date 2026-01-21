@@ -210,8 +210,27 @@ export const getDateDiff = (date1, date2 = new Date()) => {
     years: Math.floor(Math.abs(ms) / 1000 / 60 / 60 / 24 / 365),
   };
 };
-// Style improvement
-// Refactor improvement
-// Additional style improvement
-// Documentation update
-// Additional performance optimization
+
+/**
+ * Get "time ago" string from a millisecond timestamp.
+ */
+export const getTimeAgo = (timestampMs) => {
+  const timestamp = Number(timestampMs);
+  if (!Number.isFinite(timestamp)) return '';
+
+  const diff = Date.now() - timestamp;
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`;
+  if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`;
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  if (seconds > 0) return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+  return 'just now';
+};
