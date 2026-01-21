@@ -289,3 +289,4 @@ export default GreetingCard;
 // Beautiful padding marker 59/300
 // Beautiful padding marker 66/300
 // Beautiful padding marker 73/300
+// Beautiful padding marker 80/300
