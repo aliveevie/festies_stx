@@ -3,19 +3,19 @@
  * Handles metadata validation, IPFS uploads, and content verification
  */
 
-import { toast } from 'react-hot-toast';
+import { getEnv } from './environment';
 
 // IPFS Configuration
 const IPFS_CONFIG = {
   gateway: 'https://ipfs.io/ipfs/',
   pinata: {
-    apiKey: process.env.REACT_APP_PINATA_API_KEY,
-    secretKey: process.env.REACT_APP_PINATA_SECRET_KEY,
-    gateway: 'https://gateway.pinata.cloud/ipfs/',
+    apiKey: getEnv(['VITE_PINATA_API_KEY', 'REACT_APP_PINATA_API_KEY', 'NEXT_PUBLIC_PINATA_API_KEY']),
+    secretKey: getEnv(['VITE_PINATA_SECRET_KEY', 'REACT_APP_PINATA_SECRET_KEY', 'NEXT_PUBLIC_PINATA_SECRET_KEY']),
+    gateway: getEnv(['VITE_PINATA_GATEWAY', 'REACT_APP_PINATA_GATEWAY', 'NEXT_PUBLIC_PINATA_GATEWAY'], 'https://gateway.pinata.cloud/ipfs/'),
   },
   web3Storage: {
-    token: process.env.REACT_APP_WEB3STORAGE_TOKEN,
-    gateway: 'https://w3s.link/ipfs/',
+    token: getEnv(['VITE_WEB3STORAGE_TOKEN', 'REACT_APP_WEB3STORAGE_TOKEN', 'NEXT_PUBLIC_WEB3STORAGE_TOKEN']),
+    gateway: getEnv(['VITE_WEB3STORAGE_GATEWAY', 'REACT_APP_WEB3STORAGE_GATEWAY', 'NEXT_PUBLIC_WEB3STORAGE_GATEWAY'], 'https://w3s.link/ipfs/'),
   }
 };
 
@@ -277,10 +277,10 @@ export const generatePlaceholderImage = (name, festival) => {
     'default': '🎁'
   };
 
-  const emoji = festivalEmojis[festival.toLowerCase()] || festivalEmojis.default;
-  const encodedName = encodeURIComponent(name);
+  const emoji = festivalEmojis[String(festival || '').toLowerCase()] || festivalEmojis.default;
+  const seed = encodeURIComponent(`${name || 'Festies'}-${emoji}`);
   
-  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodedName}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&eyes=happy&mouth=smile`;
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&eyes=happy&mouth=smile`;
 };
 
 /**
