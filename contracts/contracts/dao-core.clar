@@ -50,12 +50,3 @@
 (define-read-only (get-proposal (id uint))
     (ok (map-get? proposals id))
 )
-;; DAO v1.0.1
-;; DAO v1.0.2
-;; DAO optimization 1
-;; DAO refactor 1
-;; DAO docs update
-;; DAO style update
-;; DAO v1.1.0
-;; DAO cleanup
-;; DAO final
