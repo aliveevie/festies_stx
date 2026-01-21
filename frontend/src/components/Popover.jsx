@@ -106,13 +106,6 @@ const Popover = ({
     }
   }, [open, placement, offset]);
 
-  useClickOutside(() => {
-    if (!isControlled && open) {
-      setIsOpen(false);
-      onOpenChange?.(false);
-    }
-  }, open && !isControlled);
-
   const handleToggle = () => {
     if (!isControlled) {
       const newOpen = !isOpen;
