@@ -218,3 +218,4 @@ const CommandPalette = ({
 
 export default CommandPalette;
 // Style improvement
+// Refactor improvement
