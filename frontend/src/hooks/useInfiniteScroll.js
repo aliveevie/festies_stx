@@ -54,3 +54,4 @@ const useInfiniteScroll = ({
 export default useInfiniteScroll;
 // Style improvement
 // Performance optimization
+// Additional style improvement
