@@ -90,3 +90,4 @@ const QRCode = ({
 
 export default QRCode;
 // Style improvement
+// Additional style improvement
