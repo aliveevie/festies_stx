@@ -210,3 +210,4 @@ export const waitForOnline = (timeout = 30000) => {
     window.addEventListener('online', handleOnline);
   });
 };
+// Style improvement
