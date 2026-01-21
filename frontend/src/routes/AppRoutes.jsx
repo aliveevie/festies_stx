@@ -18,6 +18,8 @@ import Analytics from '../pages/Analytics';
 import Events from '../pages/Events';
 import Gallery from '../pages/Gallery';
 import Staking from '../pages/Staking';
+import Support from '../pages/Support';
+import Legal from '../pages/Legal';
 
 // Page transition variants
 const pageVariants = {
@@ -312,6 +314,38 @@ const AppRoutes = () => {
                         transition={pageTransition}
                     >
                         <Staking />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/support"
+                element={
+                    <motion.div
+                        key="support"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Support />
+                    </motion.div>
+                }
+            />
+
+            <Route
+                path="/legal"
+                element={
+                    <motion.div
+                        key="legal"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants}
+                        transition={pageTransition}
+                    >
+                        <Legal />
                     </motion.div>
                 }
             />
