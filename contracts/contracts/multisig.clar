@@ -201,3 +201,4 @@
   (default-to false (map-get? owners owner))
 )
 ;; Style improvement
+// Refactor improvement
