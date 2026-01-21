@@ -23,26 +23,3 @@ const ConnectWalletButton = ({ className, label = "Connect Wallet" }) => {
 };
 
 export default ConnectWalletButton;
-// UI phase 36
-// UI phase 37
-// UI phase 38
-// UI phase 39
-// UI phase 40
-// UI phase 41
-// UI phase 42
-// UI phase 43
-// UI phase 44
-// UI phase 45
-// UI phase 46
-// UI phase 47
-// UI phase 48
-// UI phase 49
-// UI phase 50
-// Wallet build 1
-// Wallet build 2
-// Wallet optimization 1
-// Wallet refactor 1
-// Wallet docs update
-// Wallet style update
-// Wallet v1.1.0
-// Wallet cleanup
