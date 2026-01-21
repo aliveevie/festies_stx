@@ -18,7 +18,9 @@ import {
   FaSearch
 } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
-import { formatAddress, getTimeAgo, copyToClipboard } from '../utils';
+import { formatAddress } from '../utils/formatters';
+import { getTimeAgo } from '../utils/time';
+import { copyToClipboard } from '../utils/browser';
 
 const TransactionHistory = ({ 
   userAddress, 
@@ -423,15 +425,8 @@ const TransactionHistory = ({
           </div>
         )}
       </div>
-    </div>
-  );
-};
-
-export default TransactionHistory;
-// Style improvement 34
-// Performance optimization 53
-// Refactor improvement 78
-// Documentation update 103
-// Version 128
-// Final polish 153
-// Release prep 178
+	    </motion.div>
+	  );
+	};
+	
+	export default TransactionHistory;
