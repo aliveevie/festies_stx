@@ -168,6 +168,3 @@
 (define-read-only (get-escrow-count)
   (var-get escrow-counter)
 )
-;; Style improvement
-// Refactor improvement
-// Final polish v1.0.0
