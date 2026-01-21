@@ -7,7 +7,6 @@ import { useEffect, useRef } from 'react';
 const QRCode = ({
   value,
   size = 200,
-  level = 'M', // L, M, Q, H
   backgroundColor = '#FFFFFF',
   foregroundColor = '#000000',
   className = '',
