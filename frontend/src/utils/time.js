@@ -210,3 +210,4 @@ export const getDateDiff = (date1, date2 = new Date()) => {
     years: Math.floor(Math.abs(ms) / 1000 / 60 / 60 / 24 / 365),
   };
 };
+// Style improvement
