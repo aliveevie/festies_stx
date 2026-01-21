@@ -286,3 +286,4 @@ const AudioPlayer = ({
 };
 
 export default AudioPlayer;
+// Style improvement
