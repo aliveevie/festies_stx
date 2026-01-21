@@ -156,7 +156,7 @@
                     (ok true)
                 )
             )
-            (err ERR_LISTING_NOT_FOUND)
+            ERR_LISTING_NOT_FOUND
         )
     )
 )
@@ -191,7 +191,7 @@
                     (ok true)
                 )
             )
-            (err ERR_LISTING_NOT_FOUND)
+            ERR_LISTING_NOT_FOUND
         )
     )
 )
@@ -206,7 +206,7 @@
                 (begin
                     ;; Validate listing
                     (asserts! (get active listing-data) ERR_LISTING_INACTIVE)
-                    (asserts! (>= block-height (get expires-at listing-data)) false) ;; Check not expired
+                    (asserts! (<= block-height (get expires-at listing-data)) ERR_LISTING_INACTIVE) ;; Check not expired
                     (asserts! (not (is-eq tx-sender (get seller listing-data))) ERR_NOT_AUTHORIZED)
                     
                     (let ((price (get price listing-data))
@@ -255,7 +255,7 @@
                     )
                 )
             )
-            (err ERR_LISTING_NOT_FOUND)
+            ERR_LISTING_NOT_FOUND
         )
     )
 )
@@ -289,18 +289,18 @@
         )
     )
 )
-// Market v1.0.1
-// Market v1.0.2
-// Market optimization 1
-// Market refactor 1
-// Market docs update
-// Market style update
-// Market v1.1.0
-// Market cleanup
-// Market final
-// Performance optimization 72
-// Refactor improvement 89
-// Documentation update 114
-// Version 139
-// Final polish 164
-// Release prep 189
+;; Market v1.0.1
+;; Market v1.0.2
+;; Market optimization 1
+;; Market refactor 1
+;; Market docs update
+;; Market style update
+;; Market v1.1.0
+;; Market cleanup
+;; Market final
+;; Performance optimization 72
+;; Refactor improvement 89
+;; Documentation update 114
+;; Version 139
+;; Final polish 164
+;; Release prep 189
