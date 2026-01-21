@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaSearch, 
@@ -356,15 +356,8 @@ const AdvancedSearchFilter = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  );
-};
-
-export default AdvancedSearchFilter;
-// Style improvement 27
-// Performance optimization 58
-// Refactor improvement 77
-// Documentation update 102
-// Version 127
-// Final polish 152
-// Release prep 177
+	    </motion.div>
+	  );
+	};
+	
+	export default AdvancedSearchFilter;
