@@ -6,7 +6,9 @@
  * ============================================================================
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.festies.io';
+import { getApiUrl } from './environment';
+
+const API_BASE_URL = getApiUrl();
 
 /**
  * Makes a GET request
@@ -154,21 +156,21 @@ export const retryRequest = async (requestFn, maxRetries = 3, delay = 1000) => {
  * @returns {string} - User-friendly error message
  */
 export const handleApiError = (error) => {
-  if (error.message.includes('Failed to fetch')) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  if (message.includes('Failed to fetch')) {
     return 'Network error. Please check your connection.';
   }
-  if (error.message.includes('401')) {
+  if (message.includes('401')) {
     return 'Unauthorized. Please log in again.';
   }
-  if (error.message.includes('403')) {
+  if (message.includes('403')) {
     return 'Access forbidden.';
   }
-  if (error.message.includes('404')) {
+  if (message.includes('404')) {
     return 'Resource not found.';
   }
-  if (error.message.includes('500')) {
+  if (message.includes('500')) {
     return 'Server error. Please try again later.';
   }
-  return error.message || 'An unexpected error occurred.';
+  return message || 'An unexpected error occurred.';
 };
-// Performance optimization
