@@ -5,8 +5,10 @@ import {
   connectWallet, 
   disconnectWallet, 
   getContractStatus,
-  handleBlockchainError 
+  handleBlockchainError
 } from '../utils/blockchain';
+import { getNetwork } from '../utils/environment';
+import { STACKS_SESSION_STORAGE_KEY } from '../utils/walletconnect';
 
 // Create the Auth Context
 const AuthContext = createContext();
@@ -101,7 +103,11 @@ export const AuthProvider = ({ children }) => {
   // Get user's Stacks address
   const getUserAddress = useCallback(() => {
     if (!user?.profile?.stxAddress) return null;
-    return user.profile.stxAddress.mainnet || user.profile.stxAddress.testnet;
+    const network = getNetwork();
+    const stxAddress = user.profile.stxAddress;
+
+    if (network === 'mainnet') return stxAddress.mainnet || stxAddress.testnet || null;
+    return stxAddress.testnet || stxAddress.mainnet || null;
   }, [user]);
 
   // Check if user owns a specific NFT
@@ -124,9 +130,8 @@ export const AuthProvider = ({ children }) => {
   // Listen for storage changes (wallet connect/disconnect)
   useEffect(() => {
     const handleStorageChange = (e) => {
-      if (e.key === 'stacks-session') {
-        initializeAuth();
-      }
+      if (!e.key) return;
+      if (e.key === STACKS_SESSION_STORAGE_KEY || e.key === 'festies-mock-session') initializeAuth();
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -174,26 +179,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
-// Logic phase 21
-// Logic phase 22
-// Logic phase 23
-// Logic phase 24
-// Logic phase 25
-// Logic phase 26
-// Logic phase 27
-// Logic phase 28
-// Logic phase 29
-// Logic phase 30
-// Logic phase 31
-// Logic phase 32
-// Logic phase 33
-// Logic phase 34
-// Logic phase 35
-// Auth build 1
-// Auth build 2
-// Auth optimization 1
-// Auth refactor 1
-// Auth docs update
-// Auth style update
-// Auth v1.1.0
-// Auth cleanup
