@@ -477,3 +477,4 @@ export const burnNFT = async (tokenId) => {
 // Beautiful padding marker 54/300
 // Beautiful padding marker 61/300
 // Beautiful padding marker 68/300
+// Beautiful padding marker 75/300
