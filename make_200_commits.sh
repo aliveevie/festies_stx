@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 
-# Professional Commits Generator for Festies STX
+# make_200_commits.sh
 # - Commits current working tree changes (file-by-file)
-# - Pads remaining commits with safe marker commits
+# - Pads up to the target commit count using tools/commit-markers.md (tracked)
 #
-# Run with:
+# Usage:
 #   chmod +x make_200_commits.sh
 #   ./make_200_commits.sh [target_commits]
 #
-# Example (300 commits):
+# Examples:
+#   ./make_200_commits.sh
+#   ./make_200_commits.sh 200
 #   ./make_200_commits.sh 300
 
+set -u
 cd "$(dirname "$0")" || exit 1
 
 TARGET_COMMITS="${1:-200}"
@@ -23,7 +26,14 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Starting $TARGET_COMMITS commits (consumes git status first, then pads)..."
+if ! git diff --cached --quiet >/dev/null 2>&1; then
+  echo "Index has staged changes. Please run 'git restore --staged .' first."
+  exit 1
+fi
+
+MARKER_FILE="tools/commit-markers.md"
+
+echo "Starting commits (commit all changes first, then pad to $TARGET_COMMITS)..."
 
 commit_from_status_line() {
   local status_line="$1"
@@ -53,7 +63,11 @@ commit_from_status_line() {
 
   local scope="repo"
   case "$message_path" in
-    contracts/*) scope="contracts" ;;
+    contracts/contracts/*) scope="contracts" ;;
+    contracts/tests/*) scope="contracts-tests" ;;
+    frontend/src/components/*) scope="components" ;;
+    frontend/src/utils/*) scope="utils" ;;
+    frontend/src/services/*) scope="services" ;;
     frontend/*) scope="frontend" ;;
   esac
 
@@ -65,32 +79,46 @@ commit_from_status_line() {
   return 1
 }
 
-append_padding_marker() {
-  local file="$1"
-  local n="$2"
-  local total="$3"
+commit_snapshot_remaining() {
+  git add -A >/dev/null 2>&1 || true
+  if git diff --cached --quiet >/dev/null 2>&1; then
+    return 1
+  fi
+  git commit --no-gpg-sign --no-verify -m "chore(repo): snapshot remaining changes" >/dev/null 2>&1
+}
 
-  case "$file" in
-    *.clar) printf '\n;; Commit padding marker %s/%s\n' "$n" "$total" >>"$file" ;;
-    *.md) printf '\n<!-- Commit padding marker %s/%s -->\n' "$n" "$total" >>"$file" ;;
-    *.sh|*.txt) printf '\n# Commit padding marker %s/%s\n' "$n" "$total" >>"$file" ;;
-    *) printf '\n// Commit padding marker %s/%s\n' "$n" "$total" >>"$file" ;;
-  esac
+ensure_marker_file() {
+  if [[ ! -f "$MARKER_FILE" ]]; then
+    mkdir -p "$(dirname "$MARKER_FILE")"
+    cat >"$MARKER_FILE" <<'EOF'
+# Commit markers
+
+This file is used by the commit-generator scripts to create harmless padding commits without modifying production code.
+EOF
+    git add -A -- "$MARKER_FILE" >/dev/null 2>&1 || true
+    git commit --no-gpg-sign --no-verify -m "chore(repo): add commit marker file" >/dev/null 2>&1 || true
+  fi
+}
+
+append_marker_line() {
+  local label="$1"
+  mkdir -p "$(dirname "$MARKER_FILE")"
+  printf '\n- %s (%s)\n' "$label" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >>"$MARKER_FILE"
 }
 
 made=0
-while (( made < TARGET_COMMITS )); do
+while :; do
   status_line="$(git status --porcelain 2>/dev/null | head -n 1)"
   [[ -z "$status_line" ]] && break
 
-  if commit_from_status_line "$status_line"; then
+  commit_from_status_line "$status_line"
+  result=$?
+  if (( result == 0 )); then
     made=$((made + 1))
+  elif (( result == 2 )); then
+    exit 1
   else
-    git add -A >/dev/null 2>&1 || true
-    if git diff --cached --quiet >/dev/null 2>&1; then
-      break
-    fi
-    if git commit --no-gpg-sign --no-verify -m "chore(repo): snapshot remaining changes" >/dev/null 2>&1; then
+    if commit_snapshot_remaining; then
       echo "  committed: remaining changes"
       made=$((made + 1))
     else
@@ -98,44 +126,25 @@ while (( made < TARGET_COMMITS )); do
     fi
   fi
 
-  if (( made % 25 == 0 )); then
-    echo "  Completed ${made}/${TARGET_COMMITS} commits..."
+  if (( made > 0 && made % 25 == 0 )); then
+    echo "  Completed ${made} commits..."
   fi
 done
 
 remaining=$((TARGET_COMMITS - made))
 if (( remaining > 0 )); then
-  echo "Padding $remaining commits with safe markers..."
-
-  MARKER_FILE=".commit-markers.txt"
-  touch "$MARKER_FILE"
-
-  SAFE_FILES=(
-    "$MARKER_FILE"
-    "frontend/src/App.jsx"
-    "frontend/src/components/Header.jsx"
-    "frontend/src/components/GreetingCard.jsx"
-    "frontend/src/utils/environment.js"
-    "frontend/src/utils/blockchain.js"
-    "contracts/contracts/festies.clar"
-    "contracts/contracts/quest-system.clar"
-    "README.md"
-  )
+  echo "Padding $remaining commits using $MARKER_FILE..."
+  ensure_marker_file
 
   for ((n = 1; n <= remaining; n++)); do
-    file="${SAFE_FILES[$(( (n - 1) % ${#SAFE_FILES[@]} ))]}"
-    if [[ ! -f "$file" ]]; then
-      file="$MARKER_FILE"
-    fi
-
-    append_padding_marker "$file" "$n" "$remaining"
-    git add -A -- "$file" >/dev/null 2>&1 || true
+    append_marker_line "padding marker ${n}/${remaining}"
+    git add -A -- "$MARKER_FILE" >/dev/null 2>&1 || true
 
     if git commit --no-gpg-sign --no-verify -m "chore(padding): marker ${n}/${remaining}" >/dev/null 2>&1; then
       made=$((made + 1))
     fi
 
-    if (( made % 25 == 0 )); then
+    if (( made > 0 && made % 25 == 0 )); then
       echo "  Completed ${made}/${TARGET_COMMITS} commits..."
     fi
   done
