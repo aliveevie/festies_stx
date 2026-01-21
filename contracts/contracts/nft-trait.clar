@@ -43,18 +43,18 @@
     (response bool uint)
   )
 ))
-// Trait v1.0.1
-// Trait v1.0.2
-// Trait optimization 1
-// Trait refactor 1
-// Trait docs update
-// Trait style update
-// Trait v1.1.0
-// Trait cleanup
-// Trait final
-// Performance optimization 73
-// Refactor improvement 90
-// Documentation update 115
-// Version 140
-// Final polish 165
-// Release prep 190
+;; Trait v1.0.1
+;; Trait v1.0.2
+;; Trait optimization 1
+;; Trait refactor 1
+;; Trait docs update
+;; Trait style update
+;; Trait v1.1.0
+;; Trait cleanup
+;; Trait final
+;; Performance optimization 73
+;; Refactor improvement 90
+;; Documentation update 115
+;; Version 140
+;; Final polish 165
+;; Release prep 190
