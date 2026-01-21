@@ -1,7 +1,7 @@
 /**
  * Hook for managing window resize events
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * Hook to track window size
