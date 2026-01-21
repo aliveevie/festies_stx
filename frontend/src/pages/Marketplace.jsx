@@ -122,15 +122,12 @@ const Marketplace = () => {
                                     <option value="oldest">Oldest First</option>
                                 </select>
                             </div>
-                </div>
+                        </div>
                     </motion.div>
 
                     {/* Greeting Cards Grid */}
                     <motion.div variants={itemVariants}>
-                <GreetingCardGrid
-                    showActions={false}
-                    maxItems={50}
-                />
+                        <GreetingCardGrid showActions={false} maxItems={50} />
                     </motion.div>
                 </motion.div>
             </div>
@@ -139,18 +136,3 @@ const Marketplace = () => {
 };
 
 export default Marketplace;
-// Marketplace build 1
-// Marketplace build 2
-// Marketplace optimization 1
-// Marketplace refactor 1
-// Marketplace docs update
-// Marketplace style update
-// Marketplace v1.1.0
-// Marketplace cleanup
-// Style improvement 40
-// Performance optimization 54
-// Refactor improvement 80
-// Documentation update 105
-// Version 130
-// Final polish 155
-// Release prep 180
