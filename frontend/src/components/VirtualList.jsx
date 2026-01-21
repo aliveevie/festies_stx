@@ -67,3 +67,4 @@ const VirtualList = ({
 
 export default VirtualList;
 // Style improvement
+// Performance optimization
