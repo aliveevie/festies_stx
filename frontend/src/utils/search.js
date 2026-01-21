@@ -125,21 +125,25 @@ export const isWithinDateRange = (timestamp, dateRange) => {
   const date = new Date(timestamp * 1000);
 
   switch (dateRange) {
-    case 'today':
+    case 'today': {
       const today = new Date();
       return date.toDateString() === today.toDateString();
+    }
     
-    case 'week':
+    case 'week': {
       const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
       return date >= weekAgo;
+    }
     
-    case 'month':
+    case 'month': {
       const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
       return date >= monthAgo;
+    }
     
-    case 'year':
+    case 'year': {
       const yearAgo = new Date(now - 365 * 24 * 60 * 60 * 1000);
       return date >= yearAgo;
+    }
     
     default:
       return true;
