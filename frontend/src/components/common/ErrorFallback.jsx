@@ -74,10 +74,3 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => (
 );
 
 export default ErrorFallback;
-// Style improvement 36
-// Performance optimization 69
-// Refactor improvement 97
-// Documentation update 122
-// Version 147
-// Final polish 172
-// Release prep 197
