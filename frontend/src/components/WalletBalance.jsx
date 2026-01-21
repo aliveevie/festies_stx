@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaCoins, FaSpinner } from 'react-icons/fa';
 import { useAuth } from '../contexts/AuthContext';
-import { StacksMainnet, StacksTestnet } from '@stacks/network';
+import { getStacksApiBaseUrl } from '../config/stacks';
 
 const WalletBalance = () => {
     const { userAddress } = useAuth();
@@ -15,16 +15,15 @@ const WalletBalance = () => {
 
             setIsLoading(true);
             try {
-                const isMainnet = process.env.NODE_ENV === 'production';
-                const apiUrl = isMainnet
-                    ? 'https://stacks-node-api.mainnet.stacks.co'
-                    : 'https://stacks-node-api.testnet.stacks.co';
+                const apiUrl = getStacksApiBaseUrl();
 
                 const response = await fetch(`${apiUrl}/extended/v1/address/${userAddress}/balances`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
 
                 // Convert microSTX to STX
-                const stxBalance = parseInt(data.stx.balance) / 1000000;
+                const microStx = Number.parseInt(data?.stx?.balance || '0', 10);
+                const stxBalance = Number.isFinite(microStx) ? microStx / 1_000_000 : 0;
                 setBalance(stxBalance.toLocaleString(undefined, { maximumFractionDigits: 2 }));
             } catch (error) {
                 console.error('Failed to fetch balance:', error);
@@ -74,10 +73,3 @@ const WalletBalance = () => {
 };
 
 export default WalletBalance;
-// Style improvement 35
-// Performance optimization 66
-// Refactor improvement 94
-// Documentation update 119
-// Version 144
-// Final polish 169
-// Release prep 194
