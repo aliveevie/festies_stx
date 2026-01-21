@@ -211,3 +211,4 @@ export const waitForOnline = (timeout = 30000) => {
   });
 };
 // Style improvement
+// Performance optimization
