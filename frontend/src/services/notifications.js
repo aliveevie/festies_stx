@@ -107,8 +107,3 @@ export const show = (type, message, options = {}) => {
     ...options,
   });
 };
-// Style improvement
-// Performance optimization
-// Refactor improvement
-// Additional performance optimization
-// Version bump v1.0.0
