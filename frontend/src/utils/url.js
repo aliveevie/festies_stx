@@ -150,7 +150,6 @@ export const downloadFile = (url, filename) => {
  * @param {string} url - URL to open
  */
 export const openInNewTab = (url) => {
+  if (typeof window === 'undefined') return;
   window.open(url, '_blank', 'noopener,noreferrer');
 };
-// Style improvement
-// Additional style improvement
