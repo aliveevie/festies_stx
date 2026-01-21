@@ -26,6 +26,18 @@ class Logger {
     this.maxStorageSize = 100;
     this.logs = [];
     this.onLog = null;
+
+    const env = typeof import.meta !== 'undefined' ? import.meta.env : undefined;
+    const envLevel = env?.VITE_LOG_LEVEL;
+    if (envLevel) this.setLevel(envLevel);
+
+    if (env?.DEV || env?.VITE_DEBUG === 'true') {
+      this.level = Math.min(this.level, LOG_LEVELS.DEBUG);
+    }
+
+    if (env?.PROD && env?.VITE_LOG_CONSOLE === 'false') {
+      this.enableConsole = false;
+    }
   }
 
   /**
@@ -205,8 +217,3 @@ export default logger;
 
 // Export for configuration
 export { LOG_LEVELS, LOG_LEVEL_NAMES };
-// Style improvement
-// Refactor improvement
-// Documentation update
-// Additional performance optimization
-// Version bump v1.0.0
