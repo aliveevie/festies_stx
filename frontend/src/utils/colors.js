@@ -95,7 +95,3 @@ export const isDark = (hex) => {
   const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
   return brightness < 128;
 };
-// Style improvement
-// Refactor improvement
-// Documentation update
-// Additional performance optimization
