@@ -283,3 +283,4 @@ const VideoPlayer = ({
 export default VideoPlayer;
 // Style improvement
 // Performance optimization
+// Refactor improvement
