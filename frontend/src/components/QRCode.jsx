@@ -89,3 +89,4 @@ const QRCode = ({
 };
 
 export default QRCode;
+// Style improvement
