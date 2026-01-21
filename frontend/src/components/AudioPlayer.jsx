@@ -148,13 +148,6 @@ const AudioPlayer = ({
     }
   };
 
-  const skip = (seconds) => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.currentTime = Math.max(0, Math.min(duration, audio.currentTime + seconds));
-    }
-  };
-
   const formatTime = (time) => {
     if (isNaN(time)) return '0:00';
     const minutes = Math.floor(time / 60);
