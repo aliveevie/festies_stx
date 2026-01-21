@@ -172,3 +172,4 @@ export const isDebugMode = () => {
     (!isProduction() && typeof window !== 'undefined' && window.localStorage?.getItem('debug') === 'true')
   );
 };
+// Style improvement
