@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaHome, FaChartLine, FaShoppingCart, FaPlus, FaUser, FaInfoCircle, FaWallet } from 'react-icons/fa';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { formatAddress } from '../utils';
+import { formatAddress } from '../utils/formatters';
 
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
