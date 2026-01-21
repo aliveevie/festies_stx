@@ -1,7 +1,7 @@
 /**
  * Hook for keyboard events
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Hook to listen for key presses
