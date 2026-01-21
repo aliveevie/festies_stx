@@ -173,3 +173,4 @@ export const isDebugMode = () => {
   );
 };
 // Style improvement
+// Refactor improvement
