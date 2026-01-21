@@ -210,3 +210,4 @@ const SearchBar = ({
 };
 
 export default SearchBar;
+// Style improvement
