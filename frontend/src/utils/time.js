@@ -213,3 +213,4 @@ export const getDateDiff = (date1, date2 = new Date()) => {
 // Style improvement
 // Refactor improvement
 // Additional style improvement
+// Documentation update
