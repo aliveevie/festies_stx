@@ -288,3 +288,4 @@ const AudioPlayer = ({
 export default AudioPlayer;
 // Style improvement
 // Performance optimization
+// Refactor improvement
