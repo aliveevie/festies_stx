@@ -230,3 +230,4 @@ const Support = () => {
 };
 
 export default Support;
+// Style improvement
