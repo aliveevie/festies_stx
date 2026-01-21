@@ -1,15 +1,12 @@
 /**
  * CodeBlock component - Syntax highlighted code display
  */
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Copy, Check } from 'lucide-react';
 import { useClipboard } from '../hooks/useClipboard';
 
 export const CodeBlock = ({
   code,
   language = 'javascript',
-  showLineNumbers = true,
   copyable = true,
   className = '',
 }) => {
