@@ -3,7 +3,19 @@
  * All functions mirror the real contract interfaces but operate on local state.
  */
 
-const SESSION_KEY = 'stacks-session';
+import { openContractCall } from '@stacks/connect';
+import { principalCV, stringAsciiCV, uintCV } from '@stacks/transactions';
+import {
+  connectStacksWallet,
+  disconnectStacksWallet,
+  isSignedIn,
+  isWalletInstalled,
+  loadUserData
+} from './walletconnect';
+import { getEnv, getNetwork } from './environment';
+import { getFestiesContractAddress, getFestiesContractName } from '../config/stacks';
+
+const MOCK_SESSION_KEY = 'festies-mock-session';
 const STATE_KEY = 'festies-mock-chain';
 const DEFAULT_OWNER = 'ST3J2GVMMM2R07ZFBJDWTYEYAR8HX1YY6B7Z4KSB9';
 const DEFAULT_ROYALTY_RECIPIENT = 'ST2C2YYX8Z9W8Z4G3V1N2N5T2V1G5Q5C6Z7T5KX5Z';
@@ -101,14 +113,16 @@ export const formatSTX = (amount = 0, decimals = 6) => {
 };
 
 export const getAuthStatus = () => {
+  if (isSignedIn()) {
+    return { isSignedIn: true, userData: loadUserData() };
+  }
+
   if (canUseStorage) {
     try {
-      const stored = localStorage.getItem(SESSION_KEY);
-      if (stored) {
-        return { isSignedIn: true, userData: JSON.parse(stored) };
-      }
+      const stored = localStorage.getItem(MOCK_SESSION_KEY);
+      if (stored) return { isSignedIn: true, userData: JSON.parse(stored) };
     } catch (error) {
-      console.warn('Failed to read auth session:', error);
+      console.warn('Failed to read mock auth session:', error);
     }
   }
 
@@ -116,6 +130,13 @@ export const getAuthStatus = () => {
 };
 
 export const connectWallet = async () => {
+  const forceMock = String(getEnv(['VITE_USE_MOCK_WALLET'], 'false')).toLowerCase() === 'true';
+  const enableConnect = String(getEnv(['VITE_ENABLE_STACKS_CONNECT'], 'true')).toLowerCase() !== 'false';
+
+  if (!forceMock && enableConnect && isWalletInstalled()) {
+    return connectStacksWallet();
+  }
+
   const mockUser = {
     profile: {
       name: 'Festies Demo User',
@@ -129,8 +150,7 @@ export const connectWallet = async () => {
 
   if (canUseStorage) {
     try {
-      localStorage.setItem(SESSION_KEY, JSON.stringify(mockUser));
-      localStorage.setItem('stacks-session', JSON.stringify(mockUser));
+      localStorage.setItem(MOCK_SESSION_KEY, JSON.stringify(mockUser));
     } catch (error) {
       console.warn('Failed to persist wallet session:', error);
     }
@@ -140,18 +160,24 @@ export const connectWallet = async () => {
 };
 
 export const disconnectWallet = () => {
+  disconnectStacksWallet();
+
   if (!canUseStorage) return;
   try {
-    localStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem('stacks-session');
+    localStorage.removeItem(MOCK_SESSION_KEY);
   } catch (error) {
-    console.warn('Failed to clear wallet session:', error);
+    console.warn('Failed to clear mock wallet session:', error);
   }
 };
 
 const getActiveAddress = () => {
   const session = getAuthStatus();
-  return session.userData?.profile?.stxAddress?.testnet || null;
+  const network = getNetwork();
+  const stxAddress = session.userData?.profile?.stxAddress;
+
+  if (!stxAddress) return null;
+  if (network === 'mainnet') return stxAddress.mainnet || stxAddress.testnet || null;
+  return stxAddress.testnet || stxAddress.mainnet || null;
 };
 
 export const handleBlockchainError = (error) => {
@@ -166,8 +192,9 @@ export const handleBlockchainError = (error) => {
 export const getContractInfo = async () => ({
   name: 'Festival Greetings',
   symbol: 'FESTIE',
-  version: '2.1.0',
-  description: 'Professional NFT contract for festival greetings with royalty support and advanced metadata.'
+  version: '2.3.0',
+  description:
+    'Professional NFT contract for festival greetings with royalty support and advanced features - Updated for Clarity 4'
 });
 
 export const getContractStatus = async () => {
@@ -176,7 +203,8 @@ export const getContractStatus = async () => {
     owner: state.owner,
     paused: !!state.paused,
     royaltyPercentage: state.royalty.percentage,
-    royaltyRecipient: state.royalty.recipient
+    royaltyRecipient: state.royalty.recipient,
+    currentBlockTime: state.lastBlockTime || Math.floor(Date.now() / 1000)
   };
 };
 
@@ -214,6 +242,45 @@ export const getApproved = async (tokenId) => {
 };
 
 export const mintGreetingCard = async (greetingData) => {
+  const enableContractCalls = String(getEnv(['VITE_ENABLE_CONTRACT_CALLS'], 'false')).toLowerCase() === 'true';
+  const contractAddress = getFestiesContractAddress();
+  const contractName = getFestiesContractName();
+
+  if (enableContractCalls && contractAddress && contractName && isSignedIn()) {
+    const recipient = greetingData.recipientAddress || greetingData.recipient;
+    if (!recipient) throw new Error('Recipient address is required');
+
+    const name = String(greetingData.recipientName || greetingData.name || '').trim();
+    const message = String(greetingData.message || '').trim();
+    const festival = String(greetingData.festival || 'Festival').trim();
+    const imageUri = String(greetingData.imageUri || '').trim();
+    const metadataUri = String(greetingData.metadataUri || '').trim();
+
+    const txId = await new Promise((resolve, reject) => {
+      openContractCall({
+        contractAddress,
+        contractName,
+        functionName: 'mint-greeting-card',
+        functionArgs: [
+          principalCV(recipient),
+          stringAsciiCV(name),
+          stringAsciiCV(message),
+          stringAsciiCV(festival),
+          stringAsciiCV(imageUri),
+          stringAsciiCV(metadataUri)
+        ],
+        appDetails: {
+          name: getEnv(['VITE_APP_NAME'], 'Festies'),
+          icon: getEnv(['VITE_APP_ICON'], typeof window !== 'undefined' ? `${window.location.origin}/favicon.ico` : '')
+        },
+        onFinish: (data) => resolve(data.txId),
+        onCancel: () => reject(new Error('Transaction cancelled'))
+      });
+    });
+
+    return { txId };
+  }
+
   const state = getState();
   const nextTokenId = (state.lastTokenId || 0) + 1;
   const sender = getActiveAddress() || greetingData.sender || state.owner;
@@ -238,6 +305,7 @@ export const mintGreetingCard = async (greetingData) => {
   });
 
   state.lastTokenId = nextTokenId;
+  state.lastBlockTime = Math.floor(Date.now() / 1000);
   persistState();
 
   return { txId: `mock-tx-${nextTokenId}`, tokenId: nextTokenId };
@@ -260,51 +328,143 @@ export const waitForTransaction = async (txId) => {
 };
 
 export const transferNFT = async (tokenId, recipient) => {
+  const enableContractCalls = String(getEnv(['VITE_ENABLE_CONTRACT_CALLS'], 'false')).toLowerCase() === 'true';
+  const contractAddress = getFestiesContractAddress();
+  const contractName = getFestiesContractName();
+
+  if (enableContractCalls && contractAddress && contractName && isSignedIn()) {
+    const sender = getActiveAddress();
+    if (!sender) throw new Error('Wallet not connected');
+
+    const txId = await new Promise((resolve, reject) => {
+      openContractCall({
+        contractAddress,
+        contractName,
+        functionName: 'transfer',
+        functionArgs: [uintCV(BigInt(tokenId)), principalCV(sender), principalCV(recipient)],
+        appDetails: {
+          name: getEnv(['VITE_APP_NAME'], 'Festies'),
+          icon: getEnv(['VITE_APP_ICON'], typeof window !== 'undefined' ? `${window.location.origin}/favicon.ico` : '')
+        },
+        onFinish: (data) => resolve(data.txId),
+        onCancel: () => reject(new Error('Transaction cancelled'))
+      });
+    });
+
+    return { txId };
+  }
+
   const state = getState();
   const token = state.tokens.find((t) => t.tokenId === Number(tokenId));
 
   if (!token) throw new Error('Token not found');
   token.owner = recipient;
   token.approvedOperator = null;
+  state.lastBlockTime = Math.floor(Date.now() / 1000);
   persistState();
   return true;
 };
 
 export const approveNFT = async (tokenId, operator) => {
+  const enableContractCalls = String(getEnv(['VITE_ENABLE_CONTRACT_CALLS'], 'false')).toLowerCase() === 'true';
+  const contractAddress = getFestiesContractAddress();
+  const contractName = getFestiesContractName();
+
+  if (enableContractCalls && contractAddress && contractName && isSignedIn()) {
+    const txId = await new Promise((resolve, reject) => {
+      openContractCall({
+        contractAddress,
+        contractName,
+        functionName: 'approve',
+        functionArgs: [uintCV(BigInt(tokenId)), principalCV(operator)],
+        appDetails: {
+          name: getEnv(['VITE_APP_NAME'], 'Festies'),
+          icon: getEnv(['VITE_APP_ICON'], typeof window !== 'undefined' ? `${window.location.origin}/favicon.ico` : '')
+        },
+        onFinish: (data) => resolve(data.txId),
+        onCancel: () => reject(new Error('Transaction cancelled'))
+      });
+    });
+
+    return { txId };
+  }
+
   const state = getState();
   const token = state.tokens.find((t) => t.tokenId === Number(tokenId));
 
   if (!token) throw new Error('Token not found');
   token.approvedOperator = operator;
+  state.lastBlockTime = Math.floor(Date.now() / 1000);
   persistState();
   return true;
 };
 
 export const revokeApproval = async (tokenId) => {
+  const enableContractCalls = String(getEnv(['VITE_ENABLE_CONTRACT_CALLS'], 'false')).toLowerCase() === 'true';
+  const contractAddress = getFestiesContractAddress();
+  const contractName = getFestiesContractName();
+
+  if (enableContractCalls && contractAddress && contractName && isSignedIn()) {
+    const txId = await new Promise((resolve, reject) => {
+      openContractCall({
+        contractAddress,
+        contractName,
+        functionName: 'revoke-approval',
+        functionArgs: [uintCV(BigInt(tokenId))],
+        appDetails: {
+          name: getEnv(['VITE_APP_NAME'], 'Festies'),
+          icon: getEnv(['VITE_APP_ICON'], typeof window !== 'undefined' ? `${window.location.origin}/favicon.ico` : '')
+        },
+        onFinish: (data) => resolve(data.txId),
+        onCancel: () => reject(new Error('Transaction cancelled'))
+      });
+    });
+
+    return { txId };
+  }
+
   const state = getState();
   const token = state.tokens.find((t) => t.tokenId === Number(tokenId));
 
   if (!token) throw new Error('Token not found');
   token.approvedOperator = null;
+  state.lastBlockTime = Math.floor(Date.now() / 1000);
   persistState();
   return true;
 };
 
 export const burnNFT = async (tokenId) => {
+  const enableContractCalls = String(getEnv(['VITE_ENABLE_CONTRACT_CALLS'], 'false')).toLowerCase() === 'true';
+  const contractAddress = getFestiesContractAddress();
+  const contractName = getFestiesContractName();
+
+  if (enableContractCalls && contractAddress && contractName && isSignedIn()) {
+    const txId = await new Promise((resolve, reject) => {
+      openContractCall({
+        contractAddress,
+        contractName,
+        functionName: 'burn-greeting-card',
+        functionArgs: [uintCV(BigInt(tokenId))],
+        appDetails: {
+          name: getEnv(['VITE_APP_NAME'], 'Festies'),
+          icon: getEnv(['VITE_APP_ICON'], typeof window !== 'undefined' ? `${window.location.origin}/favicon.ico` : '')
+        },
+        onFinish: (data) => resolve(data.txId),
+        onCancel: () => reject(new Error('Transaction cancelled'))
+      });
+    });
+
+    return { txId };
+  }
+
   const state = getState();
   const index = state.tokens.findIndex((t) => t.tokenId === Number(tokenId));
 
   if (index === -1) throw new Error('Token not found');
 
   state.tokens.splice(index, 1);
+  state.lastBlockTime = Math.floor(Date.now() / 1000);
   persistState();
   return true;
 };
-// Blockchain build 1
-// Blockchain build 2
-// Blockchain optimization 1
-// Blockchain refactor 1
-// Blockchain docs update
-// Blockchain style update
-// Blockchain v1.1.0
-// Blockchain cleanup
+// Beautiful padding marker 5/300
