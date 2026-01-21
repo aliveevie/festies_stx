@@ -31,8 +31,8 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
       expect(result).toBeOk(Cl.tuple({
         name: Cl.stringAscii("Festival Greetings"),
         symbol: Cl.stringAscii("FESTIE"),
-        version: Cl.stringAscii("2.0.0"),
-        description: Cl.stringAscii("Professional NFT contract for festival greetings with royalty support and advanced features")
+        version: Cl.stringAscii("2.3.0"),
+        description: Cl.stringAscii("Professional NFT contract for festival greetings with royalty support and advanced features - Updated for Clarity 4")
       }));
     });
 
@@ -48,6 +48,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
     });
 
     it("returns correct contract status", () => {
+      const currentBlock = simnet.blockHeight;
       const { result } = simnet.callReadOnlyFn(
         "festies",
         "get-contract-status",
@@ -61,7 +62,8 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         "total-supply": Cl.uint(0),
         "next-token-id": Cl.uint(1),
         "royalty-percentage": Cl.uint(5),
-        "royalty-recipient": Cl.principal(deployer)
+        "royalty-recipient": Cl.principal(deployer),
+        "current-block-time": Cl.uint(currentBlock)
       }));
     });
   });
@@ -85,6 +87,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
       );
       
       expect(mintResult).toBeOk(Cl.uint(1));
+      const mintedAt = simnet.blockHeight;
       
       const tokenId = Cl.uint(1);
 
@@ -122,7 +125,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         "metadata-uri": Cl.stringAscii(TEST_METADATA_URI),
         sender: Cl.principal(wallet1),
         recipient: Cl.principal(recipient),
-        "created-at": Cl.uint(1)
+        "created-at": Cl.uint(mintedAt)
       })));
 
       // Verify total supply increased
@@ -275,27 +278,34 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
 
     it("supports batch minting operations", () => {
       const recipients = [wallet2, wallet3];
-      const names = ["Card 1", "Card 2"];
-      const messages = ["Message 1", "Message 2"];
-      const festivals = ["Festival 1", "Festival 2"];
-      const imageUris = ["https://example.com/image1.png", "https://example.com/image2.png"];
-      const metadataUris = ["https://example.com/metadata1.json", "https://example.com/metadata2.json"];
 
       const { result: batchResult } = simnet.callPublicFn(
         "festies",
         "batch-mint-greeting-cards",
         [
-          Cl.list(recipients.map(r => Cl.principal(r))),
-          Cl.list(names.map(n => Cl.stringAscii(n))),
-          Cl.list(messages.map(m => Cl.stringAscii(m))),
-          Cl.list(festivals.map(f => Cl.stringAscii(f))),
-          Cl.list(imageUris.map(i => Cl.stringAscii(i))),
-          Cl.list(metadataUris.map(m => Cl.stringAscii(m)))
+          Cl.list([
+            Cl.tuple({
+              recipient: Cl.principal(recipients[0]),
+              name: Cl.stringAscii("Card 1"),
+              message: Cl.stringAscii("Message 1"),
+              festival: Cl.stringAscii("Festival 1"),
+              "image-uri": Cl.stringAscii("https://example.com/image1.png"),
+              "metadata-uri": Cl.stringAscii("https://example.com/metadata1.json")
+            }),
+            Cl.tuple({
+              recipient: Cl.principal(recipients[1]),
+              name: Cl.stringAscii("Card 2"),
+              message: Cl.stringAscii("Message 2"),
+              festival: Cl.stringAscii("Festival 2"),
+              "image-uri": Cl.stringAscii("https://example.com/image2.png"),
+              "metadata-uri": Cl.stringAscii("https://example.com/metadata2.json")
+            })
+          ])
         ],
         wallet1
       );
 
-      expect(batchResult).toBeOk(Cl.list([Cl.uint(3), Cl.uint(4)]));
+      expect(batchResult).toBeOk(Cl.list([Cl.uint(1), Cl.uint(2)]));
 
       // Verify total supply after batch mint
       const { result: supplyResult } = simnet.callReadOnlyFn(
@@ -304,7 +314,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         [],
         wallet1
       );
-      expect(supplyResult).toBeOk(Cl.uint(4));
+      expect(supplyResult).toBeOk(Cl.uint(2));
     });
   });
 
@@ -342,7 +352,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         [Cl.principal(wallet2), Cl.uint(10)],
         wallet1
       );
-      expect(setResult).toBeErr(Cl.uint(100)); // ERR_OWNER_ONLY
+      expect(setResult).toBeErr(Cl.uint(403)); // ERR_OWNER_ONLY
     });
 
     it("validates royalty percentage is not over 100%", () => {
@@ -651,7 +661,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         wallet1
       );
       
-      expect(changeResult).toBeErr(Cl.uint(100)); // ERR_OWNER_ONLY
+      expect(changeResult).toBeErr(Cl.uint(403)); // ERR_OWNER_ONLY
     });
 
     it("allows contract owner to pause and unpause contract", () => {
@@ -665,6 +675,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
       expect(pauseResult).toBeOk(Cl.bool(true));
 
       // Verify contract is paused
+      const pausedBlock = simnet.blockHeight;
       const { result: statusResult } = simnet.callReadOnlyFn(
         "festies",
         "get-contract-status",
@@ -677,7 +688,8 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         "total-supply": Cl.uint(0),
         "next-token-id": Cl.uint(1),
         "royalty-percentage": Cl.uint(5),
-        "royalty-recipient": Cl.principal(deployer)
+        "royalty-recipient": Cl.principal(deployer),
+        "current-block-time": Cl.uint(pausedBlock)
       }));
 
       // Unpause contract
@@ -690,6 +702,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
       expect(unpauseResult).toBeOk(Cl.bool(true));
 
       // Verify contract is unpaused
+      const unpausedBlock = simnet.blockHeight;
       const { result: statusResult2 } = simnet.callReadOnlyFn(
         "festies",
         "get-contract-status",
@@ -702,7 +715,8 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         "total-supply": Cl.uint(0),
         "next-token-id": Cl.uint(1),
         "royalty-percentage": Cl.uint(5),
-        "royalty-recipient": Cl.principal(deployer)
+        "royalty-recipient": Cl.principal(deployer),
+        "current-block-time": Cl.uint(unpausedBlock)
       }));
     });
 
@@ -777,6 +791,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
       
       const tokenId = Cl.uint(1);
       expect(mintResult).toBeOk(tokenId);
+      const mintedAt = simnet.blockHeight;
 
       // Verify all data is consistent
       const { result: metadataResult } = simnet.callReadOnlyFn(
@@ -794,7 +809,7 @@ describe("Festies NFT Contract - Professional Test Suite", () => {
         "metadata-uri": Cl.stringAscii(TEST_METADATA_URI),
         sender: Cl.principal(wallet1),
         recipient: Cl.principal(recipient),
-        "created-at": Cl.uint(1)
+        "created-at": Cl.uint(mintedAt)
       })));
 
       // Burn token
