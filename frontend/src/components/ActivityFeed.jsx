@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   FaBell, 
   FaSpinner, 
   FaExclamationTriangle, 
@@ -17,7 +17,9 @@ import {
   FaRefresh
 } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
-import { formatAddress, getTimeAgo, copyToClipboard } from '../utils';
+import { formatAddress } from '../utils/formatters';
+import { getTimeAgo } from '../utils/time';
+import { copyToClipboard } from '../utils/browser';
 
 const ActivityFeed = ({ 
   userAddress,
@@ -156,16 +158,6 @@ const ActivityFeed = ({
       toast.success('Transaction ID copied to clipboard!');
     } else {
       toast.error('Failed to copy transaction ID');
-    }
-  };
-
-  // Handle copy address
-  const handleCopyAddress = async (address) => {
-    const success = await copyToClipboard(address);
-    if (success) {
-      toast.success('Address copied to clipboard!');
-    } else {
-      toast.error('Failed to copy address');
     }
   };
 
@@ -393,16 +385,8 @@ const ActivityFeed = ({
           </span>
         </div>
       </div>
-    </div>
-  );
-};
-
+	    </motion.div>
+	  );
+	};
+	
 export default ActivityFeed;
-// Activity build 1
-// Activity build 2
-// Activity optimization 1
-// Activity refactor 1
-// Activity docs update
-// Activity style update
-// Activity v1.1.0
-// Activity cleanup
