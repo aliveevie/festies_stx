@@ -102,3 +102,4 @@ const Countdown = ({
 };
 
 export default Countdown;
+// Style improvement
