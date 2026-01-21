@@ -257,3 +257,4 @@ export default Header; Header.propTypes = {};
 // Beautiful padding marker 23/300
 // Beautiful padding marker 30/300
 // Beautiful padding marker 37/300
+// Beautiful padding marker 44/300
