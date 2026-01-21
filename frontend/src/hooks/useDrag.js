@@ -179,3 +179,4 @@ const useDrag = ({
 
 export default useDrag;
 // Style improvement
+// Performance optimization
