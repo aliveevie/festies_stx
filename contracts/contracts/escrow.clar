@@ -168,3 +168,4 @@
 (define-read-only (get-escrow-count)
   (var-get escrow-counter)
 )
+;; Style improvement
