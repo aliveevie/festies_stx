@@ -163,5 +163,3 @@
         (total-collections (var-get collection-count))
     ))
 )
-// Refactor improvement
-// Documentation update
