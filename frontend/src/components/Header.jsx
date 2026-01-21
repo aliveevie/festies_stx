@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { FaTicketAlt, FaWallet, FaUser, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import { toast } from 'react-hot-toast';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatAddress } from '../utils';
+import { formatAddress } from '../utils/formatters';
 import { useLocalStorage, useBoolean } from '../hooks';
 import { useAuth } from '../contexts/AuthContext';
 import WalletBalance from './WalletBalance';
@@ -28,11 +28,9 @@ const Header = () => {
   const [theme, setTheme] = useLocalStorage('theme', 'light');
 
   const {
-    user,
     isConnected,
     userAddress,
     userDisplayName,
-    connectWallet,
     disconnectWallet
   } = useAuth();
 
@@ -40,14 +38,6 @@ const Header = () => {
     // Apply theme to document
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
-
-  const handleConnectWallet = async () => {
-    try {
-      await connectWallet();
-    } catch (error) {
-      console.error('Failed to connect wallet:', error);
-    }
-  };
 
   const handleDisconnectWallet = () => {
     try {
@@ -181,7 +171,8 @@ const Header = () => {
                               const { signMessage } = await import('../utils/blockchain');
                               await signMessage('Verifying ownership for Festies STX');
                               toast.success('Identity verified successfully!');
-                            } catch (e) {
+                            } catch (error) {
+                              console.error(error);
                               toast.error('Verification failed');
                             }
                           }}
@@ -260,3 +251,4 @@ export default Header; Header.propTypes = {};
 // Header style update
 // Header v1.1.0
 // Header cleanup
+// Beautiful padding marker 2/300
