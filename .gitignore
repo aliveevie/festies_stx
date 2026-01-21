@@ -42,3 +42,4 @@ coverage/
 make_200_commits.sh
 make_100_real_commits.sh
 make_beautiful_commits.sh
+make_300_beautiful_commits.sh
