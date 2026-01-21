@@ -200,6 +200,3 @@
 (define-read-only (is-owner (owner principal))
   (default-to false (map-get? owners owner))
 )
-;; Style improvement
-// Refactor improvement
-// Final polish v1.0.0
