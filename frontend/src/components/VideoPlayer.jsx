@@ -281,3 +281,4 @@ const VideoPlayer = ({
 };
 
 export default VideoPlayer;
+// Style improvement
