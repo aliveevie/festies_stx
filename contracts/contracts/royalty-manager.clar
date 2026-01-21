@@ -217,6 +217,3 @@
         (total-payments (var-get total-payments))
     ))
 )
-// Refactor improvement
-// Documentation update
-// Version bump
