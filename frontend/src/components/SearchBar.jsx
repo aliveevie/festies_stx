@@ -211,3 +211,4 @@ const SearchBar = ({
 
 export default SearchBar;
 // Style improvement
+// Performance optimization
