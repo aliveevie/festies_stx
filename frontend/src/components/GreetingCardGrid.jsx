@@ -15,7 +15,7 @@ import {
   revokeApproval,
   burnNFT
 } from '../utils/blockchain';
-import { searchNFTs, debounceSearch, getFilterStats } from '../utils/search';
+import { searchNFTs, debounceSearch } from '../utils/search';
 
 const GreetingCardGrid = ({ 
   filterByOwner = null, 
@@ -37,7 +37,6 @@ const GreetingCardGrid = ({
     sortBy: 'newest',
     sortOrder: 'desc'
   });
-  const [filterStats, setFilterStats] = useState(null);
 
   // Load NFTs from blockchain
   const loadNFTs = async () => {
@@ -67,7 +66,6 @@ const GreetingCardGrid = ({
         .map(result => result.value);
 
       setNfts(loadedNFTs);
-      setFilterStats(getFilterStats(loadedNFTs));
     } catch (error) {
       console.error('Failed to load NFTs:', error);
       setError('Failed to load greeting cards');
@@ -237,7 +235,7 @@ const GreetingCardGrid = ({
   };
 
   // Get unique festivals for filter
-  const uniqueFestivals = [...new Set(nfts.map(nft => nft.metadata.festival))];
+  // const uniqueFestivals = [...new Set(nfts.map(nft => nft.metadata.festival))];
 
   if (isLoading) {
     return (
