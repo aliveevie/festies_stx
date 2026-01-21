@@ -169,3 +169,4 @@
   (var-get escrow-counter)
 )
 ;; Style improvement
+// Refactor improvement
