@@ -125,3 +125,5 @@ Project Link: [https://github.com/aliveevie/festies_stx](https://github.com/aliv
 - **State Management**: React Query
 
 <!-- Commit padding marker 9/147 -->
+
+<!-- Commit padding marker 18/147 -->
