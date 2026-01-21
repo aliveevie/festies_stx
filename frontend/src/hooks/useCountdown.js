@@ -85,3 +85,4 @@ const useCountdown = (targetDate, options = {}) => {
 };
 
 export default useCountdown;
+// Style improvement
