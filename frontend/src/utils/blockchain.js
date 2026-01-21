@@ -514,3 +514,5 @@ export const burnNFT = async (tokenId) => {
 // Commit padding marker 6/147
 
 // Commit padding marker 15/147
+
+// Commit padding marker 24/147
