@@ -129,7 +129,3 @@ export const takeLast = (array, n) => {
   if (!Array.isArray(array)) return [];
   return array.slice(-n);
 };
-// Style improvement
-// Performance optimization
-// Documentation update
-// Additional performance optimization
