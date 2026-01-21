@@ -49,16 +49,30 @@ const VideoPlayer = ({
       setIsFullscreen(!!document.fullscreenElement);
     };
 
+    const handleEndedEvent = () => {
+      setIsPlaying(false);
+      onEnded?.();
+    };
+
+    const handleErrorEvent = (event) => {
+      setIsLoading(false);
+      onError?.(event);
+    };
+
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('ended', handleEndedEvent);
+    video.addEventListener('error', handleErrorEvent);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('ended', handleEndedEvent);
+      video.removeEventListener('error', handleErrorEvent);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [onProgress]);
+  }, [onProgress, onEnded, onError]);
 
   const togglePlay = () => {
     const video = videoRef.current;
