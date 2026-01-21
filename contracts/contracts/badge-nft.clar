@@ -33,12 +33,12 @@
         (ok id)
     )
 )
-// Badge v1.0.1
-// Badge v1.0.2
-// Badge optimization 1
-// Badge refactor 1
-// Badge docs update
-// Badge style update
-// Badge v1.1.0
-// Badge cleanup
-// Badge final
+;; Badge v1.0.1
+;; Badge v1.0.2
+;; Badge optimization 1
+;; Badge refactor 1
+;; Badge docs update
+;; Badge style update
+;; Badge v1.1.0
+;; Badge cleanup
+;; Badge final
