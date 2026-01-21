@@ -170,3 +170,4 @@
 )
 ;; Style improvement
 // Refactor improvement
+// Final polish v1.0.0
