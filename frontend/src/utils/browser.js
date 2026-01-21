@@ -292,3 +292,4 @@ export const prefersDarkMode = () => {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
 // Style improvement
+// Refactor improvement
