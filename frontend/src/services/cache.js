@@ -102,7 +102,7 @@ export const getCacheStats = () => {
             expiredCount++;
           }
         }
-      } catch (e) {
+      } catch {
         // Ignore parse errors
       }
     });
