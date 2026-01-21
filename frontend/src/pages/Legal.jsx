@@ -172,3 +172,4 @@ const Legal = () => {
 };
 
 export default Legal;
+// Style improvement
