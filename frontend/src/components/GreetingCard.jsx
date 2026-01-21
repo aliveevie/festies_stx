@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FaHeart, 
@@ -15,7 +15,7 @@ import {
   FaSpinner
 } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
-import { getTokenMetadata, getTokenOwner, getApproved, copyToClipboard } from '../utils';
+import { copyToClipboard } from '../utils/browser';
 
 const GreetingCard = ({ 
   tokenId, 
@@ -278,3 +278,4 @@ export default GreetingCard;
 // Card style update
 // Card v1.1.0
 // Card cleanup
+// Beautiful padding marker 3/300
