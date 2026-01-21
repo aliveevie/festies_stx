@@ -6,7 +6,7 @@ import GreetingCardGrid from '../components/GreetingCardGrid';
 import ConnectWalletButton from '../components/ConnectWalletButton';
 
 const Collection = () => {
-    const { isConnected, userAddress } = useAuth();
+    const { isConnected } = useAuth();
     const [viewMode, setViewMode] = useState('grid');
     const [filter, setFilter] = useState('all');
 
