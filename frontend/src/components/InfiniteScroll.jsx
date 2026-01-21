@@ -79,3 +79,4 @@ const InfiniteScroll = ({
 };
 
 export default InfiniteScroll;
+// Style improvement
