@@ -280,6 +280,30 @@
     ))
 )
 
+(define-read-only (get-listing-fee)
+    (ok (var-get listing-fee))
+)
+
+(define-read-only (get-marketplace-owner)
+    (ok (var-get marketplace-owner))
+)
+
+(define-read-only (get-listing-summary (item-id uint))
+    (let ((listing (map-get? listings item-id)))
+        (if (is-some listing)
+            (let ((data (unwrap! listing ERR_LISTING_NOT_FOUND)))
+                (ok (some (tuple
+                    (price (get price data))
+                    (seller (get seller data))
+                    (active (get active data))
+                    (expires-at (get expires-at data))
+                )))
+            )
+            (ok none)
+        )
+    )
+)
+
 (define-read-only (is-listing-active (item-id uint))
     (let ((listing (map-get? listings item-id)))
         (if (is-some listing)
