@@ -50,3 +50,11 @@
 (define-read-only (get-proposal (id uint))
     (ok (map-get? proposals id))
 )
+
+(define-read-only (get-proposal-count)
+    (ok (var-get proposal-count))
+)
+
+(define-read-only (get-vote (proposal-id uint) (voter principal))
+    (ok (map-get? votes { proposal-id: proposal-id, voter: voter }))
+)
