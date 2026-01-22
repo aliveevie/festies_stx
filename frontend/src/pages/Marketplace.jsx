@@ -1,11 +1,38 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaSearch, FaFilter, FaFire, FaStar, FaTrendingUp, FaGift } from 'react-icons/fa';
 import GreetingCardGrid from '../components/GreetingCardGrid';
+import StatsCard from '../components/StatsCard';
+import { marketplaceStats } from '../data/marketplaceStats';
 
 const Marketplace = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('recent');
+
+    const sortConfig = useMemo(() => {
+        switch (sortBy) {
+            case 'oldest':
+                return { sortBy: 'oldest', sortOrder: 'asc' };
+            case 'name':
+                return { sortBy: 'name', sortOrder: 'asc' };
+            case 'festival':
+                return { sortBy: 'festival', sortOrder: 'asc' };
+            case 'message-length':
+                return { sortBy: 'messageLength', sortOrder: 'desc' };
+            case 'popular':
+                return { sortBy: 'popular', sortOrder: 'desc' };
+            case 'recent':
+            default:
+                return { sortBy: 'newest', sortOrder: 'desc' };
+        }
+    }, [sortBy]);
+
+    const iconMap = {
+        gift: <FaGift className="text-white text-2xl" />,
+        fire: <FaFire className="text-white text-2xl" />,
+        trending: <FaTrendingUp className="text-white text-2xl" />,
+        star: <FaStar className="text-white text-2xl" />
+    };
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -59,37 +86,20 @@ const Marketplace = () => {
 
                     {/* Stats Cards */}
                     <motion.div 
-                        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
                         variants={itemVariants}
                     >
-                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                            <div className="flex items-center gap-3 mb-2">
-                                <FaGift className="text-blue-500 text-2xl" />
-                                <span className="text-3xl font-bold text-gray-800">1.2K</span>
-                            </div>
-                            <p className="text-sm text-gray-600">Total Cards</p>
-                        </div>
-                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                            <div className="flex items-center gap-3 mb-2">
-                                <FaFire className="text-orange-500 text-2xl" />
-                                <span className="text-3xl font-bold text-gray-800">450</span>
-                            </div>
-                            <p className="text-sm text-gray-600">Active Listings</p>
-                        </div>
-                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                            <div className="flex items-center gap-3 mb-2">
-                                <FaTrendingUp className="text-green-500 text-2xl" />
-                                <span className="text-3xl font-bold text-gray-800">89%</span>
-                            </div>
-                            <p className="text-sm text-gray-600">Volume Up</p>
-                        </div>
-                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                            <div className="flex items-center gap-3 mb-2">
-                                <FaStar className="text-yellow-500 text-2xl" />
-                                <span className="text-3xl font-bold text-gray-800">4.9</span>
-                            </div>
-                            <p className="text-sm text-gray-600">Avg Rating</p>
-                        </div>
+                        {marketplaceStats.map((stat) => (
+                            <StatsCard
+                                key={stat.id}
+                                title={stat.title}
+                                value={stat.value}
+                                trend={stat.trend}
+                                trendValue={stat.trendValue}
+                                icon={iconMap[stat.icon]}
+                                gradient={stat.gradient}
+                            />
+                        ))}
                     </motion.div>
 
                     {/* Search and Filter Bar */}
@@ -116,10 +126,11 @@ const Marketplace = () => {
                                     className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-white font-medium"
                                 >
                                     <option value="recent">Most Recent</option>
-                                    <option value="popular">Most Popular</option>
-                                    <option value="price-low">Price: Low to High</option>
-                                    <option value="price-high">Price: High to Low</option>
+                                    <option value="popular">Most Active</option>
                                     <option value="oldest">Oldest First</option>
+                                    <option value="name">Name A-Z</option>
+                                    <option value="festival">Festival A-Z</option>
+                                    <option value="message-length">Longest Messages</option>
                                 </select>
                             </div>
                         </div>
@@ -127,7 +138,14 @@ const Marketplace = () => {
 
                     {/* Greeting Cards Grid */}
                     <motion.div variants={itemVariants}>
-                        <GreetingCardGrid showActions={false} maxItems={50} />
+                        <GreetingCardGrid
+                            showActions={false}
+                            maxItems={50}
+                            externalSearchTerm={searchQuery}
+                            showSearch={false}
+                            externalSortBy={sortConfig.sortBy}
+                            externalSortOrder={sortConfig.sortOrder}
+                        />
                     </motion.div>
                 </motion.div>
             </div>
