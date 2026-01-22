@@ -1,14 +1,35 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaWallet, FaGift, FaChartLine, FaCog, FaFilter, FaSearch } from 'react-icons/fa';
 import { useAuth } from '../contexts/AuthContext';
 import GreetingCardGrid from '../components/GreetingCardGrid';
 import ConnectWalletButton from '../components/ConnectWalletButton';
+import { collectionFilters, collectionSortOptions } from '../data/collectionFilters';
+import { collectionStats } from '../data/collectionStats';
 
 const Collection = () => {
     const { isConnected } = useAuth();
     const [viewMode, setViewMode] = useState('grid');
     const [filter, setFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortBy, setSortBy] = useState('newest');
+    const [sortOrder, setSortOrder] = useState('desc');
+
+    const activeFilter = useMemo(
+        () => collectionFilters.find((option) => option.value === filter) || collectionFilters[0],
+        [filter]
+    );
+
+    const handleFilterChange = (value) => {
+        setFilter(value);
+        if (activeFilter?.value !== value) {
+            const nextFilter = collectionFilters.find((option) => option.value === value);
+            if (nextFilter) {
+                setSortBy(nextFilter.sortBy);
+                setSortOrder(nextFilter.sortOrder);
+            }
+        }
+    };
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -104,7 +125,7 @@ const Collection = () => {
                                     <FaGift className="text-2xl" />
                                 </div>
                                 <div>
-                                    <p className="text-3xl font-bold">0</p>
+                                    <p className="text-3xl font-bold">{collectionStats.totalCards}</p>
                                     <p className="text-blue-100 text-sm">Total Cards</p>
                                 </div>
                             </div>
@@ -115,7 +136,7 @@ const Collection = () => {
                                     <FaChartLine className="text-2xl" />
                                 </div>
                                 <div>
-                                    <p className="text-3xl font-bold">0</p>
+                                    <p className="text-3xl font-bold">{collectionStats.totalValue}</p>
                                     <p className="text-purple-100 text-sm">Total Value</p>
                                 </div>
                             </div>
@@ -126,7 +147,7 @@ const Collection = () => {
                                     <FaCog className="text-2xl" />
                                 </div>
                                 <div>
-                                    <p className="text-3xl font-bold">Active</p>
+                                    <p className="text-3xl font-bold">{collectionStats.statusLabel}</p>
                                     <p className="text-green-100 text-sm">Status</p>
                                 </div>
                             </div>
@@ -143,14 +164,48 @@ const Collection = () => {
                                 <FaFilter className="text-gray-400" />
                                 <select
                                     value={filter}
-                                    onChange={(e) => setFilter(e.target.value)}
+                                    onChange={(e) => handleFilterChange(e.target.value)}
                                     className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-white font-medium"
                                 >
-                                    <option value="all">All Cards</option>
-                                    <option value="recent">Recently Added</option>
-                                    <option value="favorites">Favorites</option>
-                                    <option value="by-festival">By Festival</option>
+                                    {collectionFilters.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
                                 </select>
+                            </div>
+                            <div className="flex flex-col md:flex-row items-center gap-3">
+                                <div className="relative">
+                                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        placeholder="Search your collection"
+                                        className="w-64 pl-9 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-white font-medium"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <select
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                        className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-white font-medium"
+                                    >
+                                        {collectionSortOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                Sort: {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        value={sortOrder}
+                                        onChange={(e) => setSortOrder(e.target.value)}
+                                        className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-white font-medium"
+                                    >
+                                        <option value="desc">Desc</option>
+                                        <option value="asc">Asc</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1">
                                 <button
@@ -182,6 +237,10 @@ const Collection = () => {
                         <GreetingCardGrid
                             showActions={true}
                             maxItems={100}
+                            showSearch={false}
+                            externalSearchTerm={searchTerm}
+                            externalSortBy={sortBy}
+                            externalSortOrder={sortOrder}
                         />
                     </motion.div>
                 </motion.div>
@@ -191,10 +250,3 @@ const Collection = () => {
 };
 
 export default Collection;
-// Style improvement 39
-// Performance optimization 62
-// Refactor improvement 81
-// Documentation update 106
-// Version 131
-// Final polish 156
-// Release prep 181
