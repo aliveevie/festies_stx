@@ -189,6 +189,26 @@
     )
 )
 
+(define-read-only (token-exists (token-id uint))
+    (ok (is-some (map-get? greeting-data token-id)))
+)
+
+(define-read-only (get-token-basic (token-id uint))
+    (let ((data (map-get? greeting-data token-id))
+          (owner (nft-get-owner? GreetingCard token-id)))
+        (if (and (is-some data) (is-some owner))
+            (ok (some (tuple
+                (token-id token-id)
+                (owner (unwrap! owner ERR_TOKEN_NOT_FOUND))
+                (name (get name (unwrap! data ERR_TOKEN_NOT_FOUND)))
+                (festival (get festival (unwrap! data ERR_TOKEN_NOT_FOUND)))
+                (created-at (get created-at (unwrap! data ERR_TOKEN_NOT_FOUND)))
+            )))
+            (ok none)
+        )
+    )
+)
+
 (define-read-only (get-royalty-info)
     (ok (tuple (recipient (var-get royalty-recipient)) (percentage (var-get royalty-percentage))))
 )
