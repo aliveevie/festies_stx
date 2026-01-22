@@ -17,11 +17,16 @@ import {
 } from '../utils/blockchain';
 import { searchNFTs, debounceSearch } from '../utils/search';
 
-const GreetingCardGrid = ({ 
-  filterByOwner = null, 
-  showActions = true, 
+const GreetingCardGrid = ({
+  filterByOwner = null,
+  showActions = true,
   maxItems = 20,
-  className = ""
+  className = "",
+  externalSearchTerm = null,
+  onSearchTermChange = null,
+  showSearch = true,
+  externalSortBy = null,
+  externalSortOrder = null
 }) => {
   const [nfts, setNfts] = useState([]);
   const [filteredNFTs, setFilteredNFTs] = useState([]);
@@ -126,12 +131,15 @@ const GreetingCardGrid = ({
     .sort((a, b) => {
       const sortBy = filters.sortBy || 'newest';
       const sortOrder = filters.sortOrder || 'desc';
-
       switch (sortBy) {
         case 'newest':
-          return b.metadata.createdAt - a.metadata.createdAt;
+          return sortOrder === 'asc'
+            ? a.metadata.createdAt - b.metadata.createdAt
+            : b.metadata.createdAt - a.metadata.createdAt;
         case 'oldest':
-          return a.metadata.createdAt - b.metadata.createdAt;
+          return sortOrder === 'asc'
+            ? a.metadata.createdAt - b.metadata.createdAt
+            : b.metadata.createdAt - a.metadata.createdAt;
         case 'name':
           return sortOrder === 'asc'
             ? a.metadata.name.localeCompare(b.metadata.name)
@@ -140,6 +148,14 @@ const GreetingCardGrid = ({
           return sortOrder === 'asc'
             ? a.metadata.festival.localeCompare(b.metadata.festival)
             : b.metadata.festival.localeCompare(a.metadata.festival);
+        case 'messageLength':
+          return sortOrder === 'asc'
+            ? a.metadata.message.length - b.metadata.message.length
+            : b.metadata.message.length - a.metadata.message.length;
+        case 'popular':
+          return sortOrder === 'asc'
+            ? a.tokenId - b.tokenId
+            : b.tokenId - a.tokenId;
         default:
           return 0;
       }
@@ -154,6 +170,7 @@ const GreetingCardGrid = ({
   // Handle search change
   const handleSearchChange = (term) => {
     setSearchTerm(term);
+    if (onSearchTermChange) onSearchTermChange(term);
     debouncedSearch(term, filters);
   };
 
@@ -174,6 +191,20 @@ const GreetingCardGrid = ({
   useEffect(() => {
     loadNFTs();
   }, [filterByOwner, maxItems]);
+
+  useEffect(() => {
+    if (externalSearchTerm === null || externalSearchTerm === undefined) return;
+    setSearchTerm(externalSearchTerm);
+    debouncedSearch(externalSearchTerm, filters);
+  }, [externalSearchTerm, filters]);
+
+  useEffect(() => {
+    if (!externalSortBy) return;
+    const nextOrder = externalSortOrder || 'desc';
+    const nextFilters = { ...filters, sortBy: externalSortBy, sortOrder: nextOrder };
+    setFilters(nextFilters);
+    debouncedSearch(searchTerm, nextFilters);
+  }, [externalSortBy, externalSortOrder, filters, searchTerm]);
 
   // Update filtered NFTs when NFTs change
   useEffect(() => {
@@ -365,6 +396,8 @@ const GreetingCardGrid = ({
         onFilterChange={handleFilterChange}
         onSortChange={handleSortChange}
         totalResults={filteredNFTs.length}
+        externalSearchTerm={externalSearchTerm}
+        showSearch={showSearch}
         className="mb-8"
       />
 
@@ -421,18 +454,3 @@ const GreetingCardGrid = ({
 };
 
 export default GreetingCardGrid;
-// Grid build 1
-// Grid build 2
-// Grid optimization 1
-// Grid refactor 1
-// Grid docs update
-// Grid style update
-// Grid v1.1.0
-// Grid cleanup
-// Style improvement 30
-// Performance optimization 52
-// Refactor improvement 79
-// Documentation update 104
-// Version 129
-// Final polish 154
-// Release prep 179
