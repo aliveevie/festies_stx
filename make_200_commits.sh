@@ -10,15 +10,16 @@
 #
 # Examples:
 #   ./make_200_commits.sh
+#   ./make_200_commits.sh 100
 #   ./make_200_commits.sh 200
 #   ./make_200_commits.sh 300
 
 set -u
 cd "$(dirname "$0")" || exit 1
 
-TARGET_COMMITS="${1:-200}"
+TARGET_COMMITS="${1:-100}"
 if ! [[ "$TARGET_COMMITS" =~ ^[0-9]+$ ]] || (( TARGET_COMMITS < 1 )); then
-  TARGET_COMMITS=200
+  TARGET_COMMITS=100
 fi
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
