@@ -1,26 +1,25 @@
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  FaCog, 
-  FaPalette, 
-  FaBell, 
-  FaShieldAlt, 
-  FaLanguage, 
-  FaSave,
-  FaMoon,
-  FaSun,
-  FaVolumeUp,
-  FaVolumeMute
-} from 'react-icons/fa';
+import { FaCog, FaPalette, FaBell, FaSave } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { useLocalStorage } from '../hooks';
 import ThemeToggle from '../components/ThemeToggle';
-import ProgressBar from '../components/ProgressBar';
 
 const Settings = () => {
   const [notifications, setNotifications] = useLocalStorage('notifications', true);
   const [sounds, setSounds] = useLocalStorage('sounds', true);
   const [language, setLanguage] = useLocalStorage('language', 'en');
   const [autoRefresh, setAutoRefresh] = useLocalStorage('autoRefresh', true);
+  const [savedSnapshot] = useState({ notifications, sounds, language, autoRefresh });
+
+  const hasChanges = useMemo(
+    () =>
+      savedSnapshot.notifications !== notifications ||
+      savedSnapshot.sounds !== sounds ||
+      savedSnapshot.language !== language ||
+      savedSnapshot.autoRefresh !== autoRefresh,
+    [savedSnapshot, notifications, sounds, language, autoRefresh]
+  );
 
   const handleSave = () => {
     toast.success('Settings saved successfully!');
@@ -199,12 +198,13 @@ const Settings = () => {
             >
               <motion.button
                 onClick={handleSave}
-                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                disabled={!hasChanges}
+                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <FaSave />
-                Save Settings
+                {hasChanges ? 'Save Settings' : 'Saved'}
               </motion.button>
             </motion.div>
           </div>
@@ -215,4 +215,3 @@ const Settings = () => {
 };
 
 export default Settings;
-// Style improvement
