@@ -33,7 +33,14 @@ fi
 
 MARKER_FILE="tools/commit-markers.md"
 
+print_status_count() {
+  local count
+  count="$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')"
+  echo "Found $count paths to commit."
+}
+
 echo "Starting commits (commit all changes first, then pad to $TARGET_COMMITS)..."
+print_status_count
 
 commit_from_status_line() {
   local status_line="$1"
