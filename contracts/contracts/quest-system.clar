@@ -93,6 +93,14 @@
     (ok (default-to u0 (map-get? user-xp player)))
 )
 
+(define-read-only (get-user-completed-count (player principal))
+    (ok (default-to u0 (map-get? quest-completion-count player)))
+)
+
+(define-read-only (get-quest-reward (quest-id uint))
+    (ok (get xp-reward (unwrap! (map-get? quests quest-id) ERR_QUEST_NOT_FOUND)))
+)
+
 (define-read-only (has-completed-quest (player principal) (quest-id uint))
     (ok (default-to false (map-get? quest-completions { player: player, quest-id: quest-id })))
 )
