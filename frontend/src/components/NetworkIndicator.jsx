@@ -14,11 +14,16 @@ const NetworkIndicator = () => {
               ? 'shadow-blue-500/50'
               : 'shadow-yellow-500/50';
 
+    const label = `Stacks ${networkName}`;
+
     return (
         <motion.div 
             className="hidden xl:flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 shadow-lg hover:bg-white/20 transition-all duration-300"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            title={label}
+            aria-label={label}
+            role="status"
         >
             <motion.div 
                 className={`w-3 h-3 rounded-full ${indicatorColor} ${indicatorGlow} shadow-lg`}
