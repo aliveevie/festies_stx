@@ -3,40 +3,64 @@ import { motion } from 'framer-motion';
 import { FaCoins, FaSpinner } from 'react-icons/fa';
 import { useAuth } from '../contexts/AuthContext';
 import { getStacksApiBaseUrl } from '../config/stacks';
+import { formatSTX } from '../utils/formatters';
+import { getTimeAgo } from '../utils/time';
 
 const WalletBalance = () => {
     const { userAddress } = useAuth();
     const [balance, setBalance] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [lastUpdated, setLastUpdated] = useState(null);
+    const [error, setError] = useState(null);
+
+    const refreshIntervalMs = 30000;
 
     useEffect(() => {
+        if (!userAddress) return undefined;
+
+        const controller = new AbortController();
+
         const fetchBalance = async () => {
             if (!userAddress) return;
 
             setIsLoading(true);
+            setError(null);
             try {
                 const apiUrl = getStacksApiBaseUrl();
 
-                const response = await fetch(`${apiUrl}/extended/v1/address/${userAddress}/balances`);
+                const response = await fetch(
+                    `${apiUrl}/extended/v1/address/${userAddress}/balances`,
+                    { signal: controller.signal }
+                );
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
 
-                // Convert microSTX to STX
                 const microStx = Number.parseInt(data?.stx?.balance || '0', 10);
-                const stxBalance = Number.isFinite(microStx) ? microStx / 1_000_000 : 0;
-                setBalance(stxBalance.toLocaleString(undefined, { maximumFractionDigits: 2 }));
+                setBalance(Number.isFinite(microStx) ? microStx : 0);
+                setLastUpdated(new Date());
             } catch (error) {
+                if (error?.name === 'AbortError') return;
                 console.error('Failed to fetch balance:', error);
-                setBalance('Error');
+                setError('Unable to load balance');
             } finally {
-                setIsLoading(false);
+                if (!controller.signal.aborted) {
+                    setIsLoading(false);
+                }
             }
         };
 
         fetchBalance();
-    }, [userAddress]);
+
+        const interval = setInterval(fetchBalance, refreshIntervalMs);
+        return () => {
+            controller.abort();
+            clearInterval(interval);
+        };
+    }, [userAddress, refreshIntervalMs]);
 
     if (!userAddress) return null;
+
+    const updatedLabel = lastUpdated ? getTimeAgo(lastUpdated) : 'never';
 
     return (
         <motion.div 
@@ -44,6 +68,8 @@ const WalletBalance = () => {
             whileHover={{ scale: 1.05 }}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
+            title={`Updated ${updatedLabel}`}
+            aria-live="polite"
         >
             <motion.div
                 animate={{ rotate: isLoading ? 360 : 0 }}
@@ -65,7 +91,7 @@ const WalletBalance = () => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
                 >
-                    {balance ?? '0.00'}
+                    {error ? 'Unavailable' : formatSTX(balance ?? 0, 4)}
                 </motion.span>
             )}
         </motion.div>
