@@ -78,7 +78,3 @@ const StatsCard = ({
 };
 
 export default StatsCard;
-// Style improvement
-// Performance optimization
-// Documentation update
-// Version bump
