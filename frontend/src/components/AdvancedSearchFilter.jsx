@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaSearch, 
@@ -22,7 +22,9 @@ const AdvancedSearchFilter = ({
   onFilterChange, 
   onSortChange,
   totalResults = 0,
-  className = ""
+  className = "",
+  externalSearchTerm = null,
+  showSearch = true
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,6 +79,11 @@ const AdvancedSearchFilter = ({
     setSearchTerm(value);
     onSearchChange(value);
   }, [onSearchChange]);
+
+  useEffect(() => {
+    if (externalSearchTerm === null || externalSearchTerm === undefined) return;
+    setSearchTerm(externalSearchTerm);
+  }, [externalSearchTerm]);
 
   // Handle filter change
   const handleFilterChange = useCallback((key, value) => {
@@ -185,32 +192,33 @@ const AdvancedSearchFilter = ({
         </div>
       </div>
 
-      {/* Search Bar */}
-      <motion.div 
-        className="relative mb-6"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <FaSearch className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
-        <input
-          type="text"
-          placeholder="Search by name, message, festival, or owner..."
-          value={searchTerm}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          className="w-full pl-14 pr-12 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg bg-white shadow-sm hover:shadow-md focus:shadow-lg"
-        />
-        {searchTerm && (
-          <motion.button
-            onClick={() => handleSearchChange('')}
-            className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
-            whileHover={{ scale: 1.1, rotate: 90 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <FaTimes />
-          </motion.button>
-        )}
-      </motion.div>
+      {showSearch && (
+        <motion.div 
+          className="relative mb-6"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <FaSearch className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
+          <input
+            type="text"
+            placeholder="Search by name, message, festival, or owner..."
+            value={searchTerm}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="w-full pl-14 pr-12 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg bg-white shadow-sm hover:shadow-md focus:shadow-lg"
+          />
+          {searchTerm && (
+            <motion.button
+              onClick={() => handleSearchChange('')}
+              className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaTimes />
+            </motion.button>
+          )}
+        </motion.div>
+      )}
 
       {/* Advanced Filters */}
       <AnimatePresence>
