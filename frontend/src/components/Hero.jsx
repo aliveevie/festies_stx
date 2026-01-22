@@ -29,6 +29,13 @@ const reasons = [
   },
 ];
 
+const highlights = [
+  { label: 'On-chain proof', icon: '⛓️' },
+  { label: 'Instant delivery', icon: '⚡' },
+  { label: 'Verifiable history', icon: '🧾' },
+  { label: 'Creator royalties', icon: '🎟️' }
+];
+
 const Hero = () => {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -144,6 +151,21 @@ const Hero = () => {
             <FaPlay className="text-sm" />
             Watch Demo
           </button>
+        </motion.div>
+
+        <motion.div
+          className="flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-8"
+          variants={itemVariants}
+        >
+          {highlights.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white text-sm md:text-base"
+            >
+              <span>{item.icon}</span>
+              <span className="font-semibold">{item.label}</span>
+            </div>
+          ))}
         </motion.div>
       </motion.div>
 
