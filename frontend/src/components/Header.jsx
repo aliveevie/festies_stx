@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import { useEffect } from "react";
-import { FaTicketAlt, FaWallet, FaUser, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
+import { FaTicketAlt, FaUser, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import { toast } from 'react-hot-toast';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatAddress } from '../utils/formatters';
 import { useLocalStorage, useBoolean } from '../hooks';
@@ -26,6 +26,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useBoolean(false);
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useBoolean(false);
   const [theme, setTheme] = useLocalStorage('theme', 'light');
+  const location = useLocation();
 
   const {
     isConnected,
@@ -38,6 +39,11 @@ const Header = () => {
     // Apply theme to document
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
+
+  useEffect(() => {
+    setIsMobileMenuOpen.setFalse();
+    setIsWalletMenuOpen.setFalse();
+  }, [location.pathname]);
 
   const handleDisconnectWallet = () => {
     try {
@@ -112,6 +118,7 @@ const Header = () => {
               className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
+              aria-label="Toggle theme"
             >
               {theme === 'light' ? '🌙' : '☀️'}
             </motion.button>
@@ -126,6 +133,9 @@ const Header = () => {
                   className="flex items-center gap-3 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-xl shadow-lg hover:bg-white/30 transition-all duration-200 text-white"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  aria-haspopup="menu"
+                  aria-expanded={isWalletMenuOpen.value}
+                  aria-controls="wallet-menu"
                 >
                   <FaUser className="text-lg" />
                   <span className="font-mono text-sm font-medium">
@@ -142,6 +152,7 @@ const Header = () => {
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
                       className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                      id="wallet-menu"
                     >
                       <div className="p-4 border-b border-gray-100">
                         <div className="flex items-center gap-3 mb-3">
@@ -199,6 +210,9 @@ const Header = () => {
             <button
               onClick={toggleMobileMenu}
               className="lg:hidden p-2 text-white hover:bg-white/20 rounded-lg transition-colors"
+              aria-label="Toggle navigation"
+              aria-expanded={isMobileMenuOpen.value}
+              aria-controls="mobile-nav"
             >
               {isMobileMenuOpen.value ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
             </button>
@@ -214,6 +228,7 @@ const Header = () => {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
               className="lg:hidden border-t border-white/20 mt-4 pt-4"
+              id="mobile-nav"
             >
               <div className="flex flex-col gap-2">
                 {navLinks.map((link) => (
