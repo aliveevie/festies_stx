@@ -4,9 +4,14 @@ import { FaHeart, FaGift, FaSmile, FaRocket, FaPaperPlane, FaImage, FaPalette, F
 import { toast } from 'react-hot-toast';
 import { mintGreetingCard, waitForTransaction, handleBlockchainError } from '../utils/blockchain';
 import { processGreetingData } from '../utils/metadata';
+import { isValidStacksAddress, isValidURL, sanitizeInput } from '../utils/validator';
 import { useAuth } from '../contexts/AuthContext';
 
 const CreateGreeting = () => {
+  const maxNameLength = 40;
+  const maxMessageLength = 500;
+  const maxFestivalLength = 100;
+
   const [formData, setFormData] = useState({
     recipientName: '',
     message: '',
@@ -82,17 +87,50 @@ const CreateGreeting = () => {
     
     try {
       // Validate required fields
-      if (!formData.recipientName.trim() || !formData.message.trim()) {
+      const recipientName = sanitizeInput(formData.recipientName);
+      const message = sanitizeInput(formData.message);
+      const festival = sanitizeInput(formData.festival || 'Festival');
+      const recipientAddress = formData.recipientAddress.trim();
+
+      if (!recipientName || !message) {
         throw new Error('Please fill in all required fields');
       }
 
-      if (!formData.recipientAddress.trim()) {
+      if (!recipientAddress) {
         throw new Error('Please enter recipient address');
+      }
+
+      if (!isValidStacksAddress(recipientAddress)) {
+        throw new Error('Please enter a valid Stacks address');
+      }
+
+      if (recipientName.length > maxNameLength) {
+        throw new Error(`Recipient name must be ${maxNameLength} characters or fewer`);
+      }
+
+      if (festival.length > maxFestivalLength) {
+        throw new Error(`Festival name must be ${maxFestivalLength} characters or fewer`);
+      }
+
+      if (message.length > maxMessageLength) {
+        throw new Error(`Message must be ${maxMessageLength} characters or fewer`);
+      }
+
+      if (formData.imageUri && !isValidURL(formData.imageUri)) {
+        throw new Error('Please provide a valid image URL');
+      }
+
+      if (formData.metadataUri && !isValidURL(formData.metadataUri)) {
+        throw new Error('Please provide a valid metadata URL');
       }
 
       // Process greeting data with metadata validation and IPFS integration
       const greetingData = await processGreetingData({
         ...formData,
+        recipientName,
+        message,
+        festival,
+        recipientAddress,
         sender: userAddress
       }, userAddress);
 
@@ -189,6 +227,19 @@ const CreateGreeting = () => {
       transition: { duration: 0.5 }
     }
   };
+
+  const nameCount = formData.recipientName.length;
+  const messageCount = formData.message.length;
+  const festivalCount = formData.festival.length;
+  const isAddressValid = isValidStacksAddress(formData.recipientAddress.trim());
+  const isFormValid =
+    isAddressValid &&
+    nameCount > 0 &&
+    nameCount <= maxNameLength &&
+    messageCount > 0 &&
+    messageCount <= maxMessageLength &&
+    festivalCount > 0 &&
+    festivalCount <= maxFestivalLength;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
@@ -299,6 +350,12 @@ const CreateGreeting = () => {
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg"
                     required
                   />
+                  <div className="flex justify-between text-sm text-gray-500 mt-2">
+                    <span>Keep it short and sweet</span>
+                    <span className={nameCount > maxNameLength ? 'text-red-500 font-semibold' : ''}>
+                      {nameCount}/{maxNameLength}
+                    </span>
+                  </div>
                 </motion.div>
 
                 {/* Recipient Address */}
@@ -318,6 +375,11 @@ const CreateGreeting = () => {
                   <p className="text-sm text-gray-500 mt-2">
                     Enter the Stacks address where the NFT will be sent
                   </p>
+                  {formData.recipientAddress.length > 0 && (
+                    <p className={`text-sm mt-2 ${isAddressValid ? 'text-green-600' : 'text-red-500'}`}>
+                      {isAddressValid ? 'Address format looks valid' : 'Address format looks invalid'}
+                    </p>
+                  )}
                 </motion.div>
 
                 {/* Festival */}
@@ -333,6 +395,11 @@ const CreateGreeting = () => {
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg"
                     required
                   />
+                  <div className="flex justify-end text-sm text-gray-500 mt-2">
+                    <span className={festivalCount > maxFestivalLength ? 'text-red-500 font-semibold' : ''}>
+                      {festivalCount}/{maxFestivalLength}
+                    </span>
+                  </div>
                 </motion.div>
 
                 {/* Message */}
@@ -350,7 +417,9 @@ const CreateGreeting = () => {
                   />
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-sm text-gray-500">
-                      {formData.message.length}/500 characters
+                      <span className={messageCount > maxMessageLength ? 'text-red-500 font-semibold' : ''}>
+                        {messageCount}/{maxMessageLength}
+                      </span>
                     </span>
                     <div className="flex gap-2">
                       <button
@@ -510,7 +579,7 @@ const CreateGreeting = () => {
                   
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isFormValid}
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {isSubmitting ? (
@@ -580,11 +649,4 @@ const CreateGreeting = () => {
   );
 };
 
-export default CreateGreeting; // Create build 1
-// Create build 2
-// Create optimization 1
-// Create refactor 1
-// Create docs update
-// Create style update
-// Create v1.1.0
-// Create cleanup
+export default CreateGreeting;
