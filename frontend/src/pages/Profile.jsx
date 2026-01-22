@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FaUser, 
@@ -13,21 +13,44 @@ import {
 } from 'react-icons/fa';
 import { useAuth } from '../contexts/AuthContext';
 import { copyToClipboard } from '../utils/browser';
+import { formatAddress } from '../utils/formatters';
+import { isValidURL, sanitizeInput } from '../utils/validator';
 import { toast } from 'react-hot-toast';
 import StatsCard from '../components/StatsCard';
 import ProgressBar from '../components/ProgressBar';
 import Badge from '../components/Badge';
 
+const initialProfileData = {
+  bio: 'NFT enthusiast and greeting card collector',
+  location: 'Stacks Network',
+  website: 'https://festies.io',
+};
+
 const Profile = () => {
   const { userAddress, userDisplayName, isConnected } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    bio: 'NFT enthusiast and greeting card collector',
-    location: 'Stacks Network',
-    website: 'https://festies.io',
-  });
+  const [profileData, setProfileData] = useState(initialProfileData);
+  const [savedProfileData, setSavedProfileData] = useState(initialProfileData);
 
   const handleSave = () => {
+    const sanitized = {
+      bio: sanitizeInput(profileData.bio),
+      location: sanitizeInput(profileData.location),
+      website: sanitizeInput(profileData.website),
+    };
+
+    if (!sanitized.bio.trim()) {
+      toast.error('Please add a short bio before saving.');
+      return;
+    }
+
+    if (sanitized.website && !isValidURL(sanitized.website)) {
+      toast.error('Please provide a valid website URL.');
+      return;
+    }
+
+    setProfileData(sanitized);
+    setSavedProfileData(sanitized);
     setIsEditing(false);
     toast.success('Profile updated successfully!');
   };
@@ -39,6 +62,26 @@ const Profile = () => {
         toast.success('Address copied to clipboard!');
       }
     }
+  };
+
+  const hasChanges = useMemo(
+    () =>
+      profileData.bio !== savedProfileData.bio ||
+      profileData.location !== savedProfileData.location ||
+      profileData.website !== savedProfileData.website,
+    [profileData, savedProfileData]
+  );
+
+  const isWebsiteValid = useMemo(
+    () => !profileData.website || isValidURL(profileData.website),
+    [profileData.website]
+  );
+
+  const canSave = hasChanges && profileData.bio.trim() && isWebsiteValid;
+
+  const handleFieldChange = (field) => (event) => {
+    const value = sanitizeInput(event.target.value);
+    setProfileData((prev) => ({ ...prev, [field]: value }));
   };
 
   const containerVariants = {
@@ -152,12 +195,13 @@ const Profile = () => {
               <h2 className="text-2xl font-bold text-gray-800">Profile Information</h2>
               <motion.button
                 onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all duration-300"
+                disabled={isEditing && !canSave}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {isEditing ? <FaSave /> : <FaEdit />}
-                {isEditing ? 'Save' : 'Edit'}
+                {isEditing ? (canSave ? 'Save' : 'Review') : 'Edit'}
               </motion.button>
             </div>
 
@@ -168,10 +212,14 @@ const Profile = () => {
                 </label>
                 <div className="flex items-center gap-3 p-4 bg-white/50 rounded-xl">
                   <FaWallet className="text-blue-500" />
-                  <span className="font-mono text-gray-800 flex-1">{userAddress}</span>
+                  <span className="font-mono text-gray-800 flex-1" title={userAddress || ''}>
+                    {userAddress ? formatAddress(userAddress, 8, 6) : 'No wallet connected'}
+                  </span>
                   <motion.button
                     onClick={handleCopyAddress}
-                    className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                    aria-label="Copy wallet address"
+                    disabled={!userAddress}
+                    className="p-2 text-gray-400 hover:text-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                   >
@@ -187,7 +235,7 @@ const Profile = () => {
                 {isEditing ? (
                   <textarea
                     value={profileData.bio}
-                    onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
+                    onChange={handleFieldChange('bio')}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300"
                     rows={4}
                   />
@@ -205,7 +253,7 @@ const Profile = () => {
                     <input
                       type="text"
                       value={profileData.location}
-                      onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
+                      onChange={handleFieldChange('location')}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300"
                     />
                   ) : (
@@ -221,7 +269,7 @@ const Profile = () => {
                     <input
                       type="url"
                       value={profileData.website}
-                      onChange={(e) => setProfileData({ ...profileData, website: e.target.value })}
+                      onChange={handleFieldChange('website')}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300"
                     />
                   ) : (
@@ -234,6 +282,9 @@ const Profile = () => {
                       {profileData.website}
                     </a>
                   )}
+                  {isEditing && !isWebsiteValid ? (
+                    <p className="text-sm text-red-500 mt-2">Enter a valid URL, including https://</p>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -276,4 +327,3 @@ const Profile = () => {
 };
 
 export default Profile;
-// Style improvement
