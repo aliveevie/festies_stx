@@ -241,6 +241,7 @@ const Collection = () => {
                             externalSearchTerm={searchTerm}
                             externalSortBy={sortBy}
                             externalSortOrder={sortOrder}
+                            layout={viewMode}
                         />
                     </motion.div>
                 </motion.div>
