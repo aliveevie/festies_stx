@@ -32,6 +32,11 @@ const Profile = () => {
   const [profileData, setProfileData] = useState(initialProfileData);
   const [savedProfileData, setSavedProfileData] = useState(initialProfileData);
 
+  const handleCancel = () => {
+    setProfileData(savedProfileData);
+    setIsEditing(false);
+  };
+
   const handleSave = () => {
     const sanitized = {
       bio: sanitizeInput(profileData.bio),
@@ -193,16 +198,28 @@ const Profile = () => {
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-800">Profile Information</h2>
-              <motion.button
-                onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                disabled={isEditing && !canSave}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {isEditing ? <FaSave /> : <FaEdit />}
-                {isEditing ? (canSave ? 'Save' : 'Review') : 'Edit'}
-              </motion.button>
+              <div className="flex items-center gap-3">
+                {isEditing ? (
+                  <motion.button
+                    onClick={handleCancel}
+                    className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-xl border-2 border-gray-200 hover:shadow-lg transition-all duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Cancel
+                  </motion.button>
+                ) : null}
+                <motion.button
+                  onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                  disabled={isEditing && !canSave}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isEditing ? <FaSave /> : <FaEdit />}
+                  {isEditing ? (canSave ? 'Save' : 'Review') : 'Edit'}
+                </motion.button>
+              </div>
             </div>
 
             <div className="space-y-6">
