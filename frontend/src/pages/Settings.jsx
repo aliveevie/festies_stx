@@ -10,7 +10,7 @@ const Settings = () => {
   const [sounds, setSounds] = useLocalStorage('sounds', true);
   const [language, setLanguage] = useLocalStorage('language', 'en');
   const [autoRefresh, setAutoRefresh] = useLocalStorage('autoRefresh', true);
-  const [savedSnapshot] = useState({ notifications, sounds, language, autoRefresh });
+  const [savedSnapshot, setSavedSnapshot] = useState({ notifications, sounds, language, autoRefresh });
 
   const hasChanges = useMemo(
     () =>
@@ -22,6 +22,7 @@ const Settings = () => {
   );
 
   const handleSave = () => {
+    setSavedSnapshot({ notifications, sounds, language, autoRefresh });
     toast.success('Settings saved successfully!');
   };
 
