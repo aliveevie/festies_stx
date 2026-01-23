@@ -22,6 +22,7 @@ const GreetingCardGrid = ({
   showActions = true,
   maxItems = 20,
   className = "",
+  layout = "grid",
   externalSearchTerm = null,
   onSearchTermChange = null,
   showSearch = true,
@@ -42,6 +43,8 @@ const GreetingCardGrid = ({
     sortBy: 'newest',
     sortOrder: 'desc'
   });
+
+  const getBaseNFTs = () => (filterByOwner ? nfts.filter((nft) => nft.owner === filterByOwner) : nfts);
 
   // Load NFTs from blockchain
   const loadNFTs = async () => {
@@ -103,67 +106,9 @@ const GreetingCardGrid = ({
     }
   };
 
-  // Filter and sort NFTs
-  const filteredAndSortedNFTs = nfts
-    .filter(nft => {
-      // Filter by owner if specified
-      if (filterByOwner && nft.owner !== filterByOwner) {
-        return false;
-      }
-
-      // Filter by search term
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          nft.metadata.name.toLowerCase().includes(searchLower) ||
-          nft.metadata.message.toLowerCase().includes(searchLower) ||
-          nft.metadata.festival.toLowerCase().includes(searchLower)
-        );
-      }
-
-      // Filter by festival
-      if (filters.festival) {
-        return nft.metadata.festival.toLowerCase().includes(filters.festival.toLowerCase());
-      }
-
-      return true;
-    })
-    .sort((a, b) => {
-      const sortBy = filters.sortBy || 'newest';
-      const sortOrder = filters.sortOrder || 'desc';
-      switch (sortBy) {
-        case 'newest':
-          return sortOrder === 'asc'
-            ? a.metadata.createdAt - b.metadata.createdAt
-            : b.metadata.createdAt - a.metadata.createdAt;
-        case 'oldest':
-          return sortOrder === 'asc'
-            ? a.metadata.createdAt - b.metadata.createdAt
-            : b.metadata.createdAt - a.metadata.createdAt;
-        case 'name':
-          return sortOrder === 'asc'
-            ? a.metadata.name.localeCompare(b.metadata.name)
-            : b.metadata.name.localeCompare(a.metadata.name);
-        case 'festival':
-          return sortOrder === 'asc'
-            ? a.metadata.festival.localeCompare(b.metadata.festival)
-            : b.metadata.festival.localeCompare(a.metadata.festival);
-        case 'messageLength':
-          return sortOrder === 'asc'
-            ? a.metadata.message.length - b.metadata.message.length
-            : b.metadata.message.length - a.metadata.message.length;
-        case 'popular':
-          return sortOrder === 'asc'
-            ? a.tokenId - b.tokenId
-            : b.tokenId - a.tokenId;
-        default:
-          return 0;
-      }
-    });
-
   // Debounced search function
   const debouncedSearch = debounceSearch((term, filterOptions) => {
-    const results = searchNFTs(nfts, term, filterOptions);
+    const results = searchNFTs(getBaseNFTs(), term, filterOptions);
     setFilteredNFTs(results);
   }, 300);
 
@@ -209,10 +154,16 @@ const GreetingCardGrid = ({
   // Update filtered NFTs when NFTs change
   useEffect(() => {
     if (nfts.length > 0) {
-      const results = searchNFTs(nfts, searchTerm, filters);
+      const results = searchNFTs(
+        getBaseNFTs(),
+        searchTerm,
+        filters
+      );
       setFilteredNFTs(results);
+    } else {
+      setFilteredNFTs([]);
     }
-  }, [nfts, searchTerm, filters]);
+  }, [nfts, searchTerm, filters, filterByOwner]);
 
   // Handle NFT actions
   const handleTransfer = async (tokenId) => {
@@ -341,7 +292,7 @@ const GreetingCardGrid = ({
     );
   }
 
-  if (filteredAndSortedNFTs.length === 0) {
+  if (filteredNFTs.length === 0) {
     return (
       <motion.div 
         className={`text-center py-16 ${className}`}
@@ -409,7 +360,7 @@ const GreetingCardGrid = ({
         transition={{ duration: 0.5 }}
       >
         <div className="text-sm text-gray-600 font-medium">
-          Showing <span className="font-bold text-blue-600">{filteredAndSortedNFTs.length}</span> of <span className="font-bold text-gray-800">{nfts.length}</span> cards
+          Showing <span className="font-bold text-blue-600">{filteredNFTs.length}</span> of <span className="font-bold text-gray-800">{nfts.length}</span> cards
         </div>
         <motion.button
           onClick={loadNFTs}
@@ -423,7 +374,13 @@ const GreetingCardGrid = ({
       </motion.div>
 
       {/* NFT Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div
+        className={
+          layout === 'list'
+            ? 'grid grid-cols-1 gap-4'
+            : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+        }
+      >
         <AnimatePresence>
           {filteredNFTs.map((nft) => (
             <motion.div
