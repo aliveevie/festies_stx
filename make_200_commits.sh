@@ -116,6 +116,10 @@ append_marker_line() {
 
 made=0
 while :; do
+  if (( made >= TARGET_COMMITS )); then
+    break
+  fi
+
   status_line="$(git status --porcelain 2>/dev/null | head -n 1)"
   [[ -z "$status_line" ]] && break
 
@@ -138,6 +142,13 @@ while :; do
     echo "  Completed ${made} commits..."
   fi
 done
+
+if (( made >= TARGET_COMMITS )); then
+  if git status --porcelain 2>/dev/null | grep -q .; then
+    echo "Reached target ($TARGET_COMMITS). Leaving remaining changes uncommitted."
+    print_status_count
+  fi
+fi
 
 remaining=$((TARGET_COMMITS - made))
 if (( remaining > 0 )); then
